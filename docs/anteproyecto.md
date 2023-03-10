@@ -8,6 +8,12 @@
 que se pretende alcanzar al realizar el proyecto. Se indicará igualmente donde
 será utilizado el proyecto obtenido.*
 
+La Aplicación a desarrollar permitirá al usuario cargar un archivo excel para manejar los diferentes registros y usarlos como parámetros en documentos .odt cargados previamente, con el objetivo de automatizar la generación de informes pdf por cada registro.
+
+El proyecto será utilizado en el ámbito de la automatización de informes.
+
+APACHE POI
+
 ## PREANALISIS DE LO EXISTENTE (Opcional)
 
 *[TODO] Si procede, se informará brevemente sobre el funcionamiento del sistema actual. El que vamos a reemplazar o a mejorar. Este sistema no tiene por qué estar necesariamente automatizado pudiendo realizarse actualmente de forma manual por personas.*
