@@ -8,7 +8,7 @@
 que se pretende alcanzar al realizar el proyecto. Se indicará igualmente donde
 será utilizado el proyecto obtenido.*
 
-La Aplicación a desarrollar permitirá al usuario cargar un archivo excel para manejar los diferentes registros y usarlos como parámetros en documentos .odt cargados previamente, con el objetivo de automatizar la generación de informes pdf por cada registro.
+La Aplicación a desarrollar permitirá al usuario cargar una fuente de datos (.exel, csv,...) para manejar los diferentes registros y usarlos como parámetros en distintos tipos de documentos e informes (.odt, .docx, ...) cargados previamente, con el objetivo de automatizar la generación de informes pdf por cada registro.
 
 El proyecto será utilizado en el ámbito de la automatización de informes.
 
@@ -23,6 +23,10 @@ APACHE POI
 *[TODO] Determinar de forma genérica lo que tiene que hacer el software y cuáles son los requisitos que debe cumplir.*
 
 *Si el proyecto trata sobre la adaptación o ampliación de algún software existente, se deberá aportar información sobre el mismo (documentos electrónicos, direcciones URL, etc.), delimitando claramente cuál será el trabajo que se realizará y que funcionalidad ya está implementada.*
+
+
+En esta sección se explican los requisitos fundamentales que requiere el sistema, es decir, lo que el programa hará desde el punto de vista del cliente.
+Dichas pautas y requisitos a implementar en la aplicación son los siguientes:
 
 > *Incuir los diagramas necesarios*
 
