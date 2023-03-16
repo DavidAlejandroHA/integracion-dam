@@ -51,6 +51,8 @@ Entre las acciones más sencillas y directas que puede realizar están:
   <li>Salir de la aplicación: El usuario sale de la aplicación.</li>
 </ul>
 
+![Caso de uso de la aplicación](/docs/Caso de uso aplicacion.png)
+
 ## DISEÑO DEL SOFTWARE
 
 *[TODO] Propuesta de posibles opciones de implementación del software que hay que construir, determinar cómo se va a llevar a cabo la implementación.*
