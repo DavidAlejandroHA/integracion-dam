@@ -51,7 +51,7 @@ Entre las acciones más sencillas y directas que puede realizar están:
   <li>Salir de la aplicación: El usuario sale de la aplicación.</li>
 </ul>
 
-![Caso de uso de la aplicación](https://github.com/DavidAlejandroHA/integracion-dam/tree/main/docs/Caso_de_uso_aplicacion.png)
+![Caso de uso de la aplicación](/docs/Caso_de_uso_aplicacion.png)
 
 ## DISEÑO DEL SOFTWARE
 
