@@ -4,15 +4,9 @@
 
 ## OBJETIVOS
 
-*[TODO] Se indicará de forma genérica y sin entrar en concreciones el objetivo
-que se pretende alcanzar al realizar el proyecto. Se indicará igualmente donde
-será utilizado el proyecto obtenido.*
-
 La Aplicación a desarrollar permitirá al usuario cargar una fuente de datos (.exel, csv,...) para manejar los diferentes registros y usarlos como parámetros en distintos tipos de documentos e informes (.odt, .docx, ...) cargados previamente, con el objetivo de automatizar la generación de informes pdf por cada registro.
 
 El proyecto será utilizado en el ámbito de la automatización de informes.
-
-APACHE POI
 
 ## PREANALISIS DE LO EXISTENTE (Opcional)
 
@@ -36,8 +30,6 @@ Dichas pautas y requisitos a implementar en la aplicación son los siguientes:
   <li>Permitir al usuario manejar todas las diferentes acciones que la aplicación ofrece.</li>
 </ul>
 
-> *Incuir los diagramas necesarios*
-
 ### Casos de uso
 A continuación se desarrollarán los casos de uso del sistema que capturarán sus requisitos funcionales para expresarlos desde el punto de vista del usuario, los cuales guiarán todo el proceso de desarrollo del sistema.<br>
 Estos casos de uso proporcionarán, por tanto, un modo claro y preciso de comunicación entre usuario y desarrollador.<br>
@@ -57,11 +49,40 @@ Entre las acciones más sencillas y directas que puede realizar están:
 
 *[TODO] Propuesta de posibles opciones de implementación del software que hay que construir, determinar cómo se va a llevar a cabo la implementación.*
 
->  *Incluir los diagramas necesarios.*
+### Ciclo de Vida
+
+En este apartado se explicará el modelo de ciclo de vida elegido para esta aplicación y se explicará la justificación de los procedimientos elegidos para su progresiva implementación desde diferentes puntos de vista.
+
+El modelo de ciclo de vida elegido para esta aplicación es el de <b> Desarrollo en Cascada </b>.
+
+Los motivos por los que he elegido este método de desarrollo para esta aplicación son los siguientes:
+<ul>
+  <li>Desde el punto de vista del usuario final: El ciclo de vida elegido ofrece la posibilidad de gestionar la aplicación de una manera rápida y sencilla, sin tener que invertir más tiempo del necesario en el proceso gracias a la estructuración de los procesos.</li>
+  <li>Desde el punto de vista del Programador: Ofrece una visión sencilla de las ideas a implementar y a cómo debe hacer que el sistema de su programa funcione.</li>
+  <li>Por el tipo de aplicación: Permite organizar los diferentes tipos deacciones, interfaces y programas de una manera más eficiente.</li>
+  <li>Por la facilidad de uso: Gracias a que el desarrollo en cascada es caracterizado por ordenar de manera rigurosa las etapas del ciclo de vida de software, permite hacerse una idea de cómo puede uno tener todo organizado a la hora de desarrollar el programa en todos sus aspectos.</li>
+</ul>
+  
+#### Ventajas:
+
+<ol>
+  <li value="1"> Permite la departamentalización y control de gestión.</li>
+  <li> El horario se establece con los planos normalmente adecuados paracada etapa de desarrollo.</li>
+  <li>Este modelo y sus procesos conducen a entregar el proyecto a tiempo.</li>
+  <li>Es sencillo y facilita la gestión de proyectos.</li>
+  <li>Permite tener bajo control el proyecto.</li>
+  <li>Facilita la cantidad de interacción entre equipos que se produce durante el desarrollo.</li>
+</ol>
+
+### Diagrama de Flujo de Datos
+
+A continuación se desarrollará los diagramas de flujos de datos de los diferentes procesos y niveles que existen en el entorno de la aplicación.
+
+El diagrama de flujo de datos de este proyecto no solo corresponde a la
+aplicación, sino a cómo se gestiona en parte el el documento y la fuente de datos que maneja, ya que ambos aspectos están relacionados directamente. Los diagramas de flujos de datos entonces quedarían de esta manera:
+
 
 ## ESTIMACIÓN DE COSTES
-
-*[TODO] Estimar el coste que representará la creación del proyecto. Esta estimación será temporal y/o económica si procede (costes de contratación de servicios en la nube, por ejemplo).*
 
 La estimación de costes monetarios de este proyecto está estimada ser de 0 euros. No se dependerá de ninguna API ni servicios que sean de pago para el desarrollo del proyecto.
 
