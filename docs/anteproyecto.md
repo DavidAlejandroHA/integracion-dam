@@ -1,7 +1,5 @@
 # Anteproyecto
 
-> NOTA: Incluir diagramas donde proceda (diagramas de clases, casos de uso, entidad relación, ...).
-
 ## OBJETIVOS
 
 La Aplicación a desarrollar permitirá al usuario cargar una fuente de datos (.exel, csv,...) para manejar los diferentes registros y usarlos como parámetros en distintos tipos de documentos e informes (.odt, .docx, ...) cargados previamente, con el objetivo de automatizar la generación de informes pdf por cada registro.
@@ -47,7 +45,7 @@ Entre las acciones más sencillas y directas que puede realizar están:
 
 ## DISEÑO DEL SOFTWARE
 
-*[TODO] Propuesta de posibles opciones de implementación del software que hay que construir, determinar cómo se va a llevar a cabo la implementación.*
+Las principales librerías que utilizará el software serán las librerías de javafx y Apache POI, la cuál permite gestionar y manejar diferentes tipos de documentos desarrollados por microsoft.
 
 ### Ciclo de Vida
 
@@ -80,6 +78,10 @@ A continuación se desarrollará los diagramas de flujos de datos de los diferen
 
 El diagrama de flujo de datos de este proyecto no solo corresponde a la
 aplicación, sino a cómo se gestiona en parte el el documento y la fuente de datos que maneja, ya que ambos aspectos están relacionados directamente. Los diagramas de flujos de datos entonces quedarían de esta manera:
+
+![Diagrama de contexto](/docs/Diagrama1.png)
+
+![Diagrama nivel 1](/docs/Diagrama2.png)
 
 
 ## ESTIMACIÓN DE COSTES
