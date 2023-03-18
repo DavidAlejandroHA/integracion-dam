@@ -12,11 +12,6 @@ El proyecto será utilizado en el ámbito de la automatización de informes.
 
 ## ANÁLISIS DEL SOFTWARE
 
-*[TODO] Determinar de forma genérica lo que tiene que hacer el software y cuáles son los requisitos que debe cumplir.*
-
-*Si el proyecto trata sobre la adaptación o ampliación de algún software existente, se deberá aportar información sobre el mismo (documentos electrónicos, direcciones URL, etc.), delimitando claramente cuál será el trabajo que se realizará y que funcionalidad ya está implementada.*
-
-
 En esta sección se explican los requisitos fundamentales que requiere el sistema, es decir, lo que el programa hará desde el punto de vista del cliente.<br>
 Dichas pautas y requisitos a implementar en la aplicación son los siguientes:
 
