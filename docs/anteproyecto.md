@@ -33,7 +33,6 @@ Entre las acciones más sencillas y directas que puede realizar están:
   <li>Importar documento: Importa un documento cuyos parámetros introducidos por el usuario serán sustituidos por los valores que tengan según la fuente de datos.</li>
   <li>Importar fuente de datos: Selecciona un archivo que sirva como fuente de datos (p. ej. .exel o .csv) para que la aplicación gestione el valor de los parámetros que se encuentran en el documento actual.</li>
   <li>Generar informes: Selecciona el destino en donde se crearán los informes acordes con el documento y la fuente de datos proporcionados. Una vez seleccionado, se crearán los informes.</li>
-  <li>Salir de la aplicación: El usuario sale de la aplicación.</li>
 </ul>
 
 ![Caso de uso de la aplicación](/docs/Caso_de_uso_aplicacion.png)
