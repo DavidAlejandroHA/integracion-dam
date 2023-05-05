@@ -24,15 +24,25 @@ Dichas pautas y requisitos a implementar en la aplicación son los siguientes:
 </ul>
 
 ### Casos de uso
+
 A continuación se desarrollarán los casos de uso del sistema que capturarán sus requisitos funcionales para expresarlos desde el punto de vista del usuario, los cuales guiarán todo el proceso de desarrollo del sistema.<br>
 Estos casos de uso proporcionarán, por tanto, un modo claro y preciso de comunicación entre usuario y desarrollador.<br>
 El sistema que se describe en este caso de uso es el siguiente: Un usuario interactúa con el programa y selecciona una fuente de datos y un documento con parámetros introducidos manualmente. Una vez generados los informes, los parámetros serán reemplazados por las variables de la fuente de datos.<br>
 Entre las acciones más sencillas y directas que puede realizar están:
 
 <ul>
-  <li>Importar documento: Importa un documento cuyos parámetros introducidos por el usuario serán sustituidos por los valores que tengan según la fuente de datos.</li>
-  <li>Importar fuente de datos: Selecciona un archivo que sirva como fuente de datos (p. ej. .exel o .csv) para que la aplicación gestione el valor de los parámetros que se encuentran en el documento actual.</li>
-  <li>Generar informes: Selecciona el destino en donde se crearán los informes acordes con el documento y la fuente de datos proporcionados. Una vez seleccionado, se crearán los informes.</li>
+  <li>Importar documento: Importa un documento cuyos parámetros
+introducidos por el usuario serán sustituidos por los valores
+que tengan según la fuente de datos.</li>
+  <li>Importar fuente de datos: Selecciona un archivo que sirva como
+fuente de datos (p. ej. .exel o .csv) para que la aplicación gestione
+el valor de los parámetros que se encuentran en el documento actual.</li>
+  <li>Generar informes: Selecciona el destino en donde se crearán los
+informes pdf acordes con el documento y la fuente de datos proporcionados.
+Una vez seleccionado se crearán distintos informes.
+  <li>Exportar documentos: </li> Tiene la misma funcionalidad que
+<b>generar informes</b>, salvo que el formato de exportación viene a
+ser el mismo que el del documento provisto.
 </ul>
 
 ![Caso de uso de la aplicación](/docs/Caso_de_uso_aplicacion.png)
@@ -48,13 +58,14 @@ En este apartado se explicará el modelo de ciclo de vida elegido para esta apli
 El modelo de ciclo de vida elegido para esta aplicación es el de <b> Desarrollo en Cascada </b>.
 
 Los motivos por los que he elegido este método de desarrollo para esta aplicación son los siguientes:
+
 <ul>
   <li>Desde el punto de vista del usuario final: El ciclo de vida elegido ofrece la posibilidad de gestionar la aplicación de una manera rápida y sencilla, sin tener que invertir más tiempo del necesario en el proceso gracias a la estructuración de los procesos.</li>
   <li>Desde el punto de vista del Programador: Ofrece una visión sencilla de las ideas a implementar y a cómo debe hacer que el sistema de su programa funcione.</li>
   <li>Por el tipo de aplicación: Permite organizar los diferentes tipos deacciones, interfaces y programas de una manera más eficiente.</li>
   <li>Por la facilidad de uso: Gracias a que el desarrollo en cascada es caracterizado por ordenar de manera rigurosa las etapas del ciclo de vida de software, permite hacerse una idea de cómo puede uno tener todo organizado a la hora de desarrollar el programa en todos sus aspectos.</li>
 </ul>
-  
+
 #### Ventajas:
 
 <ol>
@@ -76,7 +87,6 @@ aplicación, sino a cómo se gestiona en parte el el documento y la fuente de da
 ![Diagrama de contexto](/docs/Diagrama1.png)
 
 ![Diagrama nivel 1](/docs/Diagrama2.png)
-
 
 ## ESTIMACIÓN DE COSTES
 
