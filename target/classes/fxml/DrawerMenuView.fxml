@@ -20,7 +20,7 @@
             </JFXButton>
             <JFXButton fx:id="am" graphicTextGap="20.0" onMousePressed="#sas" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Importar fuente de datos" textAlignment="CENTER" wrapText="true">
                <graphic>
-                  <FontIcon iconColor="#33e18d" iconLiteral="gmi-arrow-downward" iconSize="60" />
+                  <FontIcon iconColor="#33e18d" iconLiteral="gmi-archive" iconSize="60" />
                </graphic>
                <font>
                   <Font size="26.0" />
@@ -34,7 +34,7 @@
                   <Font size="26.0" />
                </font>
             </JFXButton>
-            <JFXButton alignment="CENTER" graphicTextGap="20.0" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Guardar cambios" textAlignment="CENTER" wrapText="true">
+            <JFXButton alignment="CENTER" graphicTextGap="20.0" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Exportar documento" textAlignment="CENTER" wrapText="true">
                <graphic>
                   <FontIcon iconColor="#1f48a6" iconLiteral="gmi-save" iconSize="60" />
                </graphic>

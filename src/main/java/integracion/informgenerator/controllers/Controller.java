@@ -33,8 +33,8 @@ public class Controller implements Initializable{
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		drawerController = new VBoxDrawerController();
-		//webEngine = webView.getEngine();
-		//webEngine.load("https://www.google.es");
+		webEngine = webView.getEngine();
+		webEngine.load("https://www.google.es");
 		drawerMenu.setSidePane(drawerController.getView());
 		
 		
