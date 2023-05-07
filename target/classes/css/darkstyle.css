@@ -2,7 +2,10 @@
 	/*-fx-font-family: 'Courier New';*/
 	/*-fx-font-size: 12px;*/
 	/*-fx-text-color: #8B008B;*/
-	/*-fx-base: rgba(60, 63, 65, 255);*/
+}
+
+#view{
+	-fx-base: rgba(60, 63, 65, 255);
 }
 
 .drawer {

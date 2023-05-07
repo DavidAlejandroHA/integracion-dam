@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><html xmlns="http://www.w3.org/1999/xhtml">
+<head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
+<meta content="300" name="meta:paragraph-count"/>
+<meta content="2190" name="meta:word-count"/>
+<meta content="1" name="meta:table-count"/>
+<meta content="LibreOffice/7.3.3.2$Windows_X86_64 LibreOffice_project/d1d0ea68f081ee2800a922cac8f79445e4603348" name="generator"/>
+<meta content="11" name="xmpTPg:NPages"/>
+<meta content="2022-11-22T08:26:46.050000000" name="dcterms:created"/>
+<meta content="2022-11-22T08:47:13.039000000" name="dcterms:modified"/>
+<meta content="6" name="editing-cycles"/>
+<meta content="0" name="meta:object-count"/>
+<meta content="14381" name="meta:character-count"/>
+<meta content="org.apache.tika.parser.DefaultParser" name="X-TIKA:Parsed-By"/>
+<meta content="org.apache.tika.parser.odf.OpenDocumentParser" name="X-TIKA:Parsed-By"/>
+<meta content="1.3" name="odf:version"/>
+<meta content="PT6M15S" name="extended-properties:TotalTime"/>
+<meta content="0" name="meta:image-count"/>
+<meta content="11" name="meta:page-count"/>
+<meta content="application/vnd.oasis.opendocument.text" name="Content-Type"/>
+
+</head>
+<body><h2><b>Lista de comandos SQL para Sql Server y MySQL</b></h2><p>A continuación veremos los principales comandos SQL utilizados durante la administración de las Bases de Datos y conocerás para qué sirven:</p>
+<p><b>CREATE DATABASE</b> es utilizado para <a href="https://codigosql.top/sql-server/como-crear-una-base-de-datos-en-sql-server/">crear una base de datos</a> vacía.</p>
+<p><b>DROP DATABASE</b> es utilizado para eliminar íntegramente una base de datos existente.</p>
+<p><b>CREATE TABLE </b>es utilizado para <a href="https://codigosql.top/sql-server/como-crear-tablas-en-sql-server/">crear una tabla</a> nueva en una base de Datos existente.</p>
+<p><b>ALTER TABLE </b>es utilizado para modificar una tabla que hemos creado previamente.</p>
+<p><b>DROP TABLE </b>es utilizado para eliminar por completo una tabla de nuestra base de Datos.</p>
+<p/>
+<h2><b>Comandos sql para manipular Datos</b></h2><p><b>SELECT </b>es utilizado para recuperar datos de una o más tablas, en otras palabras, nos permite hacer <a href="https://codigosql.top/sql-server/consultas-basicas-select/">consultas </a>de los registros de las tablas.</p>
+<p><b>INSERT </b>es utilizado añadir o insertar registros a una tabla creada previamente, su complemento es <a href="https://codigosql.top/sql-server/insertar-datos-en-una-tabla/">Insert into</a>.</p>
+<p><b>UPDATE </b>es utilizado para modificar los datos de un conjunto de registros existentes en una tabla</p>
+<p><b>DELETE </b>es utilizado para eliminar o borrar todo o una parte de los datos de la tabla indicada por el argumento especificado después de la palabra clave <b>FROM</b>.</p>
+<p><b>TRUNCATE </b>es utilizado para borrar todos los registros de una tabla, pero no la tabla, es decir que quedaría una tabla vacía.</p>
+<h3><b>Clausulas básicas</b></h3><p>Las cláusulas son <b>condiciones </b>y las utilizamos para especificar los datos que deseamos seleccionar o manipular.</p>
+<p><b>FROM </b>se utiliza para especificar la tabla de la cual se van a consultar los registros</p>
+<p><b>GROUP BY</b> se utiliza para separar en grupos específicos los registros consultados.</p>
+<p><b>ORDER BY </b> se utiliza para ordenar los registros seleccionados tomando en cuenta los parámetros que le indiquemos.</p>
+<p><b>WHERE</b> Se utilizar para determinar los registros seleccionados con la cláusula FROM</p>
+<p><b>HAVING </b>es parecida a <b>WHERE</b>, ya que determina qué registros se seleccionan. Cuando los registros se han agrupado utilizando GROUP BY, la cláusula HAVING determina cuáles de ellos se van a mostrar.</p>
+<h4><b>Comandos para la cláusula Select</b></h4><p><b>AVG </b>Se utiliza para determinar el promedio de los registros de un campo determinado, en una tabla especifica.</p>
+<p><b>COUNT </b>Se utiliza para devolver el número de registros que se muestran en una consulta realizada.</p>
+<p><b>SUM </b>Se utiliza para devolver la suma de todos los registros de un campo especifico, dentro de una tabla.</p>
+<p><b>MAX </b>Se utiliza para devolver el registro mayor o cantidad mayor de un campo especifico, dentro de una tabla.</p>
+<p><b>MIN </b>Se utiliza para devolver el registro menor o cantidad menor de un campo especifico, dentro de una tabla.</p>
+<p>Todos los comandos sql vistos anteriormente son los mas usados, sin embargo es importante tener claro que deben ser complementados con ciertas palabras reservadas, por lo tanto es importante conocer la sintaxis para cada una de las acciones que deseamos realizar en nuestra Base de Datos. Te invito a que continúes aprendiendo en las diferentes categorías de este sitio web.</p>
+<p/>
+<p>Ejemplos</p>
+<p><b>CREATE</b> <b>DATABASE</b> mydb;</p>
+<p>USE mydb;</p>
+<p><b>CREATE</b> <b>TABLE</b> mitabla ( id INT <b>PRIMARY</b> <b>KEY</b>, nombre VARCHAR(20) );</p>
+<p><b>INSERT</b> <b>INTO</b> mitabla <b>VALUES</b> ( 1, 'Will' );</p>
+<p><b>INSERT</b> <b>INTO</b> mitabla <b>VALUES</b> ( 2, 'Marry' );</p>
+<p><b>INSERT</b> <b>INTO</b> mitabla <b>VALUES</b> ( 3, 'Dean' );</p>
+<p><b>SELECT</b> id, nombre <b>FROM</b> mitabla <b>WHERE</b> id = 1;</p>
+<p><b>UPDATE</b> mitabla <b>SET</b> nombre = 'Willy' <b>WHERE</b> id = 1;</p>
+<p><b>SELECT</b> id, nombre <b>FROM</b> mitabla;</p>
+<p><b>DELETE</b> <b>FROM</b> mitabla <b>WHERE</b> id = 1;</p>
+<p><b>SELECT</b> id, nombre <b>FROM</b> mitabla;</p>
+<p><b>DROP</b> <b>DATABASE</b> mydb;</p>
+<p><b>SELECT</b> <b>count</b>(1) <b>from</b> mitabla; da el número de registros en la tabla</p>
+<h2>Usar SELECT con encabezados de columna y cálculos</h2><p>En los siguientes ejemplos se devuelven todas las filas de la tabla Product. En el primer ejemplo se devuelven las ventas totales y los descuentos de cada producto. En el segundo ejemplo se calculan los beneficios totales de cada producto.</p>
+<p/>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT p.Name AS ProductName, </p>
+<p>NonDiscountSales = (OrderQty * UnitPrice),</p>
+<p>Discounts = ((OrderQty * UnitPrice) * UnitPriceDiscount)</p>
+<p>FROM Production.Product AS p </p>
+<p>INNER JOIN Sales.SalesOrderDetail AS sod</p>
+<p>ON p.ProductID = sod.ProductID </p>
+<p>ORDER BY ProductName DESC;</p>
+<p>GO</p>
+<p>Ésta es la consulta que calcula el beneficio de cada producto de cada pedido de venta.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT 'Total income is', ((OrderQty * UnitPrice) * (1.0 - UnitPriceDiscount)), ' for ',</p>
+<p>p.Name AS ProductName </p>
+<p>FROM Production.Product AS p </p>
+<p>INNER JOIN Sales.SalesOrderDetail AS sod</p>
+<p>ON p.ProductID = sod.ProductID </p>
+<p>ORDER BY ProductName ASC;</p>
+<p>GO</p>
+<h2>C. Usar DISTINCT con SELECT</h2><p>En el siguiente ejemplo se utiliza DISTINCT para evitar la recuperación de títulos duplicados.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT DISTINCT JobTitle</p>
+<p>FROM HumanResources.Employee</p>
+<p>ORDER BY JobTitle;</p>
+<p>GO</p>
+<h2>D. Crear tablas con SELECT INTO</h2><p>En el primer ejemplo se crea una tabla temporal denominada #Bicycles en tempdb.</p>
+<p/>
+<p>USE tempdb;</p>
+<p>GO</p>
+<p>IF OBJECT_ID (N'#Bicycles',N'U') IS NOT NULL</p>
+<p>DROP TABLE #Bicycles;</p>
+<p>GO</p>
+<p>SELECT * </p>
+<p>INTO #Bicycles</p>
+<p>FROM AdventureWorks2012.Production.Product</p>
+<p>WHERE ProductNumber LIKE 'BK%';</p>
+<p>GO</p>
+<p>En el segundo ejemplo se crea la tabla permanente NewProducts.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>IF OBJECT_ID('dbo.NewProducts', 'U') IS NOT NULL</p>
+<p> DROP TABLE dbo.NewProducts;</p>
+<p>GO</p>
+<p>ALTER DATABASE AdventureWorks2012 SET RECOVERY BULK_LOGGED;</p>
+<p>GO</p>
+<p/>
+<p>SELECT * INTO dbo.NewProducts</p>
+<p>FROM Production.Product</p>
+<p>WHERE ListPrice &gt; $25 </p>
+<p>AND ListPrice &lt; $100;</p>
+<p>GO</p>
+<p>ALTER DATABASE AdventureWorks2012 SET RECOVERY FULL;</p>
+<p>GO</p>
+<h2>E. Usar subconsultas correlacionadas</h2><p>Una subconsulta correlacionada es una consulta que depende de la consulta externa para obtener sus valores. Se ejecuta varias veces, una vez por cada fila que la consulta externa pueda seleccionar.</p>
+<p>En el primer ejemplo se muestran consultas que son semánticamente equivalentes para demostrar la diferencia entre el uso de la palabra clave EXISTS y la palabra clave IN. Ambos son ejemplos de subconsultas válidas que recuperan una instancia de cada nombre de producto cuyo modelo es un jersey de manga larga con logotipo y cuyos números de ProductModelID coinciden en las tablas Product y ProductModel.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT DISTINCT Name</p>
+<p>FROM Production.Product AS p </p>
+<p>WHERE EXISTS</p>
+<p> (SELECT *</p>
+<p> FROM Production.ProductModel AS pm </p>
+<p> WHERE p.ProductModelID = pm.ProductModelID</p>
+<p> AND pm.Name LIKE 'Long-Sleeve Logo Jersey%');</p>
+<p>GO</p>
+<p/>
+<p>-- OR</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT DISTINCT Name</p>
+<p>FROM Production.Product</p>
+<p>WHERE ProductModelID IN</p>
+<p> (SELECT ProductModelID </p>
+<p> FROM Production.ProductModel AS pm</p>
+<p> WHERE p.ProductModelID = pm.ProductModelID</p>
+<p> AND Name LIKE 'Long-Sleeve Logo Jersey%');</p>
+<p>GO</p>
+<p>En el ejemplo siguiente se usa IN y se recupera una instancia del nombre y apellido de cada empleado cuya bonificación en la tabla SalesPerson sea de 5000.00 y cuyos números de identificación coincidan en las tablas Employee y SalesPerson.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT DISTINCT p.LastName, p.FirstName </p>
+<p>FROM Person.Person AS p </p>
+<p>JOIN HumanResources.Employee AS e</p>
+<p> ON e.BusinessEntityID = p.BusinessEntityID WHERE 5000.00 IN</p>
+<p> (SELECT Bonus</p>
+<p> FROM Sales.SalesPerson AS sp</p>
+<p> WHERE e.BusinessEntityID = sp.BusinessEntityID);</p>
+<p>GO</p>
+<p>La subconsulta anterior de esta instrucción no se puede evaluar independientemente de la consulta externa. Necesita el valor Employee.EmployeeID, aunque este valor cambia a medida que el Motor de base de datos de SQL Server examina diferentes filas de Employee.</p>
+<p>Una subconsulta correlativa se puede usar también en la cláusula HAVING de una consulta externa. En este ejemplo se buscan los modelos cuyo precio máximo es superior al doble de la media del modelo.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT p1.ProductModelID</p>
+<p>FROM Production.Product AS p1</p>
+<p>GROUP BY p1.ProductModelID</p>
+<p>HAVING MAX(p1.ListPrice) &gt;= </p>
+<p> (SELECT AVG(p2.ListPrice) * 2</p>
+<p> FROM Production.Product AS p2</p>
+<p> WHERE p1.ProductModelID = p2.ProductModelID);</p>
+<p>GO</p>
+<p>En este ejemplo se utilizan dos subconsultas correlativas para buscar los nombres de los empleados que han vendido un producto específico.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT DISTINCT pp.LastName, pp.FirstName </p>
+<p>FROM Person.Person pp JOIN HumanResources.Employee e</p>
+<p>ON e.BusinessEntityID = pp.BusinessEntityID WHERE pp.BusinessEntityID IN </p>
+<p>(SELECT SalesPersonID </p>
+<p>FROM Sales.SalesOrderHeader</p>
+<p>WHERE SalesOrderID IN </p>
+<p>(SELECT SalesOrderID </p>
+<p>FROM Sales.SalesOrderDetail</p>
+<p>WHERE ProductID IN </p>
+<p>(SELECT ProductID </p>
+<p>FROM Production.Product p </p>
+<p>WHERE ProductNumber = 'BK-M68B-42')));</p>
+<p>GO</p>
+<h2>F. Usar GROUP BY</h2><p>En este ejemplo se busca el total de cada pedido de venta de la base de datos.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT SalesOrderID, SUM(LineTotal) AS SubTotal</p>
+<p>FROM Sales.SalesOrderDetail</p>
+<p>GROUP BY SalesOrderID</p>
+<p>ORDER BY SalesOrderID;</p>
+<p>GO</p>
+<p>Debido a la cláusula GROUP BY, solo se devuelve una fila que contiene la suma de todas las ventas por cada pedido de venta.</p>
+<h2>G. Usar GROUP BY con varios grupos</h2><p>En este ejemplo se busca el precio medio y la suma de las ventas anuales hasta la fecha, agrupados por Id. de producto e Id. de oferta especial.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT ProductID, SpecialOfferID, AVG(UnitPrice) AS [Average Price], </p>
+<p> SUM(LineTotal) AS SubTotal</p>
+<p>FROM Sales.SalesOrderDetail</p>
+<p>GROUP BY ProductID, SpecialOfferID</p>
+<p>ORDER BY ProductID;</p>
+<p>GO</p>
+<h2>H. Usar GROUP BY y WHERE</h2><p>En el siguiente ejemplo se colocan los resultados en grupos después de recuperar únicamente las filas con precios superiores a $1000.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT ProductModelID, AVG(ListPrice) AS [Average List Price]</p>
+<p>FROM Production.Product</p>
+<p>WHERE ListPrice &gt; $1000</p>
+<p>GROUP BY ProductModelID</p>
+<p>ORDER BY ProductModelID;</p>
+<p>GO</p>
+<h2>I. Usar GROUP BY con una expresión</h2><p>En este ejemplo se agrupa por una expresión. Puede agrupar por una expresión si ésta no incluye funciones de agregado.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT AVG(OrderQty) AS [Average Quantity], </p>
+<p>NonDiscountSales = (OrderQty * UnitPrice)</p>
+<p>FROM Sales.SalesOrderDetail</p>
+<p>GROUP BY (OrderQty * UnitPrice)</p>
+<p>ORDER BY (OrderQty * UnitPrice) DESC;</p>
+<p>GO</p>
+<h2>J. Usar GROUP BY con ORDER BY</h2><p>En este ejemplo se busca el precio medio de cada tipo de producto y se ordenan los resultados por precio medio.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT ProductID, AVG(UnitPrice) AS [Average Price]</p>
+<p>FROM Sales.SalesOrderDetail</p>
+<p>WHERE OrderQty &gt; 10</p>
+<p>GROUP BY ProductID</p>
+<p>ORDER BY AVG(UnitPrice);</p>
+<p>GO</p>
+<h2>K. Usar la cláusula HAVING</h2><p>En el primer ejemplo se muestra una cláusula HAVING con una función de agregado. Agrupa las filas de la tabla SalesOrderDetail por Id. de producto y elimina aquellos productos cuyas cantidades de pedido medias son cinco o menos. En el segundo ejemplo se muestra una cláusula HAVING sin funciones de agregado.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT ProductID </p>
+<p>FROM Sales.SalesOrderDetail</p>
+<p>GROUP BY ProductID</p>
+<p>HAVING AVG(OrderQty) &gt; 5</p>
+<p>ORDER BY ProductID;</p>
+<p>GO</p>
+<p>En esta consulta se utiliza la cláusula LIKE en la cláusula HAVING.</p>
+<p/>
+<p>USE AdventureWorks2012 ;  </p>
+<p>GO  </p>
+<p>SELECT SalesOrderID, CarrierTrackingNumber  </p>
+<p>FROM Sales.SalesOrderDetail  </p>
+<p>GROUP BY SalesOrderID, CarrierTrackingNumber  </p>
+<p>HAVING CarrierTrackingNumber LIKE '4BD%'  </p>
+<p>ORDER BY SalesOrderID ;  </p>
+<p>GO  </p>
+<h2>L. Usar HAVING y GROUP BY</h2><p>En el siguiente ejemplo se muestra el uso de las cláusulas GROUP BY, HAVING, WHERE y ORDER BY en una instrucción SELECT. Genera grupos y valores de resumen pero lo hace tras eliminar los productos cuyos precios superan los 25 $ y cuyas cantidades de pedido medias son inferiores a 5. También organiza los resultados por ProductID.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT ProductID </p>
+<p>FROM Sales.SalesOrderDetail</p>
+<p>WHERE UnitPrice &lt; 25.00</p>
+<p>GROUP BY ProductID</p>
+<p>HAVING AVG(OrderQty) &gt; 5</p>
+<p>ORDER BY ProductID;</p>
+<p>GO</p>
+<h2>M. Usar HAVING con SUM y AVG</h2><p>En el siguiente ejemplo se agrupa la tabla SalesOrderDetail por Id. de producto y solo se incluyen aquellos grupos de productos cuyos pedidos suman más de $1000000.00 y cuyas cantidades de pedido medias son inferiores a 3.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT ProductID, AVG(OrderQty) AS AverageQuantity, SUM(LineTotal) AS Total</p>
+<p>FROM Sales.SalesOrderDetail</p>
+<p>GROUP BY ProductID</p>
+<p>HAVING SUM(LineTotal) &gt; $1000000.00</p>
+<p>AND AVG(OrderQty) &lt; 3;</p>
+<p>GO</p>
+<p>Para ver los productos cuyas ventas totales son superiores a $2000000.00, utilice esta consulta:</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT ProductID, Total = SUM(LineTotal)</p>
+<p>FROM Sales.SalesOrderDetail</p>
+<p>GROUP BY ProductID</p>
+<p>HAVING SUM(LineTotal) &gt; $2000000.00;</p>
+<p>GO</p>
+<p>Si desea asegurarse de que hay al menos mil quinientos elementos para los cálculos de cada producto, use HAVING COUNT(*) &gt; 1500 para eliminar los productos que devuelven totales inferiores a 1500 elementos vendidos. La consulta tiene este aspecto:</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT ProductID, SUM(LineTotal) AS Total</p>
+<p>FROM Sales.SalesOrderDetail</p>
+<p>GROUP BY ProductID</p>
+<p>HAVING COUNT(*) &gt; 1500;</p>
+<p>GO</p>
+<h2>Hora Usar la sugerencia del optimizador INDEX</h2><p>En el ejemplo siguiente se muestran dos formas de usar la sugerencia del optimizador INDEX. En el primer ejemplo se muestra cómo obligar al optimizador a que use un índice no clúster para recuperar filas de una tabla, mientras que en el segundo ejemplo se obliga a realizar un recorrido de tabla mediante un índice igual a 0.</p>
+<p/>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT pp.FirstName, pp.LastName, e.NationalIDNumber</p>
+<p>FROM HumanResources.Employee AS e WITH (INDEX(AK_Employee_NationalIDNumber))</p>
+<p>JOIN Person.Person AS pp on e.BusinessEntityID = pp.BusinessEntityID</p>
+<p>WHERE LastName = 'Johnson';</p>
+<p>GO</p>
+<p/>
+<p>-- Force a table scan by using INDEX = 0.</p>
+<p>USE AdventureWorks2012;</p>
+<p>GO</p>
+<p>SELECT pp.LastName, pp.FirstName, e.JobTitle</p>
+<p>FROM HumanResources.Employee AS e WITH (INDEX = 0) JOIN Person.Person AS pp</p>
+<p>ON e.BusinessEntityID = pp.BusinessEntityID</p>
+<p>WHERE LastName = 'Johnson';</p>
+<p>GO</p>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<p/>
+<table><tr>	<td><p>Carácter comodín</p>
+</td>	<td><p>Descripción</p>
+</td>	<td><p>Ejemplo</p>
+</td></tr>
+<tr>	<td><p>%</p>
+</td>	<td><p>Cualquier cadena de cero o más caracteres.</p>
+</td>	<td><p>WHERE title LIKE '%computer%' busca todos los títulos de libros que contengan la palabra 'computer' en el título.</p>
+</td></tr>
+<tr>	<td><p>_ (carácter de subrayado)</p>
+</td>	<td><p>Cualquier carácter individual.</p>
+</td>	<td><p>WHERE au_fname LIKE ‘_ean’ busca todos los nombres de cuatro letras que terminen en ean (Dean, Sean, etc.)</p>
+</td></tr>
+<tr>	<td><p>[ ]</p>
+</td>	<td><p>Cualquier carácter individual del intervalo ([a-f]) o del conjunto ([abcdef]) que se ha especificado.</p>
+</td>	<td><p>WHERE au_lname LIKE ‘[C-P]arsen’ busca apellidos de autores que terminen en arsen y empiecen por cualquier carácter individual entre C y P, como Carsen, Larsen, Karsen, etc. En las búsquedas de intervalos, los caracteres incluidos en el intervalo pueden variar, dependiendo de las reglas de ordenación de la intercalación.</p>
+</td></tr>
+<tr>	<td><p>[^]</p>
+</td>	<td><p>Cualquier carácter individual que no se encuentre en el intervalo ([^a-f]) o el conjunto ([^abcdef]) que se ha especificado.</p>
+</td>	<td><p>WHERE au_lname LIKE ‘de[^l]%’ busca todos los apellidos de autores que empiecen por de y en los que la siguiente letra no sea l.</p>
+</td></tr>
+</table>
+<p/>
+<p>escape_character<br/>
+Es un carácter que se coloca delante de un carácter comodín para indicar que el comodín se interpreta como un comodín, sino como un carácter normal. escape_character es una expresión de caracteres que no tiene valor predeterminado y se debe evaluar como un único carácter. </p>
+<p/>
+</body></html>

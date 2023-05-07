@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta content="1.6" name="pdf:PDFVersion"/>
+<meta content="Writer" name="xmp:CreatorTool"/>
+<meta content="false" name="pdf:hasXFA"/>
+<meta content="true" name="access_permission:modify_annotations"/>
+<meta content="true" name="access_permission:can_print_degraded"/>
+<meta content="2022-09-28T12:23:26Z" name="dcterms:created"/>
+<meta content="application/pdf; version=1.6" name="dc:format"/>
+<meta content="Writer" name="pdf:docinfo:creator_tool"/>
+<meta content="true" name="access_permission:fill_in_form"/>
+<meta content="false" name="pdf:hasCollection"/>
+<meta content="false" name="pdf:encrypted"/>
+<meta content="false" name="pdf:hasMarkedContent"/>
+<meta content="application/pdf" name="Content-Type"/>
+<meta content="es-ES" name="dc:language"/>
+<meta content="LibreOffice 7.3" name="pdf:producer"/>
+<meta content="true" name="access_permission:extract_for_accessibility"/>
+<meta content="true" name="access_permission:assemble_document"/>
+<meta content="4" name="xmpTPg:NPages"/>
+<meta content="false" name="pdf:hasXMP"/>
+<meta content="true" name="access_permission:extract_content"/>
+<meta content="true" name="access_permission:can_print"/>
+<meta content="org.apache.tika.parser.DefaultParser" name="X-TIKA:Parsed-By"/>
+<meta content="org.apache.tika.parser.pdf.PDFParser" name="X-TIKA:Parsed-By"/>
+<meta content="true" name="access_permission:can_modify"/>
+<meta content="LibreOffice 7.3" name="pdf:docinfo:producer"/>
+<meta content="2022-09-28T12:23:26Z" name="pdf:docinfo:created"/>
+<title/>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/></head>
+<body><div class="page"><p/>
+<p>Práctica 2.1
+Instalación Odoo
+</p>
+<p>David Alejandro Hernández Alonso 2º DAM A
+</p>
+<p>En esta práctica se mostrarán las capturas tomadas durante el proceso de 
+instalación de Odoo, junto a breves reseñas que resumirán cada captura
+</p>
+<p>Se ejecuta el instalador de Odoo</p>
+<p/>
+<img alt="image0.png" src="embedded:image0.png"/></div>
+<div class="page"><p/>
+<p>Se prosigue con la instalación por defecto del instalador, avanzando continuamente en los pasos
+“Next” y “I agree”</p>
+<p/>
+<img alt="image1.png" src="embedded:image1.png"/><img alt="image2.png" src="embedded:image2.png"/></div>
+<div class="page"><p/>
+<p>Una vez completada la instalación, se ejecuta Odoo para que se abra una redirección a una página
+web y completar el registro para la aplicación</p>
+<p/>
+<img alt="image3.png" src="embedded:image3.png"/><img alt="image4.png" src="embedded:image4.png"/></div>
+<div class="page"><p/>
+<p>Finalmente, se rellenan los datos para crear una base de datos en la nube utilizando Odoo</p>
+<p/>
+<img alt="image5.png" src="embedded:image5.png"/></div>
+</body></html>

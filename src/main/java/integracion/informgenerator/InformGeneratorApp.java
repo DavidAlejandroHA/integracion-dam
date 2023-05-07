@@ -1,7 +1,12 @@
 package integracion.informgenerator;
 
+import java.io.File;
+
 import integracion.informgenerator.controllers.Controller;
 import javafx.application.Application;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -9,6 +14,8 @@ public class InformGeneratorApp extends Application {
 
 	public static Stage primaryStage;
 	public Scene escena;
+	public static StringProperty webViewContent = new SimpleStringProperty();
+	public static StringProperty fileUrl =  new SimpleStringProperty();
 
 	private Controller controller = new Controller();
 

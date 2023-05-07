@@ -10,7 +10,7 @@
    <children>
       <VBox alignment="CENTER_RIGHT">
          <children>
-            <JFXButton fx:id="importarDocumentoButton" graphicTextGap="20.0" onAction="#dda" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Importar documento" textAlignment="CENTER" wrapText="true">
+            <JFXButton fx:id="importarDocumentoButton" graphicTextGap="20.0" onAction="#importarDocumento" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Importar documento" textAlignment="CENTER" wrapText="true">
                <graphic>
                   <FontIcon iconColor="#3d8ae1" iconLiteral="gmi-arrow-downward" iconSize="60" />
                </graphic>
@@ -42,7 +42,7 @@
                   <Font size="26.0" />
                </font>
             </JFXButton>
-            <JFXButton alignment="CENTER" graphicTextGap="20.0" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Salir" textAlignment="CENTER" wrapText="true">
+            <JFXButton fx:id="salirButton" alignment="CENTER" graphicTextGap="20.0" onAction="#salir" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Salir" textAlignment="CENTER" wrapText="true">
                <graphic>
                   <FontIcon iconLiteral="gmi-exit-to-app" iconSize="60" />
                </graphic>
