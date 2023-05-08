@@ -1,10 +1,10 @@
 package integracion.informgenerator.controllers;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.dlsc.pdfviewfx.PDFView;
 import com.jfoenix.controls.JFXDrawer;
 
 import integracion.informgenerator.InformGeneratorApp;
@@ -12,8 +12,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
 
 public class Controller implements Initializable {
 
@@ -21,12 +19,10 @@ public class Controller implements Initializable {
 	private AnchorPane view;
 
 	@FXML
-	private WebView webView;
-
-	@FXML
 	private JFXDrawer drawerMenu;
 
-	private WebEngine webEngine;
+	@FXML
+	private PDFView pdfViewer;
 
 	private VBoxDrawerController drawerController;
 
@@ -35,18 +31,24 @@ public class Controller implements Initializable {
 
 		// load data
 		drawerController = new VBoxDrawerController();
-		webEngine = webView.getEngine();
-		webEngine.load("https://www.google.es");
+
 		drawerMenu.setSidePane(drawerController.getView());
 
 		// drawerMenu.close();
 
 		// bindings
-		// webEngine.documentProperty()
-		InformGeneratorApp.fileUrl.addListener((o, ov, nv) -> {
-			webEngine.load(nv);
+		
+		// TODO: Cambiar InformGeneratorApp.pdfFile por un getter del drawerController
+		InformGeneratorApp.pdfFile.addListener((o, ov, nv) -> {
 			System.out.println("dsasd\ns");
+			pdfViewer.load(nv);
 		});
+		
+        InformGeneratorApp.primaryStage.setOnCloseRequest(e -> {
+        	drawerController.closeOfficeManager();
+        	System.out.println("assdds2");
+        	// TODO: Iniciar nuevo hilo javafx y ejecutar ahí el closeOfficeManager()
+        });
 	}
 
 	// Hacer otro controlador con la vista del drawerView y ponerle el getView()
