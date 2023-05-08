@@ -1,365 +1,123 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><html xmlns="http://www.w3.org/1999/xhtml">
 <head><meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-<meta content="300" name="meta:paragraph-count"/>
-<meta content="2190" name="meta:word-count"/>
-<meta content="1" name="meta:table-count"/>
-<meta content="LibreOffice/7.3.3.2$Windows_X86_64 LibreOffice_project/d1d0ea68f081ee2800a922cac8f79445e4603348" name="generator"/>
-<meta content="11" name="xmpTPg:NPages"/>
-<meta content="2022-11-22T08:26:46.050000000" name="dcterms:created"/>
-<meta content="2022-11-22T08:47:13.039000000" name="dcterms:modified"/>
-<meta content="6" name="editing-cycles"/>
-<meta content="0" name="meta:object-count"/>
-<meta content="14381" name="meta:character-count"/>
-<meta content="org.apache.tika.parser.DefaultParser" name="X-TIKA:Parsed-By"/>
-<meta content="org.apache.tika.parser.odf.OpenDocumentParser" name="X-TIKA:Parsed-By"/>
-<meta content="1.3" name="odf:version"/>
-<meta content="PT6M15S" name="extended-properties:TotalTime"/>
-<meta content="0" name="meta:image-count"/>
-<meta content="11" name="meta:page-count"/>
-<meta content="application/vnd.oasis.opendocument.text" name="Content-Type"/>
+<meta content="windows-1252" name="Content-Encoding"/>
+<meta content="text/html; charset=windows-1252" name="Content-Type"/>
 
 </head>
-<body><h2><b>Lista de comandos SQL para Sql Server y MySQL</b></h2><p>A continuación veremos los principales comandos SQL utilizados durante la administración de las Bases de Datos y conocerás para qué sirven:</p>
-<p><b>CREATE DATABASE</b> es utilizado para <a href="https://codigosql.top/sql-server/como-crear-una-base-de-datos-en-sql-server/">crear una base de datos</a> vacía.</p>
-<p><b>DROP DATABASE</b> es utilizado para eliminar íntegramente una base de datos existente.</p>
-<p><b>CREATE TABLE </b>es utilizado para <a href="https://codigosql.top/sql-server/como-crear-tablas-en-sql-server/">crear una tabla</a> nueva en una base de Datos existente.</p>
-<p><b>ALTER TABLE </b>es utilizado para modificar una tabla que hemos creado previamente.</p>
-<p><b>DROP TABLE </b>es utilizado para eliminar por completo una tabla de nuestra base de Datos.</p>
-<p/>
-<h2><b>Comandos sql para manipular Datos</b></h2><p><b>SELECT </b>es utilizado para recuperar datos de una o más tablas, en otras palabras, nos permite hacer <a href="https://codigosql.top/sql-server/consultas-basicas-select/">consultas </a>de los registros de las tablas.</p>
-<p><b>INSERT </b>es utilizado añadir o insertar registros a una tabla creada previamente, su complemento es <a href="https://codigosql.top/sql-server/insertar-datos-en-una-tabla/">Insert into</a>.</p>
-<p><b>UPDATE </b>es utilizado para modificar los datos de un conjunto de registros existentes en una tabla</p>
-<p><b>DELETE </b>es utilizado para eliminar o borrar todo o una parte de los datos de la tabla indicada por el argumento especificado después de la palabra clave <b>FROM</b>.</p>
-<p><b>TRUNCATE </b>es utilizado para borrar todos los registros de una tabla, pero no la tabla, es decir que quedaría una tabla vacía.</p>
-<h3><b>Clausulas básicas</b></h3><p>Las cláusulas son <b>condiciones </b>y las utilizamos para especificar los datos que deseamos seleccionar o manipular.</p>
-<p><b>FROM </b>se utiliza para especificar la tabla de la cual se van a consultar los registros</p>
-<p><b>GROUP BY</b> se utiliza para separar en grupos específicos los registros consultados.</p>
-<p><b>ORDER BY </b> se utiliza para ordenar los registros seleccionados tomando en cuenta los parámetros que le indiquemos.</p>
-<p><b>WHERE</b> Se utilizar para determinar los registros seleccionados con la cláusula FROM</p>
-<p><b>HAVING </b>es parecida a <b>WHERE</b>, ya que determina qué registros se seleccionan. Cuando los registros se han agrupado utilizando GROUP BY, la cláusula HAVING determina cuáles de ellos se van a mostrar.</p>
-<h4><b>Comandos para la cláusula Select</b></h4><p><b>AVG </b>Se utiliza para determinar el promedio de los registros de un campo determinado, en una tabla especifica.</p>
-<p><b>COUNT </b>Se utiliza para devolver el número de registros que se muestran en una consulta realizada.</p>
-<p><b>SUM </b>Se utiliza para devolver la suma de todos los registros de un campo especifico, dentro de una tabla.</p>
-<p><b>MAX </b>Se utiliza para devolver el registro mayor o cantidad mayor de un campo especifico, dentro de una tabla.</p>
-<p><b>MIN </b>Se utiliza para devolver el registro menor o cantidad menor de un campo especifico, dentro de una tabla.</p>
-<p>Todos los comandos sql vistos anteriormente son los mas usados, sin embargo es importante tener claro que deben ser complementados con ciertas palabras reservadas, por lo tanto es importante conocer la sintaxis para cada una de las acciones que deseamos realizar en nuestra Base de Datos. Te invito a que continúes aprendiendo en las diferentes categorías de este sitio web.</p>
-<p/>
-<p>Ejemplos</p>
-<p><b>CREATE</b> <b>DATABASE</b> mydb;</p>
-<p>USE mydb;</p>
-<p><b>CREATE</b> <b>TABLE</b> mitabla ( id INT <b>PRIMARY</b> <b>KEY</b>, nombre VARCHAR(20) );</p>
-<p><b>INSERT</b> <b>INTO</b> mitabla <b>VALUES</b> ( 1, 'Will' );</p>
-<p><b>INSERT</b> <b>INTO</b> mitabla <b>VALUES</b> ( 2, 'Marry' );</p>
-<p><b>INSERT</b> <b>INTO</b> mitabla <b>VALUES</b> ( 3, 'Dean' );</p>
-<p><b>SELECT</b> id, nombre <b>FROM</b> mitabla <b>WHERE</b> id = 1;</p>
-<p><b>UPDATE</b> mitabla <b>SET</b> nombre = 'Willy' <b>WHERE</b> id = 1;</p>
-<p><b>SELECT</b> id, nombre <b>FROM</b> mitabla;</p>
-<p><b>DELETE</b> <b>FROM</b> mitabla <b>WHERE</b> id = 1;</p>
-<p><b>SELECT</b> id, nombre <b>FROM</b> mitabla;</p>
-<p><b>DROP</b> <b>DATABASE</b> mydb;</p>
-<p><b>SELECT</b> <b>count</b>(1) <b>from</b> mitabla; da el número de registros en la tabla</p>
-<h2>Usar SELECT con encabezados de columna y cálculos</h2><p>En los siguientes ejemplos se devuelven todas las filas de la tabla Product. En el primer ejemplo se devuelven las ventas totales y los descuentos de cada producto. En el segundo ejemplo se calculan los beneficios totales de cada producto.</p>
-<p/>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT p.Name AS ProductName, </p>
-<p>NonDiscountSales = (OrderQty * UnitPrice),</p>
-<p>Discounts = ((OrderQty * UnitPrice) * UnitPriceDiscount)</p>
-<p>FROM Production.Product AS p </p>
-<p>INNER JOIN Sales.SalesOrderDetail AS sod</p>
-<p>ON p.ProductID = sod.ProductID </p>
-<p>ORDER BY ProductName DESC;</p>
-<p>GO</p>
-<p>Ésta es la consulta que calcula el beneficio de cada producto de cada pedido de venta.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT 'Total income is', ((OrderQty * UnitPrice) * (1.0 - UnitPriceDiscount)), ' for ',</p>
-<p>p.Name AS ProductName </p>
-<p>FROM Production.Product AS p </p>
-<p>INNER JOIN Sales.SalesOrderDetail AS sod</p>
-<p>ON p.ProductID = sod.ProductID </p>
-<p>ORDER BY ProductName ASC;</p>
-<p>GO</p>
-<h2>C. Usar DISTINCT con SELECT</h2><p>En el siguiente ejemplo se utiliza DISTINCT para evitar la recuperación de títulos duplicados.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT DISTINCT JobTitle</p>
-<p>FROM HumanResources.Employee</p>
-<p>ORDER BY JobTitle;</p>
-<p>GO</p>
-<h2>D. Crear tablas con SELECT INTO</h2><p>En el primer ejemplo se crea una tabla temporal denominada #Bicycles en tempdb.</p>
-<p/>
-<p>USE tempdb;</p>
-<p>GO</p>
-<p>IF OBJECT_ID (N'#Bicycles',N'U') IS NOT NULL</p>
-<p>DROP TABLE #Bicycles;</p>
-<p>GO</p>
-<p>SELECT * </p>
-<p>INTO #Bicycles</p>
-<p>FROM AdventureWorks2012.Production.Product</p>
-<p>WHERE ProductNumber LIKE 'BK%';</p>
-<p>GO</p>
-<p>En el segundo ejemplo se crea la tabla permanente NewProducts.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>IF OBJECT_ID('dbo.NewProducts', 'U') IS NOT NULL</p>
-<p> DROP TABLE dbo.NewProducts;</p>
-<p>GO</p>
-<p>ALTER DATABASE AdventureWorks2012 SET RECOVERY BULK_LOGGED;</p>
-<p>GO</p>
-<p/>
-<p>SELECT * INTO dbo.NewProducts</p>
-<p>FROM Production.Product</p>
-<p>WHERE ListPrice &gt; $25 </p>
-<p>AND ListPrice &lt; $100;</p>
-<p>GO</p>
-<p>ALTER DATABASE AdventureWorks2012 SET RECOVERY FULL;</p>
-<p>GO</p>
-<h2>E. Usar subconsultas correlacionadas</h2><p>Una subconsulta correlacionada es una consulta que depende de la consulta externa para obtener sus valores. Se ejecuta varias veces, una vez por cada fila que la consulta externa pueda seleccionar.</p>
-<p>En el primer ejemplo se muestran consultas que son semánticamente equivalentes para demostrar la diferencia entre el uso de la palabra clave EXISTS y la palabra clave IN. Ambos son ejemplos de subconsultas válidas que recuperan una instancia de cada nombre de producto cuyo modelo es un jersey de manga larga con logotipo y cuyos números de ProductModelID coinciden en las tablas Product y ProductModel.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT DISTINCT Name</p>
-<p>FROM Production.Product AS p </p>
-<p>WHERE EXISTS</p>
-<p> (SELECT *</p>
-<p> FROM Production.ProductModel AS pm </p>
-<p> WHERE p.ProductModelID = pm.ProductModelID</p>
-<p> AND pm.Name LIKE 'Long-Sleeve Logo Jersey%');</p>
-<p>GO</p>
-<p/>
-<p>-- OR</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT DISTINCT Name</p>
-<p>FROM Production.Product</p>
-<p>WHERE ProductModelID IN</p>
-<p> (SELECT ProductModelID </p>
-<p> FROM Production.ProductModel AS pm</p>
-<p> WHERE p.ProductModelID = pm.ProductModelID</p>
-<p> AND Name LIKE 'Long-Sleeve Logo Jersey%');</p>
-<p>GO</p>
-<p>En el ejemplo siguiente se usa IN y se recupera una instancia del nombre y apellido de cada empleado cuya bonificación en la tabla SalesPerson sea de 5000.00 y cuyos números de identificación coincidan en las tablas Employee y SalesPerson.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT DISTINCT p.LastName, p.FirstName </p>
-<p>FROM Person.Person AS p </p>
-<p>JOIN HumanResources.Employee AS e</p>
-<p> ON e.BusinessEntityID = p.BusinessEntityID WHERE 5000.00 IN</p>
-<p> (SELECT Bonus</p>
-<p> FROM Sales.SalesPerson AS sp</p>
-<p> WHERE e.BusinessEntityID = sp.BusinessEntityID);</p>
-<p>GO</p>
-<p>La subconsulta anterior de esta instrucción no se puede evaluar independientemente de la consulta externa. Necesita el valor Employee.EmployeeID, aunque este valor cambia a medida que el Motor de base de datos de SQL Server examina diferentes filas de Employee.</p>
-<p>Una subconsulta correlativa se puede usar también en la cláusula HAVING de una consulta externa. En este ejemplo se buscan los modelos cuyo precio máximo es superior al doble de la media del modelo.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT p1.ProductModelID</p>
-<p>FROM Production.Product AS p1</p>
-<p>GROUP BY p1.ProductModelID</p>
-<p>HAVING MAX(p1.ListPrice) &gt;= </p>
-<p> (SELECT AVG(p2.ListPrice) * 2</p>
-<p> FROM Production.Product AS p2</p>
-<p> WHERE p1.ProductModelID = p2.ProductModelID);</p>
-<p>GO</p>
-<p>En este ejemplo se utilizan dos subconsultas correlativas para buscar los nombres de los empleados que han vendido un producto específico.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT DISTINCT pp.LastName, pp.FirstName </p>
-<p>FROM Person.Person pp JOIN HumanResources.Employee e</p>
-<p>ON e.BusinessEntityID = pp.BusinessEntityID WHERE pp.BusinessEntityID IN </p>
-<p>(SELECT SalesPersonID </p>
-<p>FROM Sales.SalesOrderHeader</p>
-<p>WHERE SalesOrderID IN </p>
-<p>(SELECT SalesOrderID </p>
-<p>FROM Sales.SalesOrderDetail</p>
-<p>WHERE ProductID IN </p>
-<p>(SELECT ProductID </p>
-<p>FROM Production.Product p </p>
-<p>WHERE ProductNumber = 'BK-M68B-42')));</p>
-<p>GO</p>
-<h2>F. Usar GROUP BY</h2><p>En este ejemplo se busca el total de cada pedido de venta de la base de datos.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT SalesOrderID, SUM(LineTotal) AS SubTotal</p>
-<p>FROM Sales.SalesOrderDetail</p>
-<p>GROUP BY SalesOrderID</p>
-<p>ORDER BY SalesOrderID;</p>
-<p>GO</p>
-<p>Debido a la cláusula GROUP BY, solo se devuelve una fila que contiene la suma de todas las ventas por cada pedido de venta.</p>
-<h2>G. Usar GROUP BY con varios grupos</h2><p>En este ejemplo se busca el precio medio y la suma de las ventas anuales hasta la fecha, agrupados por Id. de producto e Id. de oferta especial.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT ProductID, SpecialOfferID, AVG(UnitPrice) AS [Average Price], </p>
-<p> SUM(LineTotal) AS SubTotal</p>
-<p>FROM Sales.SalesOrderDetail</p>
-<p>GROUP BY ProductID, SpecialOfferID</p>
-<p>ORDER BY ProductID;</p>
-<p>GO</p>
-<h2>H. Usar GROUP BY y WHERE</h2><p>En el siguiente ejemplo se colocan los resultados en grupos después de recuperar únicamente las filas con precios superiores a $1000.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT ProductModelID, AVG(ListPrice) AS [Average List Price]</p>
-<p>FROM Production.Product</p>
-<p>WHERE ListPrice &gt; $1000</p>
-<p>GROUP BY ProductModelID</p>
-<p>ORDER BY ProductModelID;</p>
-<p>GO</p>
-<h2>I. Usar GROUP BY con una expresión</h2><p>En este ejemplo se agrupa por una expresión. Puede agrupar por una expresión si ésta no incluye funciones de agregado.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT AVG(OrderQty) AS [Average Quantity], </p>
-<p>NonDiscountSales = (OrderQty * UnitPrice)</p>
-<p>FROM Sales.SalesOrderDetail</p>
-<p>GROUP BY (OrderQty * UnitPrice)</p>
-<p>ORDER BY (OrderQty * UnitPrice) DESC;</p>
-<p>GO</p>
-<h2>J. Usar GROUP BY con ORDER BY</h2><p>En este ejemplo se busca el precio medio de cada tipo de producto y se ordenan los resultados por precio medio.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT ProductID, AVG(UnitPrice) AS [Average Price]</p>
-<p>FROM Sales.SalesOrderDetail</p>
-<p>WHERE OrderQty &gt; 10</p>
-<p>GROUP BY ProductID</p>
-<p>ORDER BY AVG(UnitPrice);</p>
-<p>GO</p>
-<h2>K. Usar la cláusula HAVING</h2><p>En el primer ejemplo se muestra una cláusula HAVING con una función de agregado. Agrupa las filas de la tabla SalesOrderDetail por Id. de producto y elimina aquellos productos cuyas cantidades de pedido medias son cinco o menos. En el segundo ejemplo se muestra una cláusula HAVING sin funciones de agregado.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT ProductID </p>
-<p>FROM Sales.SalesOrderDetail</p>
-<p>GROUP BY ProductID</p>
-<p>HAVING AVG(OrderQty) &gt; 5</p>
-<p>ORDER BY ProductID;</p>
-<p>GO</p>
-<p>En esta consulta se utiliza la cláusula LIKE en la cláusula HAVING.</p>
-<p/>
-<p>USE AdventureWorks2012 ;  </p>
-<p>GO  </p>
-<p>SELECT SalesOrderID, CarrierTrackingNumber  </p>
-<p>FROM Sales.SalesOrderDetail  </p>
-<p>GROUP BY SalesOrderID, CarrierTrackingNumber  </p>
-<p>HAVING CarrierTrackingNumber LIKE '4BD%'  </p>
-<p>ORDER BY SalesOrderID ;  </p>
-<p>GO  </p>
-<h2>L. Usar HAVING y GROUP BY</h2><p>En el siguiente ejemplo se muestra el uso de las cláusulas GROUP BY, HAVING, WHERE y ORDER BY en una instrucción SELECT. Genera grupos y valores de resumen pero lo hace tras eliminar los productos cuyos precios superan los 25 $ y cuyas cantidades de pedido medias son inferiores a 5. También organiza los resultados por ProductID.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT ProductID </p>
-<p>FROM Sales.SalesOrderDetail</p>
-<p>WHERE UnitPrice &lt; 25.00</p>
-<p>GROUP BY ProductID</p>
-<p>HAVING AVG(OrderQty) &gt; 5</p>
-<p>ORDER BY ProductID;</p>
-<p>GO</p>
-<h2>M. Usar HAVING con SUM y AVG</h2><p>En el siguiente ejemplo se agrupa la tabla SalesOrderDetail por Id. de producto y solo se incluyen aquellos grupos de productos cuyos pedidos suman más de $1000000.00 y cuyas cantidades de pedido medias son inferiores a 3.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT ProductID, AVG(OrderQty) AS AverageQuantity, SUM(LineTotal) AS Total</p>
-<p>FROM Sales.SalesOrderDetail</p>
-<p>GROUP BY ProductID</p>
-<p>HAVING SUM(LineTotal) &gt; $1000000.00</p>
-<p>AND AVG(OrderQty) &lt; 3;</p>
-<p>GO</p>
-<p>Para ver los productos cuyas ventas totales son superiores a $2000000.00, utilice esta consulta:</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT ProductID, Total = SUM(LineTotal)</p>
-<p>FROM Sales.SalesOrderDetail</p>
-<p>GROUP BY ProductID</p>
-<p>HAVING SUM(LineTotal) &gt; $2000000.00;</p>
-<p>GO</p>
-<p>Si desea asegurarse de que hay al menos mil quinientos elementos para los cálculos de cada producto, use HAVING COUNT(*) &gt; 1500 para eliminar los productos que devuelven totales inferiores a 1500 elementos vendidos. La consulta tiene este aspecto:</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT ProductID, SUM(LineTotal) AS Total</p>
-<p>FROM Sales.SalesOrderDetail</p>
-<p>GROUP BY ProductID</p>
-<p>HAVING COUNT(*) &gt; 1500;</p>
-<p>GO</p>
-<h2>Hora Usar la sugerencia del optimizador INDEX</h2><p>En el ejemplo siguiente se muestran dos formas de usar la sugerencia del optimizador INDEX. En el primer ejemplo se muestra cómo obligar al optimizador a que use un índice no clúster para recuperar filas de una tabla, mientras que en el segundo ejemplo se obliga a realizar un recorrido de tabla mediante un índice igual a 0.</p>
-<p/>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT pp.FirstName, pp.LastName, e.NationalIDNumber</p>
-<p>FROM HumanResources.Employee AS e WITH (INDEX(AK_Employee_NationalIDNumber))</p>
-<p>JOIN Person.Person AS pp on e.BusinessEntityID = pp.BusinessEntityID</p>
-<p>WHERE LastName = 'Johnson';</p>
-<p>GO</p>
-<p/>
-<p>-- Force a table scan by using INDEX = 0.</p>
-<p>USE AdventureWorks2012;</p>
-<p>GO</p>
-<p>SELECT pp.LastName, pp.FirstName, e.JobTitle</p>
-<p>FROM HumanResources.Employee AS e WITH (INDEX = 0) JOIN Person.Person AS pp</p>
-<p>ON e.BusinessEntityID = pp.BusinessEntityID</p>
-<p>WHERE LastName = 'Johnson';</p>
-<p>GO</p>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<p/>
-<table><tr>	<td><p>Carácter comodín</p>
-</td>	<td><p>Descripción</p>
-</td>	<td><p>Ejemplo</p>
-</td></tr>
-<tr>	<td><p>%</p>
-</td>	<td><p>Cualquier cadena de cero o más caracteres.</p>
-</td>	<td><p>WHERE title LIKE '%computer%' busca todos los títulos de libros que contengan la palabra 'computer' en el título.</p>
-</td></tr>
-<tr>	<td><p>_ (carácter de subrayado)</p>
-</td>	<td><p>Cualquier carácter individual.</p>
-</td>	<td><p>WHERE au_fname LIKE ‘_ean’ busca todos los nombres de cuatro letras que terminen en ean (Dean, Sean, etc.)</p>
-</td></tr>
-<tr>	<td><p>[ ]</p>
-</td>	<td><p>Cualquier carácter individual del intervalo ([a-f]) o del conjunto ([abcdef]) que se ha especificado.</p>
-</td>	<td><p>WHERE au_lname LIKE ‘[C-P]arsen’ busca apellidos de autores que terminen en arsen y empiecen por cualquier carácter individual entre C y P, como Carsen, Larsen, Karsen, etc. En las búsquedas de intervalos, los caracteres incluidos en el intervalo pueden variar, dependiendo de las reglas de ordenación de la intercalación.</p>
-</td></tr>
-<tr>	<td><p>[^]</p>
-</td>	<td><p>Cualquier carácter individual que no se encuentre en el intervalo ([^a-f]) o el conjunto ([^abcdef]) que se ha especificado.</p>
-</td>	<td><p>WHERE au_lname LIKE ‘de[^l]%’ busca todos los apellidos de autores que empiecen por de y en los que la siguiente letra no sea l.</p>
-</td></tr>
-</table>
-<p/>
-<p>escape_character<br/>
-Es un carácter que se coloca delante de un carácter comodín para indicar que el comodín se interpreta como un comodín, sino como un carácter normal. escape_character es una expresión de caracteres que no tiene valor predeterminado y se debe evaluar como un único carácter. </p>
-<p/>
-</body></html>
+<body><style>p:input:not([value=""]) { margin: 0; }</style>PK!žÜšŽÂ[Content_Types].xml ¢( ´TKOÂ@¾›øš½švÁƒ1†ÂAñ¨$b"f3°£\…È¾Tº�I	S�‘ÌõŒ«º¾ÇôWš™¦ÚY
+igï@µÇX6_Ö]7~
+fïØË‰ÈaoÙ.b*lIÆr�j)õ,l0Ï%�‘b¬
+6ài¢ÕõDÿ_‹Ž…,	¡	‰Ïó|uœZ^tÙ¢yÇ¯;!Y,}{ûCƒ³/h&gt;ÿÿPK!ÌqFp;&gt;word/_rels/document.xml.rels ¢( ¬“ÍNÃ0„ïH¼Cä;qS E¨i/€Ô+qv�ubˆíÈ»üôí1©JH‡\,y-Ï|žõ.V¦ŒÞÀ£v6eIÌ\ÎÅ\Œæn.7/¶ß)—Á&amp;8@~f‡–Ò˜*»êÔ©s¾óSåâ»ï¿x®5á¡t„�R(”
+÷m1püÑIáãÍy±Q°dÄüs…ÏO
+÷\¾oÿýoßM[a�=îGšðekØ'…»(
+Z‡‡Ò¾ã“žc‡BŠat`ïP‡ŽÍ§"VJå’º
+Bas)Ñ_—ù&amp;º9o¹5p}
+Eè±Hˆptè±ðó8(¢õ€ENßq�èm—êI3â¤0ý–&amp;¨8#ˆiÅé�ä‰piýÆOži¨Cî‚áË;'˜cÓÖ0Ä»„¤Écƒ˜xnrß4(W—ú›
+9Ïœ…lŠ©˜7¸Ô\3ñCžó�æw&gt;«‹-–K�
+FÏ51£!	fŸ	%süY3›±&amp;Í\hÄ6òý.ã`FNàl×Ú{ÿó¬-RÌ'PVª+ÍKM&gt;©�%Õ½¾c/XžÝz?òEÈú.(š–«Id¡
+°è‹Á=}Ö´°\�J¥J£^ª’¢K¨^©TnÖÏ»§³Â3&gt;dc7Z®¹L©–/Cúød£¹	sO
+6°‰‡…C*
+ãÊ¾ú"¿&amp;·4ëqµüÚ•fÙ¡~ŸAül˜IæV�O[QûÌa¡#¬·¸„\²ïÐeÔ¦ÿ1ê^
+.éœ}VªV+½,™5›phÎ›Zoâ2"�xBÄiÞ,±Á—¡ÃÜüž¶\æ�0JÎdÔ‘;)pYì]Óü$ýÁäÄHƒÞ‚–ã»ŽÏ­�#£p¥ ®NgWfW$j$ƒA‹�‰È^Ù_N
+•j¥R«Ô
+–}�/GÇõòqIÉî¹õâ{!GhšÄ¯`‘x¬þI¡Vj$7Ã^†–3€í,X&gt;ó ÷ï=6â¾…ï.mAMk�R%èý³ÔÖì^�õ8£«/ºw˜9Þ‘¸FlP3´ë�Û^SC!FZãpM× pìhrÈ®ZøÓdájv˜­ù“K’7
+Vh!�üÄB‚ZêÛú½ž”€dš&amp;M)#ÄB±­þôBl	ÅŒ/ÃÐ£vàY@*ˆ J‘³ç1øB‡ÉãA(£w\x]€× T5Ï&amp;`5é(æ[ßB½ù‚æH�Åõ�ÜH%Š~¢X_bª
+)¤‡éï¸ž�4]Ï±›à\•,[¶ÛÿüÁ†æ.±Æ�)ø”f•H·ÊÄ¥Ç-ÿi¥VëgY~Í9¢!±É±iž“Ri(ËÐJ;;qYb`ñ™Éä)×ƒ
+á/jUÓ.ÎÜÂd+DX?ú9ÿúB|¦Øô:ba„ÈA€"O[1úÿë�8eöçx&gt;’{{þ`v'ôPiÉFdÐ$Üô®o’�ëY¸™Þ¥˜¨ýëÍ˜4Øtœ„ö€Qf@É{æáö¼çü+�Yžâže5O‰ÜpŒK�‰pHâ,ƒ;Pr[{!yûÑ}€f�ožšÆx¶¶ ¶
+'ß5ýûýA¶î-›5PHÇºWúæÁì¸ÂšÀ�fH‡øŽ
+D˜Cåäe9FSòkÄzÝÆQóèl]r‚×*&amp;LµcÞ®TW¥¤îÑXo.‹OŠdZ3t}³¡ìY8#¼_¼lÁÊÕI»b´E0¤¸”ŒØS2zµÌê__K›Û×*
+v ¼ÐÝ™€{?Ã–XC�	:dV9³&gt;pâé…1�0ÃŒØ¿œ‘ÀÝŽ¸œ2”doð ?æ´£!ÀÅãt¤LÕ¡ê
+È\Zˆ¼â&amp;%hò#ã6¶
+PâÎÐBæKB��ô´{ææP¢š‘™k…j(Á@nÊXŽiOZ?� `ç69¨ÚûIóÖ
+¹C¿ *‘Ñx‚®�Ú “‰xÇ:Ñ•ætxìPG÷:¶QýJKr—Û*ù1@‹Tó4�}"ðÐ€EBæÀ„^µt~:‚uJhÞ®$Cí•p9�¨­WB“¡é°Þ¬ycJ˜íÛ\qæ*½B±	û?±3Gç¥js¾Íýq[øg´3O^Üõþ‡†!°yôâ{è�¿l^‰û‡QÎ—ÖÛ¯Æ}ä‘s€k§[kV*³�ì5¯F3óvå5ë¢½×¼œÜmÍ
+¿1dý¬|Þ[±ªž/Ã‘cS˜9ci·Ü¬Y1—oË-ïb£ãc1Fm#dÜ«�¼+=;Pÿ”ÉÌ�Ž�šÌLnvºFXŸŸœ…ìlŠ;fÍe84^$i¨uXmÞ®hL!Î&gt;ÃÑ&amp;Gã[Ô.=Ö�ÆÑYý4;á—¬s,õ™S––�³fÅd¾X·¯…;VkÎÈ9â¥ìÒ§•gúØyŽ�²Xð³Uð?óãâCâ«Yj,°çÙ—®ç!Q‚”Nš5»gQ&amp;b™�^­ÓIóvE£.ÚûOËþS9Ç
+ŽÉÑ´Ê˜5+xýj*3[¬AÊL;1ÊsOvÊæðÝÕjõ´:óÝÓª`Ôì~èÙª`tº^ŒÛcã¢½*d¨‚™�_ˆ$JU,Åô¶1NÅJÉˆøóÌð�[šÌWÓµdQ-¥jþ�ÿ(ëýPöÃÏž1ö'07×v´ìÕZz[f�ô�ûRÈûÙö²ðE—\g„ü¾«öU,ðâÅ7y`–�`†Œß±YÎÍ³ÁC«B†�`Ö¬œ-d4SeÌN×‚¢y»¢QíAq+fz%Ï¤0+¯·�ÀMÚ-ÐYþÁhe"È7zÿ˜Úïqsùã·†:g²è¼V;=ÏS&gt;«�UpRJ‡"¦°È¬Ù=k3‘Úìôj�¶™·+uÑ^Û2¼«	K“£käa™×¯¥jÙIŒÄßBÌŽÉ~S{�i'†~!í^m.žiŒ5Žp„ïWµS!~;Íð½Ví4ÙÑö7½úû?ØUùðGR˜£91'Gö·z^®Õæ…ÅŠ\é5k�,°1o�Á&amp;na¯ÈŠühºUs™·¤Žq[t¨Øü¼Ùåö‹•ûÙÌ)K#…Y³b2—H[Ÿ¬Lâò­Œr6RÌ-5 €^JÝã�ÿŽëyZq¾
+½ó±¼h6+�Jf–Ç¬Ù½4eú!f§WëàË¼]Ñ¨‹öðµ/•fñ(ÇzŽÉÔ4À˜5+ØýJóä­ÈqÒä‚’,0`£‚zCL-/¨÷’�L�1‡dž£&gt;°ãX4Êoà¡]À•»xø}âä9ð¬ÞÀñ¥êÌÅ`Ç¬y[µ/èÔ7H	fß{ø%ñi;Ž�Ó&amp;g;WÌÝÅJlÔaqJ¸,Ž3!p°Òî†ødbßqí¨ÞÈôÒÌšÝs)“SÙ×À€v=R¨»d’c:7irÌÅ��H�rž&gt;.'Æv=Yæ‘;éÉ2kÔd=�jÓìô­‘;9š	!“úbÙÂA¯ëhÜé)Ô‰ÂIê€sÒuŠŒ£JaÏèšNmžâ„úr“~hÚºÃu½q¤�ÀFf¬¤ŠåÕr);£;úƒã’JÈõE	o^íòaª–NÀ§Ã¢�Kø�¤ik(6)Î¾ŽÆ‘úÿJD¿Ú@?/¢Ï)¦GÔ¡‰H2¾:ô™~ÉâÒÁùñ'…£z|ò¶+m·9Ÿ÷4Ý¨|IñšøT-i¶ØWé,GIPªt«?P4œâçºT÷æ0¢wæì£H
+êMI/ðÖ¨+›äÿ…•¸}’
+‡cìh¡Ãßš*ôópµUº^š”HIuGãGÕ@'îœæ¬
+žén¼ÛÚ¸ÚgÆ�
+á–ßŽàq
+„+™ruäËô`Öª¶[uŒ-†g yüdV�ú�b½´µ'oÄô=ñôÅR‚ž�(e'œ+m¹“‚;b€é×µÕpŽzsŠPÿmš…¤s?oq�¬«hœs§ÌuÆ0L·½{QíFôo@Ô{RïI½{QíFôo@Ô{Q½.ôQKE”RÓ#�šò'x�;QÈä\„�…	•�y@òƒè0Iô¾(ÇÅ—ÃûyÒºaô/SÌo.:0DˆÙD�œŽ€ôžÙ¤Q\Z]rípqÉ$,¨’¥¸²rI'rI=M$û”ÍA~¸j;ì…Ê�û¥çœYÉZÉÎ&gt;�€1Úž,ÐwÎ jÈökky”øç}åÉ‘Œ“Ž˜2Hs@htÆ“ÕÜ@ÔMÚ,÷fJYÏ*ÈÒs‚TNÀîI;njÛð“ÂN”±4ÕÃ]=ý¡¹`(ÆA(ˆÙòÀÂœÇ™À&gt;U¾á$¦¸�Å68=mÐ¨ŠÓ�]¸=zUÁ?%¦ÉB_Z�”)�(APÀ9Çc \x¹Ã«~²þÉKÕš»‡‘mü7mº¿ÒÚÝ	-¡g²J�ÎØÍÃàrõ.4ë]&amp;/0äé›vDxv–!´Ü‡¾p„†ÆHB’I''¦ÎÛ�åÈãRøk#GÏ„¡Ù­ÏrSJKŒ!eÀÚI!*PÀÉùW§´Œ½#3U‹¼¦%]¯W—®Î¼ÎBÓ‡
+ gqÈAã#}Åj8]gºÍã¿µ­âÙ.Aqì¶“!•#ž;H
+qh$d-dFAß}¨Ñ¿ñ!p8E¨.¨¿],†ßrƒöçRÛÊRRy
+ à)E ã}ˆ­6Ž³ë9¾¬ŸrÕ{Ô’`²ô…êd¹!•|CÎ à1!*À`dÓ—Œ: qD¿¥\¹®ßD†�¤6]m·ËxÈÀ% g·‘¦—ã
+‰oá­±ƒg-�:DGÛMÁ	É,%Ò0œ`äœ�€ÀÈtXø™rÕ¶† @ÑzÓLËC2³¸·mRËˆ+AKkù›8ÞDäˆºSh+ñ±k;b¡È91¦7ó3%#÷!`GL�ˆÎº
+À+šÉ ›�9{²;%õ»57 çßÎëªóFA0@Ós�ZƒI\o®êý{¹Ç¿Én,Ií4Øe§ÖÚÊÂ¹�7$wÎp@çÌ	w+
+Ú=ÊÝ-è“#8bC*)RTAt5�ü/q®7¬&amp;ÙwSQõDÁ�ØÀP0&gt;2Ô€@èO‘OxÑÃ;·uR¬b©6é¹mž„¾Ø=’Ó�õ¡™úKP^4N®ƒ�³È,N‚èqµò¬wIÒ¡�GpMÕÚZfè XõŽ‡¶jˆáZæTpy–Óƒe �ä Fv`ô5îþ°d(†c,ãºÎ*Ÿ?�``=_bOØÍ^=–}(uQ÷¦Šu‚²38ï…ŸÿU°…ªmï�—Š˜Qÿ0È÷›8VLúcnŸß±êx–ÁwFþŠóiÄ:€¶Ö’29½+b„ÔÒq{L�à(¢–½€Þ’�z=èÍPÏšùzƒˆ_Ùxo•@³‚BNÊ|à¸~£dzrŸ:»Ú²îÎŸÒ÷[ìƒùVønÉX;d6‚¢&gt;ø®SÏ¹H¼ê	7ië.¾û«�ò�îQ%DýÉ&gt;ôLrëQÒ’ É¤•º­€ÇrH�RT{Õ?ð‹¦¢ß¸–‹åñmµfÓÍ.í-×Ž€
+
+‰Û�~€ÕÌÑîzó,N{äï@. WàÌ{Àý1‰ÿ!X'ÐôIó­À9ƒ^rmæVË¨JÛq%*J†A`‚+O¤_q_´HQT›c¿©G%Æñ–ÖOrP@'üÁCµ|ß}¼Çò7ÛÑšOz=ëéä:T9¨¡MÔž*ôÛnÄ�-ZVÆüðò›!¥Ê�¯„	$ ±Û�Z˜ýèÇ¥Äã�-üKÐtü´¡À.Ûä‘»€yUŸ#¸#¸'¾*•ð›„ï]îO»¬â;=²Rã˜Äò©çHRIê ‘× =M_-e¨áé{@¹M�5ô-ä²”ÆŽ§HR³‚ ?JF	*8¹ªñ*ðýÂé"K§+uÒâñÜ“šÕ¹›‰Ù‹Jª—©K×Ù±jS–åá{5äYìè³Ú"Å‡•!–Âpµì�®R®UcÏWÃÂ€*	?Q[¿íKH·*¡4¢PR8:‘ŠùW
+¢]NÛ:t¶»ybVIkKf-¦õ2ÔðS*+hŸ™µˆôò&gt;µ"Ú.®P“*2²“±ªOp}j [àçq[¾ÝLKòa­_“(rõØ(ƒýGÜVËÉÜÁv6Dqm{„ž–ý¹˜ñ”\ÒÓD¡½.ô”{×e)ƒÚ�jZ(‡ÆÙVŸš�hW+’C1Sêê‡Ý!UÎ(ÙøNÕd$}Ïÿ~ü{-ià1	è»´d«é…ŸêP(JÃí6¤ŸzÝøv±i–x¯æj‹‰µZ®‹6Ç¦¥E”ã”$îêvÇmð2keÂTj]wÄí
+›�ºï¤x�|—ˆ6×¢·%Ò×Âm¼¸O:Àž@w9!ø3i¿ú™På
+ºÉçd”�þÀTÔÛhi¶Ð‘Ð$Ò€úö£ÚŽÔP65�ŸR[ïchÒˆ·Íô
+$²³ôY(ÿî“Úœçz«98€ÕŽ
+¾Ÿâ°/Œ•&amp;M’2©}µà…å§j=«žÚ?Ä¯\QÒ÷]]¬�ÓúhKBd–¢)1mø‰! ••l	$ò•°_Û5ÒÛz¶³r´O‹p„úyš‘Ðãka@�kéñ­žÔ{QE„CÇ%X­SÁ–åòäÇÄ�ÓM¨•,àBHdï¸zˆ[%µ…Ž¹Þ¬Ïíó£®1PÐ[ékâ3òäó$…õZÈé½s¾nŒ£“?
+�t3kHÀßzÙG{qƒM„­M��Ú³bOJ…ýkHž?S'FZˆ�´·×ò$ä�ëL.(ý_Î¾ÔƒœŠÁ~†€„|o@Tß7‡P	0äÆ|�¹ÇÅJ	ûæ¹ÞÖ�²:¥I û×Tø»§ÿµ#µÇï‹Ñðÿ…2ï&amp;uÖÉO6³€APi)'•!Kœ$l:U_áuñ
+~û?Gìeª×[ÚE@Œæ¼WÓ­4øC[]-Î¼§šPe¸œ¤wk‹µÉ«e©…É–ùåB2}I=€êIØU¡áv‘oHéÑ×÷	9-à6+ì‘þ�6sÞ½ôF‰±iŠj×—ÜÀzS¸SŽz�‡ Ûï½9«{á8QëŸÔÿb×9ö^¢ŒÑWæö£Ú—z7 Ú¹¥â‡F9 ¸ßvŽËE¸Ýþ!�„–Ü$”�D¯�8òÎº]½A2ø`æ¾á¹ºÚco¶.iÒ‘•¾Éu¡�ÉÀ
+¹NZ†Ø¯ôž¯·j+KŸT)(”Á=	8&gt;‡pG‘5Ô^êÛ^ºÑVÍShp*4æBÊs’ÒÆËB½R Aúz×+"d?†¯ñ[ý'ÌyTÏá+�Já¦£]ŠüêÎ˜¹¸Ääþ
+í€t"
+|w#GÇ][ÄNÉ^¤µß4åÒÙ6CQ éé�L·] †Ã�(•¨�UóHì*\Ó’nS,%Ýà"ßqz:&amp;*ø�—H
+ÀÎFqÚ£}¡î—��#‰ºêu¶ç-9oNE‚éz$‡pâ@æuc¯n�@Îô{VˆK·@—”µÌéœã8­.¾×z_BÀbf¦¹ˆ‚KŸ
+3(mn½!�åm´¥ÇA�¶q^zUÚõ‡5ÎÐÝÁ¶R‚Ê“6±œò8#n2ã99'9ðb8´ã `zv¦ê–T¢T¬’rI;Ó–Jã
+C‡PÁßOâ¥®&amp;®¸Y“QH…
+x·®ïÜ·â|l$”#$TØŒƒ@L–GÔëJmG›“&gt;‡µF\cã
+—FÜSm·[ž¿^X[J–Ìe„&amp;" ”‚ÔHåF2FIÀÞ¤Û|43
+l¥ü¸à•§–o§Ûi±ó)’r@œlÅq}¤KoñðWû“çÿÍu¾lhÓb=[
+HŽòn´âB’´‘‚;AÆ
+R?¾®šf\�WÃxÏN³¨—$ZÑ•=¹(Vß¦äz�À
+/~"/œ4(±Þ›zï¦9¿ÀæËÑ2w-±Ê‘9½=×ºK_ZEËJÞ£ÜJ°ë$öZÌ“õ=‰Ë¶__0Q� ì	­Î–¼¹b»55©×;æÎ¸Û)P¨dàŸ#@[þ35§Úñ.éÄ}KvÓV˜ºq?Ùéq$-€§y�ÇZAüÁ‘ò
+È# �Œ�áÖn´¼p‹Nßu)[·w˜q*2’Pã¬Uð–±�órœ÷¤Ô¢x×ÅWb²Ëohî#EI
+Kkygdtüµr¡æ­ûš{9ÇëÀž‡õ'µl–T‡Ú°¡æ	Bv;ŠjÖ2î°l²îÏA~SPÙ.˜ÐP^yÌ�„
+ÔOaUóAÜ!Îã%¦7
+^½;m”$=©cHjBbÇ$e$ü`9+ØàœœvÍfLñ˜Î©Û�	õjã­²•4êT€¼ô$€¬}©“©|AëçÔQbÒP´Èu*lþ)Õºác²±¾	#cÚž;°ZýÁ½'m]îùs…l„Æëy÷‚Sô©'°'°¦tý]3]ÃŽ¸ñW
+ÐIt¸òGéYIÝ õï¸Èaém©5Uþ÷_ÜäOÁÆc\8*;ŒŒìÛÍh¼ÅÆUÕË�›þ	øÔôµ)#*é-Éø8mÈó=‡ûŸµ"~Q;öÛ�!D¬(äçÎ³W)À9Œù®s:5ÙxEŠ{ò{\TPÁ$î£·ÓÿíoÓ¢nÐ¬05M½&amp;bœd;"6&gt;`’I#¸åÆG^½{5ÖÜ©ËD~OÌYJMÎ3üêÍÃeâ5´€†�‘äÀºrï«6™«?G÷!dÜëkDW¤5¢À7ùã,á&gt;¼§öŸN‡Ò¤ËMÎ%Í�‰ÀHýh;)'ÈŠië~À½-Wb…ºç¹. aŸõ�Üù�üóQÚnWí#tL{».Åy'
+¼7CƒÐô#ÓÜ
+�óøúlNu{û�ÞÆ=WzÚìÉö–˜,ñ2ÐÕ½—&amp;…|u�ÒÞ&gt;»�¾•ŸlâœœyûˆWp¤�½v&amp;¶Z¸ö‰5b[÷#:,^ƒ¾Šóaæße4°¤,$Ž„Á¯]ªÚ3RIÅíB°/wke’ÖýÒï&gt;{ç¿~š¹Ê“©xd˜ñ%+.=f^Ë‡©,“²	ÿ!ùwØ§¡¤¿¬uL‘Êýþèèé…ËpÿSS?ø�-,#YêæÝVp-ñ]N,’Y$u÷ÛjŠ,­�#¯£�Qa}‰6÷ÿ¼À�ß!*ãec¡Áìq×­
+µ³ºŠÕtÕwO…k±ÆAm¦WŽ~Tn¥¨ï€Nß.wÚµždÉÉ®Ÿ‡Rù_—ùú"V4`Þß’@°³l¢34”~i_&amp;w	Û­fë©v¹|Ñ`¶”0È£ºÉ9ÎþG¥x*5¶Tyá¾™Ë!(”É�+ZÁî@|Ši¿y�–"Ç(¸„%Ä¨’~l
+Ïüï\Òå:*t¿
+ï~»Eœu'ÕìŒg
+ ¹Ì @ïZ¹’De�¥ãu§2�b1	B�7Â²¯¥7`Á‡2è·'%Ç&gt;m›æÀÇ®7þu™¶››ì�²ZkCÇ‚Ö×µ£Lå©_�·�âÉ?â/ö$z2~€w«Ú¡½rnÙ�Šm¶"ºC
+B�Ààm±Æþ¦¦:é¼¡‘MØoá­4û•y‘’Ÿsê°®¶Ø7Hk‰&gt;+rY_T8œ�¯¡úVgÚ�µm3„fœd¶™=x+G4ŒÝ7wq¼,ÛÖIŽù§¢IìGMúõ¦Ô8Ò–†ÛZ²¥cÞ¤úrSí!£nÔwÛ”µñ]Cc¨�òòXUo².ñ)Jž@#t4?HôÏ_¦†‘Ï.7ç±�¹ n‘õ\Uí±Õ öl‘ôä‰BˆÒPÐ”³§íû-�µ{«&amp;«xw*_�R¶o¥?Ù–Ü¸Áéw ¨Z2~Ô‡R ’¯j²-Ø¬­ÿ‡h€�ý1�?Ú²
+É
+„ýýªÖŸÓÏµäªsí)¸ÈÎTF3ô�—z¹s¬Ö™È™m‡%# q”«â£Þ7ðwFqH*-Æ2-r 6·!ÏˆÐ�¶HÀÀR2Rqž ƒ½KÃäèQrœç¸§àñ,×%¤ˆGÃ·Š¨-Û£iŽ'Ã�hX=Á‚+‘ëB†âÒ’µ´¬�‚±ž¤})óÁ~+q‡×4ÅÒ�–ÃëÊíO6^eãßOš'ëvÒÖˆEÀÖ–¶lÜ@›)äaòl
+†¹Ç 9j|pªkPf¿jQHÃ�Ÿ5¸ûŒ±¨®7Zø“p„ÌÛ,‹¦ˆ•6üe’¦Þ@ß(Q‚r’2Øœ‘mV[fS+åy’äAÈ5Ê3ç&gt;
+Æ&gt;*_.ÿf[V•Ôôú“í­}‚äÝÖÔÌÆöçOÌœþ•
+ˆûÏ®¥M±ºµdf¶Š§ž…ÿ�hÿ�h¢³�ùÖŠZ(Ú—íGÚ€J)~Ô}¨¢—íGÚ€Â¼²§í@ùœaiÔ¤Š®ÍM/0Û-ãÊ!´ u*'cÏ|U•¦¼¥á_¿�±mg9q$¸¢„(õ!$àöÛnØ­o�ðGÄ¬ªIéGÉ'ÿ„š÷6ºbØÝšÃÚ€?! GE,î£÷$Ÿ½lé)k`®
+¸¨GÂ#··°ïE/ÚŒúVCà•å-„IŠôuþ‡[(V?Ñ##Y%(ú’T‰ã6\}æÚ@ê¥¨üëÂÒÝ5Å7c­#$!`íç·oZˆRãáû„‡dwæY$úsOm#§Ýþ$›ÃÌ*
+œ3Í‚1•g}÷Ûß*ï‡sWÈP¦�G}Û0[�£Þ]Çµ}¨ûVæC4º®îýž+1/©×CeKYB'* Ûn¦±ŸÕ-°ävžµÏ½HÂ$•r’HÁÂW¶?aî@.J(ÄM_CñZËŠ?¾D)mNûv&gt;ã"½_Ô.µq0Ìf9¾:›F^9Z¾q„ã&gt;02vÛ;áÃGj­mÕ.É.)ÛjÐÛ(}Kq+
+-ò` ~î`°AÛ¡ÆFõöþ®a–Ñm–ò’�-H#	G99Î0FÀ÷ �ÐÓœt¤5ºOââ‡¾Ú,cy™§$�wc.b¬àQ„K�ÀGÀ7fKËµÚêRŒiâ¡ÇÀv4( èÖxL}âmäì{d$JêŸ‰�fN2š68¨k„œÊ.è³¶’~4$÷•‡–
+^´½šùó–6®.áõŒˆ©´%º¾ùËè2‚à`ÙÈá¨Zï7ZW¶
+þÀÔäqÇ#A±€×	.½±K¾œ[Ò²�ôMUÛû0ÅP3~¯ž�ÿêùStüàÙñƒŸŽ&gt;¢*D8…¡½îi&amp;¡ÌX‡¥\ÂaÑ,WòÖxü•=j6õ!Äv‰Õ.ìòŠ^ÎÏ£Uh´¹ Íà¬ÂV®dLÁ¶×V×J�YZÝ¨fš¢#­0Y»ØÊÁå…i°Xx†£xyNýZ4v0#�ö»�Q…‹‘Œ0Ü)˜ë€¦¶{&gt;Fu¤f­”Oƒ(8B#6ûÂ¯Sì	¨„ëÓôÜÍio›WnsÎŠ®|#fpv³4ÂY»Õ%šW²…›†Tè`žJê�m•ºãÎoŠ)ù2¥œÆÿ3Sô~·+�Ž€—Ã#])m�qèBiDý¾€ÁÁôÈ¸ß…×�TpEmþäPÿokÎò0e
+‡HµOC$(ìG*„ìA[2Ùw
+³z¶wY–,cd2ª¤®L­Ú#rHØP÷ÀU½·{(‚T7Ý$kw2ÿÜç¬‚F¡rÊõæt²bïµ5ðOO&gt;¶˜Á(·›�&amp;÷�¡b1ÌvUKoÈó½·lˆ~1³yU€°ÒVÐÊÊþ5U8çVk;ÖœÅËÍ\9ˆâ¼Å°XD)Ü!!ýì�TøÌ~íÐê�ïCoEðñB3ƒ´�¬¾d¤¤]Áàdm2iVÖµÙè¤½–oÖŠcÆr˜ûÐ7OjªÚŒì{µìËÃUïÈ!­Txƒ&gt;½è2o‘¿IÑµƒµ³Äí0®&amp;sB£&gt;Úè{Ê'ºêÊb’jà)ý
+êšúóI…‹kzÎ‰†
+¬û÷¸9LS‰¨ù®0¬0Ý˜,Ì–FpÛÂó,åÁ[;ŒŽÚ3£ZÃ_
+ÛZÿSüó{þÖÿàÊDÜãÁ0GàWZ0Ñ‚+
+v‘�]iáD¯´h¢Á¶xNà'�'x@§£¡ïcâLêß'âÚyE’ Ž¸%PW³'@{‰¤'Œ‹ƒš�ò[©©†%¸¥5ÇÏ°”Àå4â#7ÃÑé^ƒæö†:«±Æ Þ—êFJ[Í­/ç¤&amp;…v,.¼¼®¿Ž3ªtAZØP´�r¿üÚk¾îåwÿÿÿPK! N¬word/webSettings.xmlŒÐÁJ1à»à;,¹·Ù•"²t· Rñ"‚úivvÌdÂLj¬OoÚª ^zË$™�™�¹ú@_½‹£Ð©f^«
+‚¥Á…©S¯/ëÙ�ª$™0O:µQ«þòb™Û›gH©ü”ª(AZ´�Ú¦[­Ån�Ì)B(�#1šTJž4~ÛÅ™%Œ&amp;¹�ó.íõU]_«o†ÏQh�…;²;„�ŽýšÁ‘‚l]”-Ÿ£eâ!2Y)û ?yh\øešÅ?�eÓ¼,£OéUÚ›úxB¯*´íÃˆÍÆ—s³P}‰�brè&gt;aM|Ë”X®�÷”ŸïK¡ÿdÜ�ÿÿPK!¼TÝÆ{{@word/stylesWithEffects.xmlÄ[ÛrÛ8}ß™ý�ÞS_’&amp;ÛLÝN›´ÛÌôîdö™–èXIÔê’K¿~AP¢eÉ²€H�}²E‘80ñúíc:÷2Í/ÜÙ‹©ëÈØS~ß.Ü›ë�G�¹N–‹Ø¡ŠåÂ}’™ûöÍŸ�¼~8Ïò§Pfˆ³ó‡Ä[¸›¿:²zE+ŠzW´‚¦wE+FzW´B¢wE+zW´Þ»¢åßÞ-w\á	$®fãn�û:ÈC¨“=L7Hue©q¾‹TÜ¦"Ù8º°6Õ&gt;D–Ëb•ÓTE:}&gt;Y.óTéãfÏŽ@uÖ©ûlNþ%‘Y?ÐÀ­¿ÖGçï4€ãk�M/MðµlÂƒÉÞö=žÜ¨Ð—©s-�Gë¿*giN½Ê
+tëçàv“;p*Ô%·ì´cÓ»wÂÈÿd¸«ùi‡)}ÂI&gt;Vø@Ã* hX)duÄG÷™ÇÖD:ÈðâÈÀbÓ²­bvdf&gt;c3³â•€‘ê&amp;áüÕ‘½Ý±Ð®›¶ƒÚu“€ÂöN£–ÙºIÀ­n°:ªF·�êœÊ1Š]7ë@ö$@°hò&amp;�CÞ qÈ›4œ¼ûAÆ#o›,§ÖÉ›„S8�ê[ :y€ØÜ`Ø®üÍ¨ª{(åð·#�7…í 6yPØÞé"oNáDBËRkò&amp;�CÞ qÈ›4y€Æ!oÐpòî�¼	Xln°œZ'o›,P�¼	@8…Ã
+{É³þ·“7…í 6yPØÞiª=¤°Øj`Yò&amp;`áN0”XÜ£Æ!o‚Eã�7hò&amp;�CÞ áäÝ2y°ØÜ`9µNÞ 6=X :y€ØÜ°—¼1�;yPØj“7…í�¡Zž#`±ÔÀ²äMÀÂxLÞ œò\ ŽEã�7Á¢qÈ›4y€†“w?ÈxäMÀbsƒåÔ:y€Øô`�êäMbsÃ^òÆùíäM@a;¨MÞ¶w„jÉ›€ÅvPËRkò&amp;a`&amp;oNyfÇMã�7Á¢qÈ›4œ¼ûAÆ#o›,§ÖÉ›Ä¦T'o›ô=[¸/J¾ž:ëê=ƒêVpÞá$*`iàO¹–)tÊþÛ!+ˆáA5ñ½Rwíb÷qG€�¡‚U(¼Òý„·tj�Çg:	®¿]8ŸLLk†ÔîÍèª·a{’n=ó§Zv’êf¹–
+Bº¯«lÂžÐ+h*ÛzôbÝç±©ªÆÿÛ–¨ðqaÊÛ–Q &gt;pANú2IS±VI
+_õ‚&amp;tÇ½xTeÛ”Q)ZÞ�ßž¢Ì¼�[š5Ïõ]ðZë»âšÛtóSSU³K^'7~m+íY¨RŸ†à´UhšÌàËUìƒ…e�–q§ÿ(Œ(x�!Ãð‹À–´\%ÝSC¹ÎÍÛÙk`CÔJå¹Šº×§xE5Ù'¢®ŒyÔFtGJ\D+™–Î;‚rÄ!\Z{6ÜÜwíê^wk·“26Iô5~åËÛP­TK§÷"4Êá]�Tl% ×î›n�kåô	ÞUãu©"@Ð®£A§ÓËéÉÉüƒ‘ÚÕ½ˆÿ•-{OìÃþÞÅ²O&gt;v@îµØ¨HèÂÖÎú€«åk“¶“svZ¦Å¯m'§ç@ßé¡Ú!¯È ‚±c²ÉmÍ
+n¦/¾w|é cëƒ†ÿ:x
+êò'Ó™ÝžÃ­øö¼J‘ìÍ�ÿÿPK!@çÕ`šdocProps/core.xml ¢( „’ÑJÃ0…ïß¡ä¾M²Î2KÛÁ”�à@°¢x’�[°MK×íq|_Ì´Ýj‡Š—É�þ�sN’Ì÷eáí@Y©Ñ€ ¯„T›=åK�†�sÏƒon”ÂI†œ…ÉÍÔ0âMÑ0âM
+#ÞÐ0âMõïnÈpâM`±µ¡ÐÔ²x@ly(@eñ&amp;€ØÚpP¼q1þvñ&amp;PØª‹7�ÂŽNEP�#°Øª°
+ñ&amp;°0_z‹7„�¼ÄÑ0âMÑ0âM
+#ÞP�ñî†'Þ[
+M-‹7Ä–‡Toˆ­
+Å×Èoo… ºx(ìèTµo‹ 
+«�:kñ&amp;€01{‹7„�¼„«ˆ¦aÄ›0¢aÄ›ê/ÞÝ�áÄ›ÀbkC¡©eñ&amp;€ØòP€ÊâM±µÁœ³…ó¢äã©“†$ ž3Ø�j §
+A¢óþ�+™@‘•ì&gt;Ò¸!ƒØ�Ô!~ÐúÞ¡ì&gt;nH2J-¥ñH÷žÒ)"ÏZ*	n¿]8ŸlL­¦ÔþÉ¨*—ay’)?³§JvâÝÉrc
+„L]W^„%r×P”—õ˜Î¦ÎÄ¢ª¼ÿo›Sá3±cåm€åAETêãÈI_ÆI"V:Nà£éPE7œ‹GWž‹2vŽæçãŸß¢ìs{§4[=ÏÌYð¯ÍYqÅm¦ø©êª�%�“Û¸Ö„ò,t©ËCÚ2°Efðá:òa„P&amp;ˆÿ7³áô…5÷/d|X’–é¸ùÑ@®2{w2Æ=°bj©³L‡ÍýŒ&gt;¾yxü¥Uv¤55)&amp;”dÂp»•fW“ëÕÍÉÀ3³eÊQ“£ò¸üüé¡_4ÖxÈp¿�…æ5i½ïy¼šÁÄvÂ`±±N3�Ÿn—kæ~î»nuÇ¼ÜH%ý1/)�“ÁÆ]âb›FrñÅò½ÆÇý¹
+­�Vvprë/që­ÛvÎr€ÿ¬UòÓLšÑ¦¨ÞiÉ�Ûø	þLž:Êƒn/h|ÓŠdš/¾îŒul£�]_Td9€Ëú…aÅg¦äÆÉXè˜± 
+¬˜ª	-éŠÎðîŠNÃ“äÁ�·Ì�ðãBšä†i©Ž'z	�
+�ô¼=éædh(•@î°°‡
+­ÉKEiù²Z‘¤ØžNYÝ&gt;
+J‰M¥ë~P¦£‚ÉÁÆ¢O\R$TÐgØûÌStÞ‘XK- û&amp;úì»ÕÌœ!RÒ9’˜!�@fz}#ÁK‰`ã�Aåönö�ˆ°;&gt;â	A„PÕÇ£a¬_»½X;q
+˜á@§¯Q�8…ç5*1°óQ¡´ÂsaTž™Æ™9G&amp;D#q	Q¹nh&gt;:�;4UšQ	$P	×¿‡æ&gt;ß_†f˜XþÿÿPK!„f_êädocProps/app.xml ¢( œSAnÛ0¼èÝcÊŠÆšAá È¡mXIÎ,µ²‰R$A®�¸�ê+ú±®¤X‘ÛžêÓììb8ž]ÁÍKk³Æd¼[åóY‘gè´¯�Û®òÇêÓÅuž%R®VÖ;\åGLù�|ÿ¢É`ÊXÂ¥U¾#
+K!’Þa«ÒŒÛŽ;��­".ãVø¦1o½Þ·èH”Eq%ð…ÐÕX_„Q0—ú_ÑÚëÎ_zªŽ�
+K¨°
+VÊ¯�;«=µ F*OÊV¦EY..îŒ5ù†²û&gt;‰¬1Ngƒz
+%™–ðÙ8¶2¿1 öÕ6ª°{58V°ÑÊâš3��²	A¼p‡ªÛïƒ2ì´ëword/_rels/document.xml.relsPK-!Iá¥%9¹ih	word/document.xmlPK-
+!ÐRGœ¶'¶'Ðword/media/image1.jpegPK-!Ãsz¬¦ºAword/theme/theme1.xmlPK-!cø³\Ý™Hword/settings.xmlPK-! N¬$Mword/webSettings.xmlPK-!¼TÝÆ{{@XNword/stylesWithEffects.xmlPK-!@çÕ`šWdocProps/core.xmlPK-!ÓF8ÜõŠ=¢Yword/styles.xmlPK-!·«ÙA÷»Äaword/fontTable.xmlPK-!„f_êäëcdocProps/app.xmlPK
+
+Mg</body></html>

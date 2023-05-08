@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -26,6 +28,7 @@ import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.converter.WordToHtmlConverter;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
+import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
@@ -33,6 +36,7 @@ import org.apache.tika.parser.ocr.TesseractOCRConfig;
 import org.apache.tika.parser.pdf.PDFParserConfig;
 import org.apache.tika.sax.ContentHandlerDecorator;
 import org.apache.tika.sax.ToXMLContentHandler;
+import org.apache.tika.extractor.EmbeddedDocumentExtractor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -110,6 +114,7 @@ public class VBoxDrawerController implements Initializable {
 		fileChooser.setInitialDirectory(new File("."));
 		// https://jenkov.com/tutorials/javafx/filechooser.html
 		// https://blog.csdn.net/u011781521/article/details/116260048
+		//https://itecnote.com/tecnote/extract-images-from-pdf-with-apache-tika/
 		/*
 		 * try { System.out.println(FileMagic.valueOf(fileChooser.showOpenDialog(
 		 * InformGeneratorApp.primaryStage))); } catch (IOException e1) { // TODO
@@ -121,26 +126,6 @@ public class VBoxDrawerController implements Initializable {
 			Metadata metadata = new Metadata();
 			ContentHandler handler = new ToXMLContentHandler();
 
-			/*ContentHandlerDecorator h2Handler = new ContentHandlerDecorator(handler) {
-				private final List<String> elementsToInclude = List.of("head");
-
-				@Override
-				public void startElement(String uri, String local, String name, Attributes atts) throws SAXException {
-					if (elementsToInclude.contains(name)) {
-						AttributesImpl s = new AttributesImpl();
-						s.addAttribute(uri, local, name, local, name);
-						super.startElement(uri, local, name, s);
-					}
-				}
-
-				@Override
-				public void endElement(String uri, String local, String name) throws SAXException {
-					if (elementsToInclude.contains(name)) {
-						super.endElement(uri, local, name);
-					}
-				}
-			};*/
-
 			TesseractOCRConfig config = new TesseractOCRConfig();
 			PDFParserConfig pdfConfig = new PDFParserConfig();
 			pdfConfig.setExtractInlineImages(true);
@@ -151,16 +136,30 @@ public class VBoxDrawerController implements Initializable {
 			parseContext.set(PDFParserConfig.class, pdfConfig);
 			parseContext.set(Parser.class, parser); // need to add this to make sure
 													// recursive parsing happens!
+			//parseContext.set
+			
+			EmbeddedDocumentExtractor embeddedDocumentExtractor = 
+		            new EmbeddedDocumentExtractor() {
+		        @Override
+		        public boolean shouldParseEmbedded(Metadata metadata) {
+		            return false;
+		        }
+		        @Override
+		        public void parseEmbedded(InputStream stream, ContentHandler handler, Metadata metadata, boolean outputHtml)
+		                throws SAXException, IOException {
+		            Path outputFile = new File(metadata.get(TikaCoreProperties.RESOURCE_NAME_KEY)).toPath();
+		            Files.copy(stream, outputFile);
+		        }
+		    };
+		    
+		    parseContext.set(EmbeddedDocumentExtractor.class, embeddedDocumentExtractor);
 
 			InputStream stream = new FileInputStream(fileChooser.showOpenDialog(InformGeneratorApp.primaryStage));
 
 			parser.parse(stream, handler, metadata, parseContext);
 			File outFile = new File("output.html");
-			// FileOutputStream out = new FileOutputStream(outFile);
 			OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outFile), StandardCharsets.UTF_8);
 			String content = handler.toString();
-			// content.replaceFirst("<head a=\"s\">", "<head>");
-			//content.replaceFirst("head", "headssss");
 			out.write(content);
 			out.close();
 			
@@ -173,15 +172,33 @@ public class VBoxDrawerController implements Initializable {
 				doc = builder.parse(new File("output.html"));
 				
 				NodeList list = doc.getElementsByTagName("head");
-				NodeList l = doc.getElementsByTagName("title");
+				NodeList listTitle = doc.getElementsByTagName("title");
+				NodeList listImages = doc.getElementsByTagName("img");
+				NodeList listBody = doc.getElementsByTagName("body");
+				//<style>p:input:not([value=""]) { margin: 0; }</style>
+				
 				Element head = (Element) list.item(0);
-				head.removeChild(l.item(0)); // Esto es necesario porque por algún motivo (probablemente un bug) DOM se carga la etiqueta de apertura del título
+				head.removeChild(listTitle.item(0)); // Esto es necesario porque por algún motivo (probablemente un bug) DOM se carga la etiqueta de apertura del título
 												// (quizás porque está vacío), lo que da a un error en la estructura del documento y a que no se vea en el webview
 				Element metaE = doc.createElement("meta");
 				metaE.setAttribute("http-equiv", "Content-Type");
 				metaE.setAttribute("content", "text/html; charset=utf-8");
 				head.appendChild(metaE);
 				head.insertBefore(metaE, head.getFirstChild());
+				
+				// Remover el "embedded:" del atributo de src
+				for(int i = 0; i < listImages.getLength() ; i++) {
+					String newAttr = ((Element) listImages.item(i)).getAttribute("src");
+					newAttr = newAttr.replaceFirst("embedded:", "");
+					((Element) listImages.item(i)).setAttribute("src", newAttr);
+				}
+				
+				Element style = doc.createElement("style");
+				style.setTextContent("p:input:not([value=\"\"]) { margin: 0; }");
+				
+				Element body = ((Element) listBody.item(0));
+				body.appendChild(style);
+				body.insertBefore(style, body.getFirstChild());
 				
 			} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
