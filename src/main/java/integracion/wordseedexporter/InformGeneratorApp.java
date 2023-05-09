@@ -1,4 +1,4 @@
-package integracion.informgenerator;
+package integracion.wordseedexporter;
 
 import java.io.File;
 

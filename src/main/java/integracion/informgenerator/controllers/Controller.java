@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 import com.dlsc.pdfviewfx.PDFView;
 import com.jfoenix.controls.JFXDrawer;
 
-import integracion.informgenerator.InformGeneratorApp;
+import integracion.wordseedexporter.InformGeneratorApp;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;

@@ -14,7 +14,7 @@ import org.jodconverter.local.office.LocalOfficeManager;
 
 import com.jfoenix.controls.JFXButton;
 
-import integracion.informgenerator.InformGeneratorApp;
+import integracion.wordseedexporter.InformGeneratorApp;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
