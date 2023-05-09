@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.office.OfficeException;
+import org.jodconverter.core.office.OfficeManager;
 import org.jodconverter.core.office.OfficeUtils;
 import org.jodconverter.local.JodConverter;
 import org.jodconverter.local.office.LocalOfficeManager;
@@ -43,7 +44,7 @@ public class VBoxDrawerController implements Initializable {
 	@FXML
 	private JFXButton am;
 
-	private LocalOfficeManager officeManager;
+	private OfficeManager officeManager;
 	
 	// model
 	public ObjectProperty<File> pdfFile = new SimpleObjectProperty<>();

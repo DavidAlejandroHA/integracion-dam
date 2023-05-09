@@ -9,6 +9,7 @@ import com.dlsc.pdfviewfx.PDFView;
 import com.jfoenix.controls.JFXDrawer;
 
 import integracion.wordseedexporter.InformGeneratorApp;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -62,12 +63,18 @@ public class Controller implements Initializable {
 			} else {
 				pdfViewer.unload();
 			}
-
 		});
 
 		InformGeneratorApp.primaryStage.setOnCloseRequest(e -> {
-			drawerController.closeOfficeManager();
-			System.out.println("assdds2");
+			Task<Void> task = new Task<>() {
+				protected Void call() throws Exception {
+					drawerController.closeOfficeManager();
+					System.out.println("closed");
+					return null;
+				}
+			};
+			new Thread(task).start();
+			
 			// TODO: Iniciar nuevo hilo javafx y ejecutar ahí el closeOfficeManager()
 		});
 	}
