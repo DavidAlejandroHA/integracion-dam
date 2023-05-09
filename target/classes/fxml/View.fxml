@@ -50,7 +50,7 @@
             </HBox>
             <HBox GridPane.rowIndex="2">
                <children>
-                  <HBox prefHeight="100.0" prefWidth="20.0" />
+                  <HBox minWidth="20.0" prefHeight="100.0" prefWidth="20.0" />
                   <PDFView fx:id="pdfViewer" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>

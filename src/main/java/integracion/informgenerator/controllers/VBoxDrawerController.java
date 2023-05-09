@@ -75,7 +75,7 @@ public class VBoxDrawerController implements Initializable {
 	@FXML
 	private JFXButton am;
 
-	private LocalOfficeManager officeManager = LocalOfficeManager.install();
+	private LocalOfficeManager officeManager;
 	// model
 
 	WordToHtmlConverter wordToHtmlConverter;
@@ -84,7 +84,14 @@ public class VBoxDrawerController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		try {
+			officeManager = LocalOfficeManager.install();
 			officeManager.start();
+			//NullPointerException: officeHome must not be null
+		} catch (NullPointerException e) {
+			// TODO Hacer alerta
+			e.printStackTrace();
+			Alert nullPointExAlert = new Alert(AlertType.WARNING);
+			nullPointExAlert.setTitle(null);
 		} catch (OfficeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -121,18 +128,25 @@ public class VBoxDrawerController implements Initializable {
 
 	@FXML
 	void importarDocumento(ActionEvent event) {
+		//Docx4JSRUtil.searchAndReplace
+		//https://github.com/phip1611/docx4j-search-and-replace-util
+		// https://blog.csdn.net/u011781521/article/details/116260048
+		// https://jenkov.com/tutorials/javafx/filechooser.html
+		
+		//Reemplazar texto: https://stackoverflow.com/questions/3391968/text-replacement-in-winword-doc-using-apache-poi
+		//https://gist.github.com/aerobium/bf02e443c079c5caec7568e167849dda
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File("."));
 
 		System.out.println("a");
 		try {
-
+			File pdfFile = new File("output.pdf");
 			JodConverter.convert(fileChooser.showOpenDialog(InformGeneratorApp.primaryStage))
 					.as(DefaultDocumentFormatRegistry.DOC)
-					.to(new File("output.pdf"))
+					.to(pdfFile)
 					.as(DefaultDocumentFormatRegistry.PDF)
 					.execute();
-			InformGeneratorApp.pdfFile.set(new File("output.pdf"));
+			InformGeneratorApp.pdfFile.set(pdfFile);
 		} catch (OfficeException e) {
 			e.printStackTrace();
 		} finally {
@@ -144,8 +158,8 @@ public class VBoxDrawerController implements Initializable {
 	void importarDocumento_(ActionEvent event) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File("."));
-		// https://jenkov.com/tutorials/javafx/filechooser.html
-		// https://blog.csdn.net/u011781521/article/details/116260048
+		
+		
 		// https://itecnote.com/tecnote/extract-images-from-pdf-with-apache-tika/
 		/*
 		 * try { System.out.println(FileMagic.valueOf(fileChooser.showOpenDialog(
@@ -198,7 +212,7 @@ public class VBoxDrawerController implements Initializable {
 			Document doc = null;
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
-			DocumentBuilder builder;
+			DocumentBuilder builder ;
 			try {
 				builder = factory.newDocumentBuilder();
 				doc = builder.parse(new File("output.html"));
