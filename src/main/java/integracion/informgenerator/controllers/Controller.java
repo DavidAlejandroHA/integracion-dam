@@ -1,5 +1,6 @@
 package integracion.informgenerator.controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -26,6 +27,15 @@ public class Controller implements Initializable {
 
 	private VBoxDrawerController drawerController;
 
+	// paths y nombres de rutas
+	
+	public static final String APPFOLDERNAME = "WordSeedExporter";
+
+	public static final File APPFOLDER = new File(
+			System.getProperty("user.home") + File.separator + "." + APPFOLDERNAME);
+	
+	public static final File TEMPDOCSFOLDER = new File(APPFOLDER.getPath() + File.separator + "tmpDocs");
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -35,20 +45,31 @@ public class Controller implements Initializable {
 		drawerMenu.setSidePane(drawerController.getView());
 
 		// drawerMenu.close();
+		
+		// create app folder
+		
+		if (!Controller.APPFOLDER.exists()) {
+			Controller.APPFOLDER.mkdirs();
+			Controller.TEMPDOCSFOLDER.mkdirs();
+		}
 
-		// bindings
-		
-		// TODO: Cambiar InformGeneratorApp.pdfFile por un getter del drawerController
-		InformGeneratorApp.pdfFile.addListener((o, ov, nv) -> {
-			System.out.println("dsasd\ns");
-			pdfViewer.load(nv);
+		// listeners
+
+		drawerController.pdfFileProperty().addListener((o, ov, nv) -> {
+			// El if y el else es para forzar al pdfViewer que cambie de pdf
+			if (nv != null) {
+				pdfViewer.load(nv);
+			} else {
+				pdfViewer.unload();
+			}
+
 		});
-		
-        InformGeneratorApp.primaryStage.setOnCloseRequest(e -> {
-        	drawerController.closeOfficeManager();
-        	System.out.println("assdds2");
-        	// TODO: Iniciar nuevo hilo javafx y ejecutar ahí el closeOfficeManager()
-        });
+
+		InformGeneratorApp.primaryStage.setOnCloseRequest(e -> {
+			drawerController.closeOfficeManager();
+			System.out.println("assdds2");
+			// TODO: Iniciar nuevo hilo javafx y ejecutar ahí el closeOfficeManager()
+		});
 	}
 
 	// Hacer otro controlador con la vista del drawerView y ponerle el getView()
