@@ -1,4 +1,4 @@
-package integracion.informgenerator.controllers;
+package integracion.wordseedexporter.controllers;
 
 import java.io.File;
 import java.io.IOException;

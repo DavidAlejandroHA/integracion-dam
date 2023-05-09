@@ -2,7 +2,7 @@ package integracion.wordseedexporter;
 
 import java.io.File;
 
-import integracion.informgenerator.controllers.Controller;
+import integracion.wordseedexporter.controllers.Controller;
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
