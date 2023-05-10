@@ -14,7 +14,7 @@ import org.jodconverter.local.office.LocalOfficeManager;
 
 import com.jfoenix.controls.JFXButton;
 
-import integracion.wordseedexporter.InformGeneratorApp;
+import integracion.wordseedexporter.WordSeedExporterApp;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
@@ -98,7 +98,7 @@ public class VBoxDrawerController implements Initializable {
 		System.out.println("a");
 		try {
 			File pdfFileOut = new File(Controller.TEMPDOCSFOLDER + File.separator + "output.pdf");
-			JodConverter.convert(fileChooser.showOpenDialog(InformGeneratorApp.primaryStage))
+			JodConverter.convert(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage))
 					.as(DefaultDocumentFormatRegistry.DOC).to(pdfFileOut).as(DefaultDocumentFormatRegistry.PDF)
 					.execute();
 			// Esto es para forzar al pdfViewer que cambie de pdf
@@ -119,7 +119,7 @@ public class VBoxDrawerController implements Initializable {
 		exitAlert.setTitle("Salir");
 		exitAlert.setHeaderText("Está apunto de salir de la aplicación.");
 		exitAlert.setContentText("¿Desea salir de la aplicación?");
-		exitAlert.initOwner(InformGeneratorApp.primaryStage);
+		exitAlert.initOwner(WordSeedExporterApp.primaryStage);
 
 		Optional<ButtonType> result = exitAlert.showAndWait();
 

@@ -14,7 +14,7 @@ import org.jodconverter.local.office.LocalOfficeManager;
 import com.dlsc.pdfviewfx.PDFView;
 import com.jfoenix.controls.JFXDrawer;
 
-import integracion.wordseedexporter.InformGeneratorApp;
+import integracion.wordseedexporter.WordSeedExporterApp;
 import javafx.application.HostServices;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -81,7 +81,7 @@ public class Controller implements Initializable {
 			}
 		});
 
-		InformGeneratorApp.primaryStage.setOnCloseRequest(e -> {
+		WordSeedExporterApp.primaryStage.setOnCloseRequest(e -> {
 			// Iniciando nuevo hilo javafx y ejecutar ahí el closeOfficeManager()
 			Task<Void> task = new Task<>() {
 				protected Void call() throws Exception {
