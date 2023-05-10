@@ -120,6 +120,7 @@ public class VBoxDrawerController implements Initializable {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File("."));
 		docManager.giveDocument(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
+		//  TODO: Terminar la importación de la fuente de datos
 	}
 
 	@FXML
