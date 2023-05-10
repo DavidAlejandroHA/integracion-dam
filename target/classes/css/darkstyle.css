@@ -46,3 +46,21 @@
 .fakeDrawer:hover {
 	-fx-background-color: linear-gradient(from 0px 0px to 0px 60px, #2e2e2e, #505050);
 }
+
+/*PDFViewer*/
+
+.pdf-view .search-navigator {
+    -fx-background-color: darkgray;
+    -fx-padding: 5px 10px;
+    -fx-fill-height: true;
+    -fx-spacing: 10px;
+    -fx-alignment: center-right;
+}
+
+.pdf-view .search-navigator .search-bar-button:hover {
+    -fx-background-color: rgba(0, 0, 0, .5), derive(darkgray, -10%);
+}
+
+.pdf-view .search-navigator .search-bar-button:pressed {
+    -fx-background-color: rgba(0, 0, 0, .5), derive(darkgray, -5%);
+}

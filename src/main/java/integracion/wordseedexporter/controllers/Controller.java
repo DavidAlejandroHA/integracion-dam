@@ -1,10 +1,7 @@
 package integracion.wordseedexporter.controllers;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -15,20 +12,12 @@ import com.dlsc.pdfviewfx.PDFView;
 import com.jfoenix.controls.JFXDrawer;
 
 import integracion.wordseedexporter.WordSeedExporterApp;
-import javafx.application.HostServices;
+import integracion.wordseedexporter.components.PDFViewSkinES;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
 public class Controller implements Initializable {
 
@@ -80,6 +69,9 @@ public class Controller implements Initializable {
 				pdfViewer.unload();
 			}
 		});
+		
+		// Añadir la interfaz personalizada en Español al pdfViewer
+		pdfViewer.setSkin(new PDFViewSkinES(pdfViewer));
 
 		WordSeedExporterApp.primaryStage.setOnCloseRequest(e -> {
 			// Iniciando nuevo hilo javafx y ejecutar ahí el closeOfficeManager()
