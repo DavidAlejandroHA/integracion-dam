@@ -106,7 +106,7 @@ public class Controller implements Initializable {
 	public void setOfficeManager(LocalOfficeManager officeManager) {
 		this.officeManager = officeManager;
 		try {
-			officeManager.start();
+			this.officeManager.start();
 		} catch (OfficeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
