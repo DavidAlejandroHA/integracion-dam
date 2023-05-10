@@ -8,7 +8,6 @@ import java.util.ResourceBundle;
 
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.office.OfficeException;
-import org.jodconverter.core.office.OfficeManager;
 import org.jodconverter.core.office.OfficeUtils;
 import org.jodconverter.local.JodConverter;
 import org.jodconverter.local.office.LocalOfficeManager;
@@ -44,26 +43,14 @@ public class VBoxDrawerController implements Initializable {
 	@FXML
 	private JFXButton am;
 
-	private OfficeManager officeManager;
-	
+	private LocalOfficeManager officeManager;
+
 	// model
 	public ObjectProperty<File> pdfFile = new SimpleObjectProperty<>();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		try {
-			officeManager = LocalOfficeManager.install();
-			officeManager.start();
-			//NullPointerException: officeHome must not be null
-		} catch (NullPointerException e) {
-			// TODO Hacer alerta
-			e.printStackTrace();
-			Alert nullPointExAlert = new Alert(AlertType.WARNING);
-			nullPointExAlert.setTitle(null);
-		} catch (OfficeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 	}
 
 	public VBoxDrawerController() {
@@ -91,17 +78,20 @@ public class VBoxDrawerController implements Initializable {
 	}
 
 	public void closeOfficeManager() {
-		OfficeUtils.stopQuietly(officeManager);
+		if(officeManager != null) {
+			OfficeUtils.stopQuietly(officeManager);
+		}
 	}
 
 	@FXML
 	void importarDocumento(ActionEvent event) {
-		//https://github.com/phip1611/docx4j-search-and-replace-util
+		// https://github.com/phip1611/docx4j-search-and-replace-util
 		// https://blog.csdn.net/u011781521/article/details/116260048
 		// https://jenkov.com/tutorials/javafx/filechooser.html
-		
-		//Reemplazar texto: https://stackoverflow.com/questions/3391968/text-replacement-in-winword-doc-using-apache-poi
-		//https://gist.github.com/aerobium/bf02e443c079c5caec7568e167849dda
+
+		// Reemplazar texto:
+		// https://stackoverflow.com/questions/3391968/text-replacement-in-winword-doc-using-apache-poi
+		// https://gist.github.com/aerobium/bf02e443c079c5caec7568e167849dda
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File("."));
 
@@ -109,9 +99,7 @@ public class VBoxDrawerController implements Initializable {
 		try {
 			File pdfFileOut = new File(Controller.TEMPDOCSFOLDER + File.separator + "output.pdf");
 			JodConverter.convert(fileChooser.showOpenDialog(InformGeneratorApp.primaryStage))
-					.as(DefaultDocumentFormatRegistry.DOC)
-					.to(pdfFileOut)
-					.as(DefaultDocumentFormatRegistry.PDF)
+					.as(DefaultDocumentFormatRegistry.DOC).to(pdfFileOut).as(DefaultDocumentFormatRegistry.PDF)
 					.execute();
 			// Esto es para forzar al pdfViewer que cambie de pdf
 			pdfFileProperty().set(null);
@@ -140,20 +128,21 @@ public class VBoxDrawerController implements Initializable {
 			stage.close();
 		}
 	}
+	
+	public void setOfficeManager(LocalOfficeManager officeManager) {
+		this.officeManager = officeManager;
+	}
 
 	public final ObjectProperty<File> pdfFileProperty() {
 		return this.pdfFile;
 	}
-	
 
 	public final File getPdfFile() {
 		return this.pdfFileProperty().get();
 	}
-	
 
 	public final void setPdfFile(final File pdfFile) {
 		this.pdfFileProperty().set(pdfFile);
 	}
-	
 
 }
