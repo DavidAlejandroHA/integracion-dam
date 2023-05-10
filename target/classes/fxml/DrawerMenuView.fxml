@@ -18,7 +18,7 @@
                   <Font size="24.0" />
                </font>
             </JFXButton>
-            <JFXButton fx:id="am" graphicTextGap="20.0" onMousePressed="#sas" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Importar fuente de datos" textAlignment="CENTER" wrapText="true">
+            <JFXButton fx:id="importarFuenteButton" graphicTextGap="20.0" onAction="#importarFuente" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Importar fuente de datos" textAlignment="CENTER" wrapText="true">
                <graphic>
                   <FontIcon iconColor="#33e18d" iconLiteral="gmi-archive" iconSize="60" />
                </graphic>

@@ -15,6 +15,7 @@ import org.jodconverter.local.office.LocalOfficeManager;
 import com.jfoenix.controls.JFXButton;
 
 import integracion.wordseedexporter.WordSeedExporterApp;
+import integracion.wordseedexporter.model.DocumentManager;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
@@ -41,7 +42,7 @@ public class VBoxDrawerController implements Initializable {
 	private JFXButton importarDocumentoButton;
 
 	@FXML
-	private JFXButton am;
+	private JFXButton importarFuenteButton;
 
 	private LocalOfficeManager officeManager;
 
@@ -50,7 +51,7 @@ public class VBoxDrawerController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
+
 	}
 
 	public VBoxDrawerController() {
@@ -78,9 +79,11 @@ public class VBoxDrawerController implements Initializable {
 	}
 
 	public void closeOfficeManager() {
-		if(officeManager != null) {
+		if (officeManager != null) {
 			OfficeUtils.stopQuietly(officeManager);
 		}
+		// TODO: Hilo de javafx para nueva ventana/alerta indicando que se está cerrando
+		// el programa hasta que se cierre
 	}
 
 	@FXML
@@ -110,6 +113,14 @@ public class VBoxDrawerController implements Initializable {
 			System.out.println("b");
 		}
 	}
+	
+	@FXML
+	void importarFuente(ActionEvent event) {
+		DocumentManager docManager = new DocumentManager();
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(new File("."));
+		docManager.giveDocument(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
+	}
 
 	@FXML
 	void salir(ActionEvent event) {
@@ -128,7 +139,7 @@ public class VBoxDrawerController implements Initializable {
 			stage.close();
 		}
 	}
-	
+
 	public void setOfficeManager(LocalOfficeManager officeManager) {
 		this.officeManager = officeManager;
 	}

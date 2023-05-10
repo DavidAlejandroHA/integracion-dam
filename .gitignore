@@ -1,1 +1,7 @@
+.classpath
+.proyect
+/.settings/
+/bin/
 /target/
+*.odt
+*.docx
