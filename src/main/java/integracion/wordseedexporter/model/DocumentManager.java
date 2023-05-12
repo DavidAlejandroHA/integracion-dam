@@ -1,14 +1,25 @@
 package integracion.wordseedexporter.model;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.jena.rdfxml.xmlinput.impl.XMLHandler;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.docx4j.XmlUtils;
@@ -20,6 +31,8 @@ import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.odftoolkit.odfdom.incubator.search.TextNavigation;
 import org.odftoolkit.odfdom.incubator.search.TextSelection;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class DocumentManager {
 	
@@ -48,15 +61,17 @@ public class DocumentManager {
 				MainDocumentPart documentPart = wordMLPackage.getMainDocumentPart();
 				
 				// unmarshallFromTemplate requires string input
-				String xml = XmlUtils.marshaltoString(documentPart.getJaxbElement(), true, true);
+				String xml = XmlUtils.marshaltoString(documentPart.getContents(), true, true);
 				
-				System.out.println(xml);
+				//System.out.println(xml);
 				
 				// TODO: hacer clase para parsear con el DOM y reemplazar solo el texto contenido en los elementos
 				//
 				//Document doc = convertStringToXMLDocument(xml);
-				xml = xml.replaceAll("por", "PAPAPAPA");
+				//xml = xml.replaceAll("por", "PAPAPAPA");
+				xml = replaceWordInXML(xml, "por", "PAPAPAPA");
 				// Do it...
+				System.out.println(xml);
 				Object obj = XmlUtils.unmarshalString(xml);
 				// Inject result into docx
 				//https://github.com/plutext/docx4j/blob/1f496eca1f70e07d8c112168857bee4c8e6b0514/docx4j-samples-docx4j/src/main/java/org/docx4j/samples/VariableReplace.java#L95
@@ -74,6 +89,15 @@ public class DocumentManager {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -101,7 +125,15 @@ public class DocumentManager {
 		//https://stackoverflow.com/questions/72405729/how-to-programatically-modify-libre-office-odt-document-in-java
 		//https://angelozerr.wordpress.com/2012/12/06/how-to-convert-docxodt-to-pdfhtml-with-java/
 		//https://stackoverflow.com/questions/61805246/docx4j-docx-to-pdf-conversion-docx-content-not-appearing-page-by-page-to-pdf
-		
+	}
+	
+	public String replaceWordInXML(String xml, String key1, String key2) throws ParserConfigurationException, SAXException, IOException {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser saxParser = factory.newSAXParser();
+        InputStream targetStream = new ByteArrayInputStream(xml.getBytes());
+        saxParser.parse(targetStream, new ReplaceWordHandler(key1, key2));
+        System.out.println(IOUtils.toString(targetStream, StandardCharsets.UTF_8.name()));
+		return IOUtils.toString(targetStream, StandardCharsets.UTF_8.name());
 	}
 
 }

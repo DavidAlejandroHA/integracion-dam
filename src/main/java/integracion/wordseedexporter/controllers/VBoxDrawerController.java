@@ -1,6 +1,7 @@
 package integracion.wordseedexporter.controllers;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
@@ -113,14 +114,37 @@ public class VBoxDrawerController implements Initializable {
 			System.out.println("b");
 		}
 	}
-	
+
 	@FXML
 	void importarFuente(ActionEvent event) {
 		DocumentManager docManager = new DocumentManager();
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File("."));
 		docManager.giveDocument(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
-		//  TODO: Terminar la importación de la fuente de datos
+		/*try {
+			XWPFDocument doc = new XWPFDocument(
+					new FileInputStream(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage)));
+			
+			for (XWPFParagraph p : doc.getParagraphs()) {
+			    List<XWPFRun> runs = p.getRuns();
+			    if (runs != null) {
+			        for (XWPFRun r : runs) {
+			            String text = r.getText(0);
+			            if (text != null && text.contains("needle")) {
+			                text = text.replace("needle", "haystack");
+			                r.setText(text, 0);
+			            }
+			        }
+			    }
+			}
+			//doc.getCharts().get(0).get
+			//doc.getEndnotes().get(0).getParagraphs()
+			XWPFFooter s;
+			//https://stackoverflow.com/questions/18264975/issue-with-jodconverter-and-running-libreoffice-in-headless-mode
+			//https://poi.apache.org/apidocs/dev/org/apache/poi/xwpf/usermodel/BodyType.html
+			//https://poi.apache.org/apidocs/dev/org/apache/poi/xwpf/usermodel/IBody.html*/
+		
+		// TODO: Terminar la importación de la fuente de datos
 	}
 
 	@FXML
