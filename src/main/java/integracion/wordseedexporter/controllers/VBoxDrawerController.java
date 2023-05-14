@@ -1,11 +1,13 @@
 package integracion.wordseedexporter.controllers;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.office.OfficeException;
@@ -31,6 +33,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import net.sf.saxon.s9api.SaxonApiException;
 
 public class VBoxDrawerController implements Initializable {
 
@@ -94,12 +97,9 @@ public class VBoxDrawerController implements Initializable {
 		// https://jenkov.com/tutorials/javafx/filechooser.html
 
 		// Reemplazar texto:
-		// https://stackoverflow.com/questions/3391968/text-replacement-in-winword-doc-using-apache-poi
 		// https://gist.github.com/aerobium/bf02e443c079c5caec7568e167849dda
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File("."));
-
-		System.out.println("a");
 		try {
 			File pdfFileOut = new File(Controller.TEMPDOCSFOLDER + File.separator + "output.pdf");
 			JodConverter.convert(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage))
@@ -120,7 +120,15 @@ public class VBoxDrawerController implements Initializable {
 		DocumentManager docManager = new DocumentManager();
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File("."));
-		docManager.giveDocument(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
+		try {
+			docManager.giveDocument(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		
 		/*try {
 			XWPFDocument doc = new XWPFDocument(
 					new FileInputStream(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage)));
@@ -143,6 +151,9 @@ public class VBoxDrawerController implements Initializable {
 			//https://stackoverflow.com/questions/18264975/issue-with-jodconverter-and-running-libreoffice-in-headless-mode
 			//https://poi.apache.org/apidocs/dev/org/apache/poi/xwpf/usermodel/BodyType.html
 			//https://poi.apache.org/apidocs/dev/org/apache/poi/xwpf/usermodel/IBody.html*/
+			}catch (SaxonApiException e) {
+			e.printStackTrace();
+		}
 		
 		// TODO: Terminar la importación de la fuente de datos
 	}
