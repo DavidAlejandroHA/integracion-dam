@@ -472,7 +472,7 @@ public class PDFViewSkinES extends PDFViewSkin {
 		nextResultButton.setOnAction(evt -> showNextSearchResult());
 		nextResultButton.setMaxHeight(Double.MAX_VALUE);
 
-		final Button doneButton = new Button("Done");
+		final Button doneButton = new Button("Hecho");
 		doneButton.setOnAction(evt -> view.setSearchText(null));
 		doneButton.getStyleClass().addAll("search-bar-button");
 

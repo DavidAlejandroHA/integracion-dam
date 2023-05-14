@@ -1,181 +1,176 @@
 package integracion.wordseedexporter.model;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.docx4j.XmlUtils;
-import org.docx4j.openpackaging.exceptions.Docx4JException;
-import org.docx4j.openpackaging.io3.Save;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
-import org.docx4j.utils.XPathFactoryUtil;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import net.sf.saxon.s9api.SaxonApiException;
-import net.sf.saxon.xpath.XPathFactoryImpl;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xwpf.usermodel.XWPFComment;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFEndnote;
+import org.apache.poi.xwpf.usermodel.XWPFFooter;
+import org.apache.poi.xwpf.usermodel.XWPFFootnote;
+import org.apache.poi.xwpf.usermodel.XWPFHeader;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
 public class DocumentManager {
 
 	public DocumentManager() {
-
 	}
 
-	public void giveDocument(File f) throws XPathExpressionException, TransformerException, SaxonApiException {
-		// https://odftoolkit.org/api/odfdom/org/odftoolkit/odfdom/doc/OdfTextDocument.html
-		// https://odftoolkit.org/api/odfdom/org/odftoolkit/odfdom/doc/package-summary.html
+	public void giveDocument(File f)
+			throws XPathExpressionException, TransformerException, InvalidFormatException, IOException {
 
 		if (f.getName().endsWith(".docx")) {
-			WordprocessingMLPackage wordMLPackage;
+//			XWPFDocument doc = new XWPFDocument(OPCPackage.open(f));
+//			document = doc;
 
-			try {
-				wordMLPackage = WordprocessingMLPackage.load(f);
-				MainDocumentPart documentPart = wordMLPackage.getMainDocumentPart();
+			// ej.
+			// Registros de la columna de "Nombres"
+			List<String> nombres = Arrays.asList("Pepe", "Carlos"); // registros de una columna
+			List<List<String>> listaClaves = Arrays.asList(nombres); // aquí irían más si hubiesen más columnas
 
-				// unmarshallFromTemplate requires string input
-				String xml = XmlUtils.marshaltoString(documentPart.getContents(), true, true);
+			// Nombre de las columnas del excel - serán las palabras a reemplazar
+			List<String> nombresColumnas = Arrays.asList("[Nombre]");
+			replaceDocxStrings(listaClaves, nombresColumnas, f);
+		}
+	}
 
-				xml = replaceStringInXML(xml, "'por'", "<PAPAPAPAs>&&apos;");
-				
-				// https://www.docx4java.org/blog/2019/01/opendope-and-xpath-2-03-0/
-				// https://github.com/plutext/docx4j/blob/1bd5f8375525c2f3f22eef33077b593379391b77/src/samples/docx4j/org/docx4j/samples/ContentControlBindingExtensions.java
-				Object obj = XmlUtils.unmarshalString(xml);
-				
-				// Inyectar el resultado en el docx
-				documentPart.setJaxbElement((org.docx4j.wml.Document) obj);
+	// La lista de listas de string vendrá de la próxima interfaz a crear
+	public void replaceDocxStrings(List<List<String>> replaceKeyList, List<String> keyList, File f)
+			throws InvalidFormatException, IOException {
 
-				Save saver = new Save(wordMLPackage);
-				saver.save(new FileOutputStream(new File("unmarshallFromTemplateExample.docx")));
+		// La interfaz IBody es la que implementa el método .getParagraphs() y las
+		// clases que manejan el contenido de los párrafos
+		// https://poi.apache.org/apidocs/dev/org/apache/poi/xwpf/usermodel/IBody.html
+		// https://poi.apache.org/apidocs/dev/org/apache/poi/xwpf/usermodel/BodyType.html
 
-			} catch (Docx4JException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JAXBException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SAXException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ParserConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		for (int i = 0; i < replaceKeyList.size(); i++) { // iterando en las columnas
+
+			List<String> lChild = replaceKeyList.get(i);
+			for (int j = 0; j < lChild.size(); j++) { // iterando en las filas
+
+				XWPFDocument doc = new XWPFDocument(OPCPackage.open(f)); // para reiniciar el doc a su estado inicial
+																			// para poder volver a reemplazar texto
+
+				List<XWPFParagraph> parrafos = doc.getParagraphs();
+				List<XWPFTable> tablas = doc.getTables();
+				XWPFComment[] comentarios = doc.getComments();
+				List<XWPFEndnote> endNotes = doc.getEndnotes();
+				List<XWPFFooter> piesPag = doc.getFooterList();
+				List<XWPFFootnote> notasPiesPag = doc.getFootnotes();
+				List<XWPFHeader> cabeceras = doc.getHeaderList();
+
+				// Párrafos del cuerpo del documento
+				if (parrafos != null) {
+					for (XWPFParagraph p : parrafos) {
+						editParagraph(p, lChild.get(j), keyList.get(i));
+					}
+				}
+
+				// Tablas
+				if (tablas != null) {
+					for (XWPFTable tbl : tablas) {
+						for (XWPFTableRow row : tbl.getRows()) {
+							for (XWPFTableCell cell : row.getTableCells()) {
+								for (XWPFParagraph p : cell.getParagraphs()) {
+									editParagraph(p, lChild.get(j), keyList.get(i));
+								}
+							}
+						}
+					}
+				}
+
+				// Comentarios
+				if (comentarios != null) {
+					for (XWPFComment comms : comentarios) {
+						for (XWPFParagraph p : comms.getParagraphs()) {
+							editParagraph(p, lChild.get(j), keyList.get(i));
+						}
+					}
+				}
+
+				// EndNotes
+				if (endNotes != null) {
+					for (XWPFEndnote endNote : endNotes) {
+						for (XWPFParagraph p : endNote.getParagraphs()) {
+							editParagraph(p, lChild.get(j), keyList.get(i));
+						}
+					}
+				}
+
+				// Pies de páginas
+				if (piesPag != null) {
+					for (XWPFFooter footer : piesPag) {
+						for (XWPFParagraph p : footer.getParagraphs()) {
+							editParagraph(p, lChild.get(j), keyList.get(i));
+						}
+					}
+				}
+
+				// Notas de pies de páginas
+				if (notasPiesPag != null) {
+					for (XWPFFootnote footNote : notasPiesPag) {
+						for (XWPFParagraph p : footNote.getParagraphs()) {
+							editParagraph(p, lChild.get(j), keyList.get(i));
+						}
+					}
+				}
+
+				// Cabeceras
+				if (cabeceras != null) {
+					for (XWPFHeader header : cabeceras) {
+						for (XWPFParagraph p : header.getParagraphs()) {
+							editParagraph(p, lChild.get(j), keyList.get(i));
+						}
+					}
+				}
+				doc.write(new FileOutputStream("output_" + (j + 1) + ".docx"));
 			}
-
 		}
-		// https://docx4java.org/docx4j/Docx4j_GettingStarted.pdf
-		// https://stackoverflow.com/questions/72405729/how-to-programatically-modify-libre-office-odt-document-in-java
-		// https://angelozerr.wordpress.com/2012/12/06/how-to-convert-docxodt-to-pdfhtml-with-java/
-		// https://stackoverflow.com/questions/61805246/docx4j-docx-to-pdf-conversion-docx-content-not-appearing-page-by-page-to-pdf
+
+	}
+	
+	public void replacePptxStrings(File f) throws InvalidFormatException {
+		XMLSlideShow slideShow = new XMLSlideShow(OPCPackage.open(f));
+		
+		// https://poi.apache.org/components/slideshow/quick-guide.html
+		// https://poi.apache.org/apidocs/dev/org/apache/poi/xslf/usermodel/XSLFShapeContainer.html
+		// https://poi.apache.org/apidocs/dev/org/apache/poi/xslf/usermodel/XSLFShape.html
+		for (XSLFSlide slide : slideShow.getSlides()) {
+			
+			//slide.getNotes().getTextParagraphs().get(0).te
+		}
 	}
 
-	public String replaceStringInXML(String xml, String key1, String key2) throws SaxonApiException, SAXException,
-			IOException, ParserConfigurationException, XPathExpressionException, TransformerException {
-
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true); // never forget this!
-		DocumentBuilder docBuilder = factory.newDocumentBuilder();
-		InputStream xmlStream = new ByteArrayInputStream(xml.getBytes());
-		Document doc = docBuilder.parse(xmlStream);
-
-		// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
-		// En este caso solo se escapea las comillas dobles porque es lo que se usa para el contains"" del xpath
-		String escapedKey1 = key1.replaceAll("\"", "\"\"");
-
-		// Añadir los carácteres de escape para la estructura xml (esto solo en archivos xml de odf?)
-		//key2 = StringEscapeUtils.escapeXml11(key2);
-
-		String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
-		// Para poder escapear los carácteres especiales
-		XPathFactoryUtil.setxPathFactory(new XPathFactoryImpl());
-		XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
-
-		NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(doc, XPathConstants.NODE);
-		// Actualizar los nodos encontrados
-		// System.out.println(StringEscapeUtils.escapeXml11(key1));
-		for (int i = 0; i < nodelist.getLength(); i++) {
-			Node node = nodelist.item(i);
-			String text = node.getTextContent();
-			// Aqui ya no se utiliza el texto escapeado "de saxon" porque ya se está editando texto a nivel de documento xml
-			text = text.replaceAll(key1, key2);
-			node.setTextContent(text);
+	public void editParagraph(XWPFParagraph p, String replaceableKey, String key) {
+		List<XWPFRun> runs = p.getRuns();
+		if (runs != null) {
+			for (XWPFRun r : runs) {
+				String text = r.getText(0);
+//				if(text != null && text.equals("[Nombre]")) {
+//					System.out.println(text);
+//					System.out.println(replaceableKey);
+//					System.out.println(key);
+//				}
+				if (text != null && text.contains(key)) {
+					text = text.replace(key, replaceableKey);
+					r.setText(text, 0);
+				}
+			}
 		}
-		// Escribir el contenido xml en forma de String
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(doc);
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		StreamResult result = new StreamResult(output);
-		transformer.transform(source, result);
-
-		return new String(output.toByteArray());
-
-		
-		
-		
-		
-//		Processor proc = new Processor(false);
-//		Serializer serializer = proc.newSerializer();
-//		XPathCompiler xpath = proc.newXPathCompiler();
-//		DocumentBuilder builder = proc.newDocumentBuilder();
-//
-//		// Convertir la string a un único nodo padre (s9api)
-//		XdmNode doc = builder.build(new StreamSource(new StringReader(xml)));
-//
-//		// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
-//		List<String> escapeList = Arrays.asList("\"", "'", "<", ">", "&");
-//		
-//		for(int i = 0; i < escapeList.size(); i++) {
-//			key1 = key1.replaceAll(escapeList.get(i), escapeList.get(i) + escapeList.get(i));
-//			//key2 = key2.replaceAll(escapeList.get(i), escapeList.get(i) + escapeList.get(i));
-//		}
-//		
-//		// Añadir los carácteres de escape para la estructura xml (esto solo en docx, pptx, exelx...)
-//		key2 = StringEscapeUtils.escapeXml11(key2);
-//
-//		System.out.println(key1);
-//		XPathCompiler co = proc.newXPathCompiler();
-//		//co.evaluate("replace //*[text()[contains(.,\"" + key1 + "\")]], a", doc);
-//		co.compile("replace //*[text()[contains(.,\"" + key1 + "\")]], a");
-//		
-//		//XPathSelector selector = xpath.compile("show //*[text()[contains(.,\"" + key1 + "\")]]").load();
-//		
-//		
-//		for (XdmItem s : selector) {
-//			//XdmNode ss = (XdmNode) s;
-//			s.getUnderlyingValue().
-//			System.out.println(s.getUnderlyingValue().getStringValue());
-//		}
-//		System.out.println("a");
-//
-//		serializer.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "no");
-//		// serializer.setOutputProperty(Serializer.Property.INDENT, "yes");
-//
-//		return serializer.serializeNodeToString(doc);
 	}
+
 }

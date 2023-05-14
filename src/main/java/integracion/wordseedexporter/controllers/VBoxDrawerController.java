@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.office.OfficeException;
 import org.jodconverter.core.office.OfficeUtils;
@@ -33,7 +34,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import net.sf.saxon.s9api.SaxonApiException;
 
 public class VBoxDrawerController implements Initializable {
 
@@ -100,11 +100,13 @@ public class VBoxDrawerController implements Initializable {
 		// https://gist.github.com/aerobium/bf02e443c079c5caec7568e167849dda
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File("."));
+
 		try {
 			File pdfFileOut = new File(Controller.TEMPDOCSFOLDER + File.separator + "output.pdf");
-			JodConverter.convert(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage))
-					.as(DefaultDocumentFormatRegistry.DOC).to(pdfFileOut).as(DefaultDocumentFormatRegistry.PDF)
-					.execute();
+			File outDir = fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage);
+			JodConverter.convert(outDir).as(DefaultDocumentFormatRegistry.DOC).to(pdfFileOut)
+					.as(DefaultDocumentFormatRegistry.PDF).execute();
+			System.out.println(String.valueOf(JodConverter.convert(outDir)));
 			// Esto es para forzar al pdfViewer que cambie de pdf
 			pdfFileProperty().set(null);
 			pdfFileProperty().set(pdfFileOut);
@@ -128,33 +130,14 @@ public class VBoxDrawerController implements Initializable {
 		} catch (TransformerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		
-		/*try {
-			XWPFDocument doc = new XWPFDocument(
-					new FileInputStream(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage)));
-			
-			for (XWPFParagraph p : doc.getParagraphs()) {
-			    List<XWPFRun> runs = p.getRuns();
-			    if (runs != null) {
-			        for (XWPFRun r : runs) {
-			            String text = r.getText(0);
-			            if (text != null && text.contains("needle")) {
-			                text = text.replace("needle", "haystack");
-			                r.setText(text, 0);
-			            }
-			        }
-			    }
-			}
-			//doc.getCharts().get(0).get
-			//doc.getEndnotes().get(0).getParagraphs()
-			XWPFFooter s;
-			//https://stackoverflow.com/questions/18264975/issue-with-jodconverter-and-running-libreoffice-in-headless-mode
-			//https://poi.apache.org/apidocs/dev/org/apache/poi/xwpf/usermodel/BodyType.html
-			//https://poi.apache.org/apidocs/dev/org/apache/poi/xwpf/usermodel/IBody.html*/
-			}catch (SaxonApiException e) {
+		} catch (InvalidFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		// TODO: Terminar la importación de la fuente de datos
 	}
 
