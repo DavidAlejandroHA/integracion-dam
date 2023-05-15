@@ -12,7 +12,11 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
+import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.apache.poi.xwpf.usermodel.XWPFComment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFEndnote;
@@ -76,7 +80,7 @@ public class DocumentManager {
 				// Párrafos del cuerpo del documento
 				if (parrafos != null) {
 					for (XWPFParagraph p : parrafos) {
-						editParagraph(p, lChild.get(j), keyList.get(i));
+						editDocxParagraph(p, lChild.get(j), keyList.get(i));
 					}
 				}
 
@@ -86,7 +90,7 @@ public class DocumentManager {
 						for (XWPFTableRow row : tbl.getRows()) {
 							for (XWPFTableCell cell : row.getTableCells()) {
 								for (XWPFParagraph p : cell.getParagraphs()) {
-									editParagraph(p, lChild.get(j), keyList.get(i));
+									editDocxParagraph(p, lChild.get(j), keyList.get(i));
 								}
 							}
 						}
@@ -97,7 +101,7 @@ public class DocumentManager {
 				if (comentarios != null) {
 					for (XWPFComment comms : comentarios) {
 						for (XWPFParagraph p : comms.getParagraphs()) {
-							editParagraph(p, lChild.get(j), keyList.get(i));
+							editDocxParagraph(p, lChild.get(j), keyList.get(i));
 						}
 					}
 				}
@@ -106,7 +110,7 @@ public class DocumentManager {
 				if (endNotes != null) {
 					for (XWPFEndnote endNote : endNotes) {
 						for (XWPFParagraph p : endNote.getParagraphs()) {
-							editParagraph(p, lChild.get(j), keyList.get(i));
+							editDocxParagraph(p, lChild.get(j), keyList.get(i));
 						}
 					}
 				}
@@ -115,7 +119,7 @@ public class DocumentManager {
 				if (piesPag != null) {
 					for (XWPFFooter footer : piesPag) {
 						for (XWPFParagraph p : footer.getParagraphs()) {
-							editParagraph(p, lChild.get(j), keyList.get(i));
+							editDocxParagraph(p, lChild.get(j), keyList.get(i));
 						}
 					}
 				}
@@ -124,7 +128,7 @@ public class DocumentManager {
 				if (notasPiesPag != null) {
 					for (XWPFFootnote footNote : notasPiesPag) {
 						for (XWPFParagraph p : footNote.getParagraphs()) {
-							editParagraph(p, lChild.get(j), keyList.get(i));
+							editDocxParagraph(p, lChild.get(j), keyList.get(i));
 						}
 					}
 				}
@@ -133,7 +137,7 @@ public class DocumentManager {
 				if (cabeceras != null) {
 					for (XWPFHeader header : cabeceras) {
 						for (XWPFParagraph p : header.getParagraphs()) {
-							editParagraph(p, lChild.get(j), keyList.get(i));
+							editDocxParagraph(p, lChild.get(j), keyList.get(i));
 						}
 					}
 				}
@@ -142,20 +146,49 @@ public class DocumentManager {
 		}
 
 	}
-	
-	public void replacePptxStrings(File f) throws InvalidFormatException {
-		XMLSlideShow slideShow = new XMLSlideShow(OPCPackage.open(f));
-		
+
+	public void replacePptxStrings(List<List<String>> replaceKeyList, List<String> keyList, File f)
+			throws InvalidFormatException, IOException {
+
+		for (int i = 0; i < replaceKeyList.size(); i++) { // iterando en las columnas
+
+			List<String> lChild = replaceKeyList.get(i);
+			for (int j = 0; j < lChild.size(); j++) { // iterando en las filas
+				XMLSlideShow slideShow = new XMLSlideShow(OPCPackage.open(f));// para reiniciar el doc a su estado
+																				// inicial para poder volver a
+																				// reemplazar texto
+				List<XSLFSlide> slides = slideShow.getSlides();
+				if (slides != null) {
+					for (XSLFSlide slide : slideShow.getSlides()) {
+						// slide.getNotes().pa
+						for (XSLFShape sh : slide.getShapes()) {
+							if (sh instanceof XSLFTextShape) {
+
+								List<XSLFTextParagraph> parrafos = ((XSLFTextShape) sh).getTextParagraphs();
+
+								if (parrafos != null) {
+									for (XSLFTextParagraph p : parrafos) {
+										editPptxParagraph(p, lChild.get(j), keyList.get(i));
+									}
+
+								}
+							}
+
+						}
+					}
+				}
+				slideShow.write(new FileOutputStream("output_" + (j + 1) + ".pptx"));
+
+			}
+
+		}
 		// https://poi.apache.org/components/slideshow/quick-guide.html
 		// https://poi.apache.org/apidocs/dev/org/apache/poi/xslf/usermodel/XSLFShapeContainer.html
 		// https://poi.apache.org/apidocs/dev/org/apache/poi/xslf/usermodel/XSLFShape.html
-		for (XSLFSlide slide : slideShow.getSlides()) {
-			
-			//slide.getNotes().getTextParagraphs().get(0).te
-		}
+
 	}
 
-	public void editParagraph(XWPFParagraph p, String replaceableKey, String key) {
+	public void editDocxParagraph(XWPFParagraph p, String replaceableKey, String key) {
 		List<XWPFRun> runs = p.getRuns();
 		if (runs != null) {
 			for (XWPFRun r : runs) {
@@ -168,6 +201,24 @@ public class DocumentManager {
 				if (text != null && text.contains(key)) {
 					text = text.replace(key, replaceableKey);
 					r.setText(text, 0);
+				}
+			}
+		}
+	}
+
+	public void editPptxParagraph(XSLFTextParagraph p, String replaceableKey, String key) {
+		List<XSLFTextRun> runs = p.getTextRuns();
+		if (runs != null) {
+			for (XSLFTextRun r : runs) {
+				String text = r.getRawText();
+//				if(text != null && text.equals("[Nombre]")) {
+//					System.out.println(text);
+//					System.out.println(replaceableKey);
+//					System.out.println(key);
+//				}
+				if (text != null && text.contains(key)) {
+					text = text.replace(key, replaceableKey);
+					r.setText(text);
 				}
 			}
 		}

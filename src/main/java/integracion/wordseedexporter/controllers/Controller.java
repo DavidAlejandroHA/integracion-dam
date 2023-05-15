@@ -69,7 +69,7 @@ public class Controller implements Initializable {
 				pdfViewer.unload();
 			}
 		});
-		
+
 		// Añadir la interfaz personalizada en Español al pdfViewer
 		pdfViewer.setSkin(new PDFViewSkinES(pdfViewer));
 
@@ -90,9 +90,9 @@ public class Controller implements Initializable {
 		// https://stackoverflow.com/questions/13815119/apache-poi-converting-doc-to-html-with-images
 		// https://stackoverflow.com/questions/7868713/convert-word-to-html-with-apache-poi
 		// https://poi.apache.org/components/
-		//https://github.com/deividasstr/docx-word-replacer/tree/master
-		//https://github.com/HomerReid/TranslatePPTX
-		//https://stackoverflow.com/questions/52478351/replacing-all-text-in-powerpoint-using-apache-poi
+		// https://github.com/deividasstr/docx-word-replacer/tree/master
+		// https://github.com/HomerReid/TranslatePPTX
+		// https://stackoverflow.com/questions/52478351/replacing-all-text-in-powerpoint-using-apache-poi
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/View.fxml"));
 			loader.setController(this);
@@ -105,9 +105,11 @@ public class Controller implements Initializable {
 	public AnchorPane getView() {
 		return view;
 	}
-	
+
 	public void setOfficeManager(LocalOfficeManager officeManager) {
 		this.officeManager = officeManager;
+		// TODO: LocalOfficeManager.builder().taskExecutionTimeout(Long.valueOf(2000));
+		// mirar si se puede aplicar esto al cerrar
 		try {
 			this.officeManager.start();
 		} catch (OfficeException e) {
