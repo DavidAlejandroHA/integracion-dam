@@ -52,7 +52,7 @@ public class VBoxDrawerController implements Initializable {
 
 	// model
 	public ObjectProperty<File> pdfFile = new SimpleObjectProperty<>();
-
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -70,16 +70,6 @@ public class VBoxDrawerController implements Initializable {
 
 	public HBox getView() {
 		return drawerView;
-	}
-
-	@FXML
-	void dda(ActionEvent event) {
-		System.out.println("asasasas2");
-	}
-
-	@FXML
-	void sas(MouseEvent event) {
-		System.out.println("asasasas333313321");
 	}
 
 	public void closeOfficeManager() {
@@ -104,9 +94,11 @@ public class VBoxDrawerController implements Initializable {
 		try {
 			File pdfFileOut = new File(Controller.TEMPDOCSFOLDER + File.separator + "output.pdf");
 			File outDir = fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage);
-			JodConverter.convert(outDir).as(DefaultDocumentFormatRegistry.DOC).to(pdfFileOut)
-					.as(DefaultDocumentFormatRegistry.PDF).execute();
-			System.out.println(String.valueOf(JodConverter.convert(outDir)));
+			if(outDir != null) {
+				JodConverter.convert(outDir).as(DefaultDocumentFormatRegistry.DOC).to(pdfFileOut)
+				.as(DefaultDocumentFormatRegistry.PDF).execute();
+			}
+			
 			// Esto es para forzar al pdfViewer que cambie de pdf
 			pdfFileProperty().set(null);
 			pdfFileProperty().set(pdfFileOut);
@@ -119,9 +111,17 @@ public class VBoxDrawerController implements Initializable {
 
 	@FXML
 	void importarFuente(ActionEvent event) {
+		reemplazarTexto();
+	}
+	
+	public void reemplazarTexto() {
 		DocumentManager docManager = new DocumentManager();
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File("."));
+		fileChooser.getExtensionFilters().addAll(//
+				new FileChooser.ExtensionFilter("Microsoft Word Document (2007)", "*.docx"),
+				new FileChooser.ExtensionFilter("Microsoft PowerPoint Document (2007)", "*.pptx"),
+				new FileChooser.ExtensionFilter("Microsoft Excel Document (2007)", "*.xlsx"));
 		try {
 			docManager.giveDocument(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
 		} catch (XPathExpressionException e) {
@@ -158,6 +158,17 @@ public class VBoxDrawerController implements Initializable {
 			stage.close();
 		}
 	}
+	
+	// TODO
+	@FXML
+    void enterMouseOnDrawer(MouseEvent event) {
+		System.out.println("a");
+    }
+
+    @FXML
+    void exitMouseOfDrawer(MouseEvent event) {
+    	System.out.println("b");
+    }
 
 	public void setOfficeManager(LocalOfficeManager officeManager) {
 		this.officeManager = officeManager;

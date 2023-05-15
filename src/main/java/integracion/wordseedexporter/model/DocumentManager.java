@@ -3,7 +3,7 @@ package integracion.wordseedexporter.model;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.transform.TransformerException;
@@ -11,12 +11,17 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFComment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFEndnote;
@@ -29,6 +34,8 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
+import integracion.wordseedexporter.controllers.Controller;
+
 public class DocumentManager {
 
 	public DocumentManager() {
@@ -36,20 +43,25 @@ public class DocumentManager {
 
 	public void giveDocument(File f)
 			throws XPathExpressionException, TransformerException, InvalidFormatException, IOException {
-
-		if (f.getName().endsWith(".docx")) {
-//			XWPFDocument doc = new XWPFDocument(OPCPackage.open(f));
-//			document = doc;
-
+		
+		/*if (f != null) {
 			// ej.
 			// Registros de la columna de "Nombres"
 			List<String> nombres = Arrays.asList("Pepe", "Carlos"); // registros de una columna
 			List<List<String>> listaClaves = Arrays.asList(nombres); // aquí irían más si hubiesen más columnas
-
 			// Nombre de las columnas del excel - serán las palabras a reemplazar
-			List<String> nombresColumnas = Arrays.asList("[Nombre]");
-			replaceDocxStrings(listaClaves, nombresColumnas, f);
-		}
+			List<String> nombresColumnas = Arrays.asList("Sociedad");
+
+			if (f.getName().endsWith(".docx")) {
+				replaceDocxStrings(listaClaves, nombresColumnas, f);
+
+			} else if (f.getName().endsWith(".pptx")) {
+				replacePptxStrings(listaClaves, nombresColumnas, f);
+
+			} else if (f.getName().endsWith(".xlsx")) {
+				replaceXlsxStrings(listaClaves, nombresColumnas, f);
+			}
+		}*/
 	}
 
 	// La lista de listas de string vendrá de la próxima interfaz a crear
@@ -188,40 +200,77 @@ public class DocumentManager {
 
 	}
 
-	public void editDocxParagraph(XWPFParagraph p, String replaceableKey, String key) {
+	public void replaceXlsxStrings(List<List<String>> replaceKeyList, List<String> keyList, File f)
+			throws InvalidFormatException, IOException {
+		for (int i = 0; i < replaceKeyList.size(); i++) { // iterando en las columnas
+			List<String> lChild = replaceKeyList.get(i);
+			for (int j = 0; j < lChild.size(); j++) { // iterando en las filas
+				XSSFWorkbook spreadSheet = new XSSFWorkbook(OPCPackage.open(f));// para reiniciar el doc a su estado
+																				// inicial para poder volver a
+																				// reemplazar texto
+				Iterator<Sheet> slides = spreadSheet.sheetIterator();
+
+				if (slides != null) {
+
+					// Para cada página del documento exel
+					while (slides.hasNext()) {
+						Sheet sh = slides.next(); // Se maneja cada hoja
+						for (Row row : sh) {
+							for (Cell cell : row) {
+								editXlxsCells(cell, lChild.get(j), keyList.get(i));
+							}
+						}
+					}
+
+				}
+				spreadSheet.write(new FileOutputStream("output_" + (j + 1) + ".pptx"));
+
+			}
+		}
+	}
+
+	private void editDocxParagraph(XWPFParagraph p, String replaceableKey, String key) {
 		List<XWPFRun> runs = p.getRuns();
 		if (runs != null) {
 			for (XWPFRun r : runs) {
+				if(Controller.replaceExactWord.get()) {
+					replaceableKey = "\\b" + replaceableKey + "\\b";
+				}
 				String text = r.getText(0);
-//				if(text != null && text.equals("[Nombre]")) {
-//					System.out.println(text);
-//					System.out.println(replaceableKey);
-//					System.out.println(key);
-//				}
 				if (text != null && text.contains(key)) {
-					text = text.replace(key, replaceableKey);
+					text = text.replaceAll(key, replaceableKey);
 					r.setText(text, 0);
 				}
 			}
 		}
 	}
 
-	public void editPptxParagraph(XSLFTextParagraph p, String replaceableKey, String key) {
+	private void editPptxParagraph(XSLFTextParagraph p, String replaceableKey, String key) {
 		List<XSLFTextRun> runs = p.getTextRuns();
 		if (runs != null) {
 			for (XSLFTextRun r : runs) {
+				if(Controller.replaceExactWord.get()) {
+					replaceableKey = "\\b" + replaceableKey + "\\b";
+				}
 				String text = r.getRawText();
-//				if(text != null && text.equals("[Nombre]")) {
-//					System.out.println(text);
-//					System.out.println(replaceableKey);
-//					System.out.println(key);
-//				}
 				if (text != null && text.contains(key)) {
-					text = text.replace(key, replaceableKey);
+					text = text.replaceAll(key, replaceableKey);
 					r.setText(text);
 				}
 			}
 		}
 	}
 
+	private void editXlxsCells(Cell c, String replaceableKey, String key) {
+		if (c.getCellType().equals(CellType.STRING)) {
+			if(Controller.replaceExactWord.get()) {
+				replaceableKey = "\\b" + replaceableKey + "\\b";
+			}
+			String text = c.getStringCellValue();
+			if (text != null && text.contains(key)) {
+				text = text.replaceAll(key, replaceableKey);
+				c.setCellValue(text);
+			}
+		}
+	}
 }

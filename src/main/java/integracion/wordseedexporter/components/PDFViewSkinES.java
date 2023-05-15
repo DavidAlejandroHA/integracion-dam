@@ -481,7 +481,8 @@ public class PDFViewSkinES extends PDFViewSkin {
 		HBox buttonBox = new HBox(previousResultButton, nextResultButton);
 
 		HBox searchBox = new HBox(searchLabel, buttonBox, doneButton);
-		searchBox.getStyleClass().add("search-navigator");
+		searchBox.getStyleClass().addAll("search-navigator");
+		searchBox.setStyle("-fx-background-color: darkgray;");
 		searchBox.visibleProperty().bind(searchResultsAvailable);
 		searchBox.managedProperty().bind(searchResultsAvailable);
 

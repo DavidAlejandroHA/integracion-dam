@@ -13,6 +13,8 @@ import com.jfoenix.controls.JFXDrawer;
 
 import integracion.wordseedexporter.WordSeedExporterApp;
 import integracion.wordseedexporter.components.PDFViewSkinES;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -42,6 +44,10 @@ public class Controller implements Initializable {
 			System.getProperty("user.home") + File.separator + "." + APPFOLDERNAME);
 
 	public static final File TEMPDOCSFOLDER = new File(APPFOLDER.getPath() + File.separator + "tmpDocs");
+
+	// model
+
+	public static BooleanProperty replaceExactWord = new SimpleBooleanProperty(true); // valor por defecto a true
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
