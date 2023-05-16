@@ -14,7 +14,12 @@ import com.jfoenix.controls.JFXDrawer;
 import integracion.wordseedexporter.WordSeedExporterApp;
 import integracion.wordseedexporter.components.PDFViewSkinES;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -46,18 +51,25 @@ public class Controller implements Initializable {
 	public static final File TEMPDOCSFOLDER = new File(APPFOLDER.getPath() + File.separator + "tmpDocs");
 
 	// model
-
 	public static BooleanProperty replaceExactWord = new SimpleBooleanProperty(true); // valor por defecto a true
+
+	public static ListProperty<String> replaceList = new SimpleListProperty<>(FXCollections.observableArrayList());
+	public static ObjectProperty<ListProperty<String>> columnList = new SimpleObjectProperty<>(replaceList);
+
+	// La listproperty dentro de columnList deberá iterar por el mismo índice que
+	// la listproperty keyList
+	public static ListProperty<String> keyList = new SimpleListProperty<>(FXCollections.observableArrayList());
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// load data
+//		columnList TODO Continuar
+
 		drawerController = new VBoxDrawerController();
 		drawerMenu.setSidePane(drawerController.getView());
 
 		// drawerMenu.close();
-
 		// create app folder
 
 		if (!Controller.APPFOLDER.exists()) {

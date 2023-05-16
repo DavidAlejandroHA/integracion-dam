@@ -35,11 +35,41 @@ import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
 import integracion.wordseedexporter.controllers.Controller;
 
+/**
+ * <p>
+ * Esta clase se encarga de, dado un documento entregado, cambiar<br>
+ * una palabra o una serie de palabras en el documento entregado.
+ * </p>
+ * <p>
+ * Las palabras reemplazadas en el documento dependen además de la<br>
+ * BooleanProperty de la clase Controller (Controller.replaceExactWord), <br>
+ * ya que según su valor llegará a reemplazar solo las palabras <br>
+ * exactas que el usuario haya especificado (true) o cualquier coincidencia<br>
+ * que incluyan las que estén dentro de otra palabra que se encuentre en el<br>
+ * documento (false). <br>
+ * </p>
+ * 
+ * @author David Alejandro
+ *
+ */
 public class DocumentManager {
 
 	public DocumentManager() {
 	}
 
+	/**
+	 * Este método gestiona el tipo de documento entregado (.docx, pptx, xlsx) y
+	 * ejecuta el método apropiado para editar el documento.
+	 * 
+	 * TODO: En caso de entregar un documento de la suite de OpenOffice o
+	 * LibreOffice (odt, odp o ods), se transformará a su equivalente en las
+	 * versiones de los documento de microsoft para poder editarlos utilizando las
+	 * funciones actuales de la clase.
+	 * 
+	 * @param f El fichero (documento) a modificar
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 */
 	public void giveDocument(File f) throws InvalidFormatException, IOException {
 
 		if (f != null) {
@@ -64,9 +94,22 @@ public class DocumentManager {
 	}
 
 	// La lista de listas de string vendrá de la próxima interfaz a crear
+	/**
+	 * Edita el fichero (documento) entregado previamente por la función
+	 * {@link #giveDocument(File)} junto a la lista de palabras clave y la lista de
+	 * palabras a reemplazar que contendrán en sus índices correspondientes los
+	 * Strings almacenados a través del menú de creación de la fuente de datos o de
+	 * la opción de importación.
+	 * 
+	 * @param replaceKeyList 
+	 * @param keyList
+	 * @param f
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 */
 	public void replaceDocxStrings(List<List<String>> replaceKeyList, List<String> keyList, File f)
 			throws InvalidFormatException, IOException {
-
+		
 		// La interfaz IBody es la que implementa el método .getParagraphs() y las
 		// clases que manejan el contenido de los párrafos en los docx
 
@@ -150,11 +193,10 @@ public class DocumentManager {
 						}
 					}
 				}
-				doc.write(new FileOutputStream(
-						Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_" + (j + 1) + ".docx"));
+				doc.write(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_"
+						+ (j + 1) + (i + 1) + ".docx"));
 			}
 		}
-
 	}
 
 	public void replacePptxStrings(List<List<String>> replaceKeyList, List<String> keyList, File f)
@@ -188,8 +230,8 @@ public class DocumentManager {
 					}
 				}
 
-				slideShow.write(new FileOutputStream(
-						Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_" + (j + 1) + ".pptx"));
+				slideShow.write(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_"
+						+ (j + 1) + (i + 1) + ".pptx"));
 
 			}
 
@@ -219,8 +261,8 @@ public class DocumentManager {
 					}
 
 				}
-				spreadSheet.write(new FileOutputStream(
-						Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_" + (j + 1) + ".pptx"));
+				spreadSheet.write(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_"
+						+ (j + 1) + (i + 1) + ".pptx"));
 
 			}
 		}
