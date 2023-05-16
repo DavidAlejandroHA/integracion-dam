@@ -3,12 +3,11 @@ package integracion.wordseedexporter.model;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
-
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
@@ -41,14 +40,13 @@ public class DocumentManager {
 	public DocumentManager() {
 	}
 
-	public void giveDocument(File f)
-			throws XPathExpressionException, TransformerException, InvalidFormatException, IOException {
-		
-		/*if (f != null) {
-			// ej.
-			// Registros de la columna de "Nombres"
+	public void giveDocument(File f) throws InvalidFormatException, IOException {
+
+		if (f != null) {
+			// ej. // Registros de la columna de "Nombres"
 			List<String> nombres = Arrays.asList("Pepe", "Carlos"); // registros de una columna
 			List<List<String>> listaClaves = Arrays.asList(nombres); // aquí irían más si hubiesen más columnas
+
 			// Nombre de las columnas del excel - serán las palabras a reemplazar
 			List<String> nombresColumnas = Arrays.asList("Sociedad");
 
@@ -61,7 +59,8 @@ public class DocumentManager {
 			} else if (f.getName().endsWith(".xlsx")) {
 				replaceXlsxStrings(listaClaves, nombresColumnas, f);
 			}
-		}*/
+		}
+
 	}
 
 	// La lista de listas de string vendrá de la próxima interfaz a crear
@@ -69,9 +68,7 @@ public class DocumentManager {
 			throws InvalidFormatException, IOException {
 
 		// La interfaz IBody es la que implementa el método .getParagraphs() y las
-		// clases que manejan el contenido de los párrafos
-		// https://poi.apache.org/apidocs/dev/org/apache/poi/xwpf/usermodel/IBody.html
-		// https://poi.apache.org/apidocs/dev/org/apache/poi/xwpf/usermodel/BodyType.html
+		// clases que manejan el contenido de los párrafos en los docx
 
 		for (int i = 0; i < replaceKeyList.size(); i++) { // iterando en las columnas
 
@@ -153,7 +150,8 @@ public class DocumentManager {
 						}
 					}
 				}
-				doc.write(new FileOutputStream("output_" + (j + 1) + ".docx"));
+				doc.write(new FileOutputStream(
+						Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_" + (j + 1) + ".docx"));
 			}
 		}
 
@@ -189,15 +187,13 @@ public class DocumentManager {
 						}
 					}
 				}
-				slideShow.write(new FileOutputStream("output_" + (j + 1) + ".pptx"));
+
+				slideShow.write(new FileOutputStream(
+						Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_" + (j + 1) + ".pptx"));
 
 			}
 
 		}
-		// https://poi.apache.org/components/slideshow/quick-guide.html
-		// https://poi.apache.org/apidocs/dev/org/apache/poi/xslf/usermodel/XSLFShapeContainer.html
-		// https://poi.apache.org/apidocs/dev/org/apache/poi/xslf/usermodel/XSLFShape.html
-
 	}
 
 	public void replaceXlsxStrings(List<List<String>> replaceKeyList, List<String> keyList, File f)
@@ -208,13 +204,13 @@ public class DocumentManager {
 				XSSFWorkbook spreadSheet = new XSSFWorkbook(OPCPackage.open(f));// para reiniciar el doc a su estado
 																				// inicial para poder volver a
 																				// reemplazar texto
-				Iterator<Sheet> slides = spreadSheet.sheetIterator();
+				Iterator<Sheet> sheets = spreadSheet.sheetIterator();
 
-				if (slides != null) {
+				if (sheets != null) {
 
-					// Para cada página del documento exel
-					while (slides.hasNext()) {
-						Sheet sh = slides.next(); // Se maneja cada hoja
+					// Para cada página del documento excel
+					while (sheets.hasNext()) {
+						Sheet sh = sheets.next(); // Se maneja cada hoja
 						for (Row row : sh) {
 							for (Cell cell : row) {
 								editXlxsCells(cell, lChild.get(j), keyList.get(i));
@@ -223,19 +219,19 @@ public class DocumentManager {
 					}
 
 				}
-				spreadSheet.write(new FileOutputStream("output_" + (j + 1) + ".pptx"));
+				spreadSheet.write(new FileOutputStream(
+						Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_" + (j + 1) + ".pptx"));
 
 			}
 		}
 	}
 
 	private void editDocxParagraph(XWPFParagraph p, String replaceableKey, String key) {
+		replaceableKey = stringModifyOptions(replaceableKey);
+
 		List<XWPFRun> runs = p.getRuns();
 		if (runs != null) {
 			for (XWPFRun r : runs) {
-				if(Controller.replaceExactWord.get()) {
-					replaceableKey = "\\b" + replaceableKey + "\\b";
-				}
 				String text = r.getText(0);
 				if (text != null && text.contains(key)) {
 					text = text.replaceAll(key, replaceableKey);
@@ -246,12 +242,11 @@ public class DocumentManager {
 	}
 
 	private void editPptxParagraph(XSLFTextParagraph p, String replaceableKey, String key) {
+		replaceableKey = stringModifyOptions(replaceableKey);
+
 		List<XSLFTextRun> runs = p.getTextRuns();
 		if (runs != null) {
 			for (XSLFTextRun r : runs) {
-				if(Controller.replaceExactWord.get()) {
-					replaceableKey = "\\b" + replaceableKey + "\\b";
-				}
 				String text = r.getRawText();
 				if (text != null && text.contains(key)) {
 					text = text.replaceAll(key, replaceableKey);
@@ -262,15 +257,32 @@ public class DocumentManager {
 	}
 
 	private void editXlxsCells(Cell c, String replaceableKey, String key) {
+		replaceableKey = stringModifyOptions(replaceableKey);
+
+		// Solo modificar las celdas que contengan contenido de texto
+		// Si contienen otras cosas que no sean texto, se ignoran ya que al modificar
+		// por ejemplo celdas numéricas con texto, podría lanzarse una excepción
 		if (c.getCellType().equals(CellType.STRING)) {
-			if(Controller.replaceExactWord.get()) {
-				replaceableKey = "\\b" + replaceableKey + "\\b";
-			}
 			String text = c.getStringCellValue();
 			if (text != null && text.contains(key)) {
 				text = text.replaceAll(key, replaceableKey);
 				c.setCellValue(text);
 			}
 		}
+	}
+
+	private String stringModifyOptions(String k) {
+		k = StringEscapeUtils.escapeJava(k); // es necesario el escape de caracteres para que
+		// pueda trabajar bien con el replaceAll
+		if (Controller.replaceExactWord.get()) {
+			// Si la BooleanProperty replaceExactWord está a true, se le añaden a la
+			// replaceableKey
+			// (k) escapeada en Java un "limitador" de palabras para seleccionar solo esas
+			// mismas palabras (\\b) y no otras que la puedan contener pero que no sean la
+			// misma, ya que el .replaceAll() puede trabajar con expresiones regulares
+			// (regex)
+			k = "\\b" + k + "\\b";
+		}
+		return k;
 	}
 }

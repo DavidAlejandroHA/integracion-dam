@@ -6,9 +6,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.office.OfficeException;
@@ -52,7 +49,7 @@ public class VBoxDrawerController implements Initializable {
 
 	// model
 	public ObjectProperty<File> pdfFile = new SimpleObjectProperty<>();
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -94,11 +91,11 @@ public class VBoxDrawerController implements Initializable {
 		try {
 			File pdfFileOut = new File(Controller.TEMPDOCSFOLDER + File.separator + "output.pdf");
 			File outDir = fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage);
-			if(outDir != null) {
+			if (outDir != null) {
 				JodConverter.convert(outDir).as(DefaultDocumentFormatRegistry.DOC).to(pdfFileOut)
-				.as(DefaultDocumentFormatRegistry.PDF).execute();
+						.as(DefaultDocumentFormatRegistry.PDF).execute();
 			}
-			
+
 			// Esto es para forzar al pdfViewer que cambie de pdf
 			pdfFileProperty().set(null);
 			pdfFileProperty().set(pdfFileOut);
@@ -113,7 +110,7 @@ public class VBoxDrawerController implements Initializable {
 	void importarFuente(ActionEvent event) {
 		reemplazarTexto();
 	}
-	
+
 	public void reemplazarTexto() {
 		DocumentManager docManager = new DocumentManager();
 		FileChooser fileChooser = new FileChooser();
@@ -124,12 +121,6 @@ public class VBoxDrawerController implements Initializable {
 				new FileChooser.ExtensionFilter("Microsoft Excel Document (2007)", "*.xlsx"));
 		try {
 			docManager.giveDocument(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
-		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (InvalidFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -158,17 +149,17 @@ public class VBoxDrawerController implements Initializable {
 			stage.close();
 		}
 	}
-	
+
 	// TODO
 	@FXML
-    void enterMouseOnDrawer(MouseEvent event) {
+	void enterMouseOnDrawer(MouseEvent event) {
 		System.out.println("a");
-    }
+	}
 
-    @FXML
-    void exitMouseOfDrawer(MouseEvent event) {
-    	System.out.println("b");
-    }
+	@FXML
+	void exitMouseOfDrawer(MouseEvent event) {
+		System.out.println("b");
+	}
 
 	public void setOfficeManager(LocalOfficeManager officeManager) {
 		this.officeManager = officeManager;
