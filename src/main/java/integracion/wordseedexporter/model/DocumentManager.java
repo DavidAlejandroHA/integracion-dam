@@ -32,6 +32,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
 
 import integracion.wordseedexporter.controllers.Controller;
 
@@ -88,6 +89,19 @@ public class DocumentManager {
 
 			} else if (f.getName().endsWith(".xlsx")) {
 				replaceXlsxStrings(listaClaves, nombresColumnas, f);
+			} else if (f.getName().endsWith(".odp")) {
+//				try {
+//					//OdfTextDocument document = OdfTextDocument.loadDocument(f);
+//					OdfPresentationDocument document = OdfPresentationDocument.loadDocument(f);
+//			        // 5) Convert ODFDOM OdfTextDocument 2 PDF with iText
+//			        OutputStream salida = new FileOutputStream(new File("test2.pdf"));
+//			        PdfOptions options = PdfOptions.create();
+//			        PdfConverter.getInstance().convert(document, salida, options);
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+
 			}
 		}
 
@@ -101,7 +115,7 @@ public class DocumentManager {
 	 * Strings almacenados a través del menú de creación de la fuente de datos o de
 	 * la opción de importación.
 	 * 
-	 * @param replaceKeyList 
+	 * @param replaceKeyList
 	 * @param keyList
 	 * @param f
 	 * @throws InvalidFormatException
@@ -109,7 +123,7 @@ public class DocumentManager {
 	 */
 	public void replaceDocxStrings(List<List<String>> replaceKeyList, List<String> keyList, File f)
 			throws InvalidFormatException, IOException {
-		
+
 		// La interfaz IBody es la que implementa el método .getParagraphs() y las
 		// clases que manejan el contenido de los párrafos en los docx
 
@@ -222,20 +236,20 @@ public class DocumentManager {
 									for (XSLFTextParagraph p : parrafos) {
 										editPptxParagraph(p, lChild.get(j), keyList.get(i));
 									}
-
 								}
 							}
-
 						}
 					}
 				}
-
 				slideShow.write(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_"
 						+ (j + 1) + (i + 1) + ".pptx"));
 
 			}
 
 		}
+		// https://odftoolkit.org/simple/document/cookbook/Manipulate%20TextSearch.html
+		// https://javadoc.io/static/org.odftoolkit/odfdom-java/0.11.0/org/odftoolkit/odfdom/doc/presentation/package-summary.html
+		// https://javadoc.io/static/org.odftoolkit/odfdom-java/0.11.0/org/odftoolkit/odfdom/doc/package-summary.html
 	}
 
 	public void replaceXlsxStrings(List<List<String>> replaceKeyList, List<String> keyList, File f)

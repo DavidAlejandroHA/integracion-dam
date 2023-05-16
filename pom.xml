@@ -118,18 +118,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.odftoolkit/odfdom-java -->
-		<dependency>
-			<groupId>org.odftoolkit</groupId>
-			<artifactId>odfdom-java</artifactId>
-			<version>1.0.0-BETA1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -141,6 +129,12 @@
 			<groupId>net.sf.saxon</groupId>
 			<artifactId>Saxon-HE</artifactId>
 			<version>12.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/org.odftoolkit.odfdom.converter.pdf -->
+		<dependency>
+			<groupId>fr.opensagres.xdocreport</groupId>
+			<artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
+			<version>1.0.6</version>
 		</dependency>
 	</dependencies>
 </project>

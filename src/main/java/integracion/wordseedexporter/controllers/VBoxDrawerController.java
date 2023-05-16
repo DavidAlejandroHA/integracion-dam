@@ -118,7 +118,9 @@ public class VBoxDrawerController implements Initializable {
 		fileChooser.getExtensionFilters().addAll(//
 				new FileChooser.ExtensionFilter("Microsoft Word Document (2007)", "*.docx"),
 				new FileChooser.ExtensionFilter("Microsoft PowerPoint Document (2007)", "*.pptx"),
-				new FileChooser.ExtensionFilter("Microsoft Excel Document (2007)", "*.xlsx"));
+				new FileChooser.ExtensionFilter("Microsoft Excel Document (2007)", "*.xlsx"),
+				new FileChooser.ExtensionFilter("Office Text Document", "*.odt"),
+				new FileChooser.ExtensionFilter("Office Presentation Document", "*.odp"));
 		try {
 			docManager.giveDocument(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
 		} catch (InvalidFormatException e) {
