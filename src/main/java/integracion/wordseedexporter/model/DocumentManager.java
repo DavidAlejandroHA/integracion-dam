@@ -3,7 +3,6 @@ package integracion.wordseedexporter.model;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,9 +31,9 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
-import org.odftoolkit.odfdom.converter.pdf.PdfOptions;
 
 import integracion.wordseedexporter.controllers.Controller;
+import javafx.collections.ObservableList;
 
 /**
  * <p>
@@ -75,11 +74,17 @@ public class DocumentManager {
 
 		if (f != null) {
 			// ej. // Registros de la columna de "Nombres"
-			List<String> nombres = Arrays.asList("Pepe", "Carlos"); // registros de una columna
-			List<List<String>> listaClaves = Arrays.asList(nombres); // aquí irían más si hubiesen más columnas
+			// List<String> nombres = Arrays.asList("Pepe", "Carlos"); // registros de una
+			// columna
+			// List<List<String>> listaClaves = Arrays.asList(nombres); // aquí irían más si
+			// hubiesen más columnas
+
+			ObservableList<String> listaClaves = Controller.keyList.get();
 
 			// Nombre de las columnas del excel - serán las palabras a reemplazar
-			List<String> nombresColumnas = Arrays.asList("Sociedad");
+			// List<String> nombresColumnas = Arrays.asList("Sociedad");
+
+			ObservableList<ObservableList<String>> nombresColumnas = Controller.columnList.get();
 
 			if (f.getName().endsWith(".docx")) {
 				replaceDocxStrings(listaClaves, nombresColumnas, f);
@@ -90,6 +95,7 @@ public class DocumentManager {
 			} else if (f.getName().endsWith(".xlsx")) {
 				replaceXlsxStrings(listaClaves, nombresColumnas, f);
 			} else if (f.getName().endsWith(".odp")) {
+
 //				try {
 //					//OdfTextDocument document = OdfTextDocument.loadDocument(f);
 //					OdfPresentationDocument document = OdfPresentationDocument.loadDocument(f);
@@ -101,10 +107,8 @@ public class DocumentManager {
 //					// TODO Auto-generated catch block
 //					e.printStackTrace();
 //				}
-
 			}
 		}
-
 	}
 
 	// La lista de listas de string vendrá de la próxima interfaz a crear
@@ -121,8 +125,8 @@ public class DocumentManager {
 	 * @throws InvalidFormatException
 	 * @throws IOException
 	 */
-	public void replaceDocxStrings(List<List<String>> replaceKeyList, List<String> keyList, File f)
-			throws InvalidFormatException, IOException {
+	public void replaceDocxStrings(ObservableList<String> keyList,
+			ObservableList<ObservableList<String>> replaceKeyList, File f) throws InvalidFormatException, IOException {
 
 		// La interfaz IBody es la que implementa el método .getParagraphs() y las
 		// clases que manejan el contenido de los párrafos en los docx
@@ -213,8 +217,8 @@ public class DocumentManager {
 		}
 	}
 
-	public void replacePptxStrings(List<List<String>> replaceKeyList, List<String> keyList, File f)
-			throws InvalidFormatException, IOException {
+	public void replacePptxStrings(ObservableList<String> keyList,
+			ObservableList<ObservableList<String>> replaceKeyList, File f) throws InvalidFormatException, IOException {
 
 		for (int i = 0; i < replaceKeyList.size(); i++) { // iterando en las columnas
 
@@ -252,8 +256,8 @@ public class DocumentManager {
 		// https://javadoc.io/static/org.odftoolkit/odfdom-java/0.11.0/org/odftoolkit/odfdom/doc/package-summary.html
 	}
 
-	public void replaceXlsxStrings(List<List<String>> replaceKeyList, List<String> keyList, File f)
-			throws InvalidFormatException, IOException {
+	public void replaceXlsxStrings(ObservableList<String> keyList,
+			ObservableList<ObservableList<String>> replaceKeyList, File f) throws InvalidFormatException, IOException {
 		for (int i = 0; i < replaceKeyList.size(); i++) { // iterando en las columnas
 			List<String> lChild = replaceKeyList.get(i);
 			for (int j = 0; j < lChild.size(); j++) { // iterando en las filas

@@ -130,11 +130,5 @@
 			<artifactId>Saxon-HE</artifactId>
 			<version>12.2</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/org.odftoolkit.odfdom.converter.pdf -->
-		<dependency>
-			<groupId>fr.opensagres.xdocreport</groupId>
-			<artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
-			<version>1.0.6</version>
-		</dependency>
 	</dependencies>
 </project>

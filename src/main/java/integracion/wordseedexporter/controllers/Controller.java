@@ -13,17 +13,18 @@ import com.jfoenix.controls.JFXDrawer;
 
 import integracion.wordseedexporter.WordSeedExporterApp;
 import integracion.wordseedexporter.components.PDFViewSkinES;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 
 public class Controller implements Initializable {
@@ -53,8 +54,12 @@ public class Controller implements Initializable {
 	// model
 	public static BooleanProperty replaceExactWord = new SimpleBooleanProperty(true); // valor por defecto a true
 
-	public static ListProperty<String> replaceList = new SimpleListProperty<>(FXCollections.observableArrayList());
-	public static ObjectProperty<ListProperty<String>> columnList = new SimpleObjectProperty<>(replaceList);
+	// private ObservableList<String> replaceList =
+	// FXCollections.observableArrayList();
+
+	public static ListProperty<ObservableList<String>> columnList = new SimpleListProperty<>(
+			FXCollections.<ObservableList<String>>observableArrayList());
+	// https://stackoverflow.com/questions/16317949/javafx-two-dimensional-observablelist
 
 	// La listproperty dentro de columnList deberá iterar por el mismo índice que
 	// la listproperty keyList
@@ -65,7 +70,8 @@ public class Controller implements Initializable {
 
 		// load data
 //		columnList TODO Continuar
-
+		// replaceList.setAll(FXCollections.observableArrayList());
+		// columnList.add(replaceList);
 		drawerController = new VBoxDrawerController();
 		drawerMenu.setSidePane(drawerController.getView());
 
@@ -93,19 +99,25 @@ public class Controller implements Initializable {
 
 		WordSeedExporterApp.primaryStage.setOnCloseRequest(e -> {
 			// Iniciando nuevo hilo javafx y ejecutar ahí el closeOfficeManager()
-			Task<Void> task = new Task<>() {
-				protected Void call() throws Exception {
+//			Task<Void> task = new Task<>() {
+//				protected Void call() throws Exception {
+//					drawerController.closeOfficeManager();
+//					System.out.println("closed");
+//					return null;
+//				}
+//			};
+//			new Thread(task).start();
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
 					drawerController.closeOfficeManager();
-					System.out.println("closed");
-					return null;
 				}
-			};
-			new Thread(task).start();
+
+			});
 		});
 	}
 
 	public Controller() {
-		// https://stackoverflow.com/questions/52478351/replacing-all-text-in-powerpoint-using-apache-poi
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/View.fxml"));
 			loader.setController(this);
@@ -121,13 +133,14 @@ public class Controller implements Initializable {
 
 	public void setOfficeManager(LocalOfficeManager officeManager) {
 		this.officeManager = officeManager;
-		// TODO: LocalOfficeManager.builder().taskExecutionTimeout(Long.valueOf(2000));
-		// mirar si se puede aplicar esto al cerrar
-//		try {
-//			this.officeManager.start();
-//		} catch (OfficeException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			this.officeManager.start();
+		} catch (OfficeException e) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Se ha producido un error al iniciar LibeOffice/OpenOffice");
+			alert.initOwner(WordSeedExporterApp.primaryStage);
+			alert.show();
+		}
 	}
 }
