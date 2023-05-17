@@ -56,7 +56,7 @@
             </HBox>
          </children>
       </GridPane>
-      <JFXDrawer fx:id="drawerMenu" alignment="CENTER_LEFT" defaultDrawerSize="600.0" layoutX="-280.0" miniDrawerSize="300.0" prefHeight="900.0" prefWidth="600.0" styleClass="drawer">
+      <JFXDrawer fx:id="drawerMenu" alignment="CENTER_LEFT" defaultDrawerSize="600.0" layoutX="-280.0" miniDrawerSize="300.0" onDrawerClosed="#onDrawerClosed" onDrawerOpened="#onDrawerOpened" prefHeight="900.0" prefWidth="600.0" styleClass="drawer">
          <opaqueInsets>
             <Insets />
          </opaqueInsets>

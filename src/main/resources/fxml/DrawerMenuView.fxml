@@ -6,7 +6,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<HBox fx:id="drawerView" alignment="CENTER_RIGHT" onMouseEntered="#enterMouseOnDrawer" onMouseExited="#exitMouseOfDrawer" styleClass="drawerContent" stylesheets="@../css/darkstyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<HBox fx:id="drawerView" alignment="CENTER_RIGHT" onMouseEntered="#onMouseDrawerEntered" onMouseExited="#onMouseDrawerExited" styleClass="drawerContent" stylesheets="@../css/darkstyle.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox alignment="CENTER_RIGHT">
          <children>

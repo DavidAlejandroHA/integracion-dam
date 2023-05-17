@@ -14,6 +14,7 @@ import org.jodconverter.local.JodConverter;
 import org.jodconverter.local.office.LocalOfficeManager;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDrawer;
 
 import integracion.wordseedexporter.WordSeedExporterApp;
 import integracion.wordseedexporter.model.DocumentManager;
@@ -47,6 +48,8 @@ public class VBoxDrawerController implements Initializable {
 
 	private LocalOfficeManager officeManager;
 
+	private JFXDrawer drawerMenu;
+
 	// model
 	public ObjectProperty<File> pdfFile = new SimpleObjectProperty<>();
 
@@ -63,10 +66,6 @@ public class VBoxDrawerController implements Initializable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public HBox getView() {
-		return drawerView;
 	}
 
 	public void closeOfficeManager() {
@@ -86,7 +85,7 @@ public class VBoxDrawerController implements Initializable {
 		// Reemplazar texto:
 		// https://gist.github.com/aerobium/bf02e443c079c5caec7568e167849dda
 		FileChooser fileChooser = new FileChooser();
-		fileChooser.setInitialDirectory(new File("."));
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.home") + File.separator + "Desktop"));
 
 		try {
 			File pdfFileOut = new File(Controller.TEMPDOCSFOLDER + File.separator + "output.pdf");
@@ -94,11 +93,11 @@ public class VBoxDrawerController implements Initializable {
 			if (outDir != null) {
 				JodConverter.convert(outDir).as(DefaultDocumentFormatRegistry.DOC).to(pdfFileOut)
 						.as(DefaultDocumentFormatRegistry.PDF).execute();
+				// Esto es para forzar al pdfViewer que cambie de pdf
+				pdfFileProperty().set(null);
+				pdfFileProperty().set(pdfFileOut);
 			}
 
-			// Esto es para forzar al pdfViewer que cambie de pdf
-			pdfFileProperty().set(null);
-			pdfFileProperty().set(pdfFileOut);
 		} catch (OfficeException e) {
 			e.printStackTrace();
 		} finally {
@@ -152,15 +151,26 @@ public class VBoxDrawerController implements Initializable {
 		}
 	}
 
-	// TODO
 	@FXML
-	void enterMouseOnDrawer(MouseEvent event) {
-		System.out.println("a");
+	void onMouseDrawerEntered(MouseEvent event) {
+		if (drawerMenu.isClosed()) { // si está cerrado y no está abriendose
+			drawerMenu.setPrefWidth(600);
+		}
 	}
 
 	@FXML
-	void exitMouseOfDrawer(MouseEvent event) {
-		System.out.println("b");
+	void onMouseDrawerExited(MouseEvent event) {
+		if (!drawerMenu.isPressed() && !drawerMenu.isOpening() && !drawerMenu.isClosing() && !drawerMenu.isOpened()) {
+			drawerMenu.setPrefWidth(300);
+		}
+	}
+
+	public HBox getView() {
+		return drawerView;
+	}
+
+	public void setDrawerMenu(JFXDrawer drawerMenu) {
+		this.drawerMenu = drawerMenu;
 	}
 
 	public void setOfficeManager(LocalOfficeManager officeManager) {

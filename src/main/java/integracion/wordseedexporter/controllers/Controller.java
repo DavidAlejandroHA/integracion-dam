@@ -10,6 +10,7 @@ import org.jodconverter.local.office.LocalOfficeManager;
 
 import com.dlsc.pdfviewfx.PDFView;
 import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.events.JFXDrawerEvent;
 
 import integracion.wordseedexporter.WordSeedExporterApp;
 import integracion.wordseedexporter.components.PDFViewSkinES;
@@ -69,12 +70,16 @@ public class Controller implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// load data
-//		columnList TODO Continuar
+//		columnList TODO Continuar Todo
 		// replaceList.setAll(FXCollections.observableArrayList());
 		// columnList.add(replaceList);
 		drawerController = new VBoxDrawerController();
 		drawerMenu.setSidePane(drawerController.getView());
-
+		drawerMenu.setPrefWidth(280);
+		//drawerMenu.setMaxWidth(280);
+		//drawerMenu.setVisible(false);
+		drawerController.setDrawerMenu(drawerMenu);
+		
 		// drawerMenu.close();
 		// create app folder
 
@@ -93,7 +98,13 @@ public class Controller implements Initializable {
 				pdfViewer.unload();
 			}
 		});
-
+		
+//		drawerMenu.setOnMouseExited(e -> {
+//			System.out.println("ddssd");
+//		});
+//		
+//		drawerMenu.setOnDragDetected(null);
+//			
 		// Añadir la interfaz personalizada en Español al pdfViewer
 		pdfViewer.setSkin(new PDFViewSkinES(pdfViewer));
 
@@ -126,6 +137,18 @@ public class Controller implements Initializable {
 			e.printStackTrace();
 		}
 	}
+	
+	@FXML
+    void onDrawerClosed(JFXDrawerEvent event) {
+		drawerMenu.setPrefWidth(300);
+    }
+	
+	@FXML
+    void onDrawerOpened(JFXDrawerEvent event) {
+		//drawerMenu.setPrefWidth(300);
+    }
+	
+	
 
 	public AnchorPane getView() {
 		return view;
