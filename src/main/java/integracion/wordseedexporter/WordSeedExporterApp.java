@@ -4,6 +4,7 @@ import org.jodconverter.local.office.LocalOfficeManager;
 
 import integracion.wordseedexporter.controllers.Controller;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -87,12 +88,13 @@ public class WordSeedExporterApp extends Application {
 			Label l3 = new Label(" si desea instalar");
 			Label l4 = new Label("LibreOffice en su equipo.");
 			HBox l2Content = new HBox(l2, link, l3);
-
+			link.setAlignment(Pos.TOP_CENTER);
 			alertContent.getChildren().addAll(l1, l2Content, l4);
+			
 			nullPointExAlert.getDialogPane().contentProperty().set(alertContent);
-			//nullPointExAlert.initOwner(WordSeedExporterApp.primaryStage);
+			nullPointExAlert.initOwner(WordSeedExporterApp.primaryStage);
 			nullPointExAlert.show();
-			primaryStage.close();
+			//primaryStage.close();
 		}
 
 	}
