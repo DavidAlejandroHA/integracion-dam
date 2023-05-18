@@ -70,6 +70,9 @@ public class Controller implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// load data
+		ObservableList<String> replaceList = FXCollections.observableArrayList("soso", "toro");
+		Controller.columnList.add(replaceList);
+		Controller.keyList.add("pepe");
 //		columnList TODO Continuar Todo
 		// replaceList.setAll(FXCollections.observableArrayList());
 		// columnList.add(replaceList);
@@ -148,8 +151,6 @@ public class Controller implements Initializable {
 		//drawerMenu.setPrefWidth(300);
     }
 	
-	
-
 	public AnchorPane getView() {
 		return view;
 	}

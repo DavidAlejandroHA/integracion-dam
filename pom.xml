@@ -130,5 +130,17 @@
 			<artifactId>Saxon-HE</artifactId>
 			<version>12.2</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.odftoolkit/simple-odf -->
+		<dependency>
+			<groupId>org.odftoolkit</groupId>
+			<artifactId>simple-odf</artifactId>
+			<version>0.9.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 </project>

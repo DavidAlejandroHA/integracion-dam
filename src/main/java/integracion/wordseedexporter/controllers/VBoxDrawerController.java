@@ -128,6 +128,9 @@ public class VBoxDrawerController implements Initializable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		// TODO: Terminar la importación de la fuente de datos

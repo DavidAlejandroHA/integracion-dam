@@ -185,7 +185,7 @@ public class OldDocumentManager {
 
 	public void convertDocToPDF(File f, String name) {
 		FileChooser fileChooser = new FileChooser();
-		//fileChooser.setInitialDirectory(new File("."));
+		// fileChooser.setInitialDirectory(new File("."));
 		File saveFile = fileChooser.showSaveDialog(WordSeedExporterApp.primaryStage);
 		try {
 			File pdfFileOut = new File(saveFile.getPath() + File.separator + "output.pdf");

@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.text.StringEscapeUtils;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
@@ -31,9 +33,15 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.docx4j.utils.XPathFactoryUtil;
+import org.odftoolkit.odfdom.doc.OdfPresentationDocument;
+import org.odftoolkit.odfdom.doc.presentation.OdfSlide;
+import org.odftoolkit.odfdom.dom.element.draw.DrawPageElement;
+import org.w3c.dom.NodeList;
 
 import integracion.wordseedexporter.controllers.Controller;
 import javafx.collections.ObservableList;
+import net.sf.saxon.xpath.XPathFactoryImpl;
 
 /**
  * <p>
@@ -67,10 +75,9 @@ public class DocumentManager {
 	 * funciones actuales de la clase.
 	 * 
 	 * @param f El fichero (documento) a modificar
-	 * @throws InvalidFormatException
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public void giveDocument(File f) throws InvalidFormatException, IOException {
+	public void giveDocument(File f) throws Exception {
 
 		if (f != null) {
 			// ej. // Registros de la columna de "Nombres"
@@ -78,35 +85,29 @@ public class DocumentManager {
 			// columna
 			// List<List<String>> listaClaves = Arrays.asList(nombres); // aquí irían más si
 			// hubiesen más columnas
-
-			ObservableList<String> listaClaves = Controller.keyList.get();
-
 			// Nombre de las columnas del excel - serán las palabras a reemplazar
 			// List<String> nombresColumnas = Arrays.asList("Sociedad");
 
-			ObservableList<ObservableList<String>> nombresColumnas = Controller.columnList.get();
+			ObservableList<String> nombresColumnas = Controller.keyList.get();
+
+			ObservableList<ObservableList<String>> columnas = Controller.columnList.get();
 
 			if (f.getName().endsWith(".docx")) {
-				replaceDocxStrings(listaClaves, nombresColumnas, f);
+				replaceDocxStrings(nombresColumnas, columnas, f);
 
 			} else if (f.getName().endsWith(".pptx")) {
-				replacePptxStrings(listaClaves, nombresColumnas, f);
+				replacePptxStrings(nombresColumnas, columnas, f);
 
 			} else if (f.getName().endsWith(".xlsx")) {
-				replaceXlsxStrings(listaClaves, nombresColumnas, f);
+				replaceXlsxStrings(nombresColumnas, columnas, f);
+
 			} else if (f.getName().endsWith(".odp")) {
 
-//				try {
-//					//OdfTextDocument document = OdfTextDocument.loadDocument(f);
-//					OdfPresentationDocument document = OdfPresentationDocument.loadDocument(f);
-//			        // 5) Convert ODFDOM OdfTextDocument 2 PDF with iText
-//			        OutputStream salida = new FileOutputStream(new File("test2.pdf"));
-//			        PdfOptions options = PdfOptions.create();
-//			        PdfConverter.getInstance().convert(document, salida, options);
-//				} catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				XPathFactoryUtil.setxPathFactory(new XPathFactoryImpl());
+				if (Controller.keyList.get() != null && Controller.columnList.get() != null) {
+					replaceOdpStrings(Controller.keyList.get(), Controller.columnList.get(), f);
+				}
+
 			}
 		}
 	}
@@ -119,21 +120,21 @@ public class DocumentManager {
 	 * Strings almacenados a través del menú de creación de la fuente de datos o de
 	 * la opción de importación.
 	 * 
-	 * @param replaceKeyList
-	 * @param keyList
+	 * @param columns
+	 * @param columnKeyName
 	 * @param f
 	 * @throws InvalidFormatException
 	 * @throws IOException
 	 */
-	public void replaceDocxStrings(ObservableList<String> keyList,
-			ObservableList<ObservableList<String>> replaceKeyList, File f) throws InvalidFormatException, IOException {
+	public void replaceDocxStrings(ObservableList<String> columnKeyName, ObservableList<ObservableList<String>> columns,
+			File f) throws InvalidFormatException, IOException {
 
 		// La interfaz IBody es la que implementa el método .getParagraphs() y las
 		// clases que manejan el contenido de los párrafos en los docx
 
-		for (int i = 0; i < replaceKeyList.size(); i++) { // iterando en las columnas
+		for (int i = 0; i < columns.size(); i++) { // iterando en las columnas
 
-			List<String> lChild = replaceKeyList.get(i);
+			List<String> lChild = columns.get(i);
 			for (int j = 0; j < lChild.size(); j++) { // iterando en las filas
 
 				XWPFDocument doc = new XWPFDocument(OPCPackage.open(f)); // para reiniciar el doc a su estado inicial
@@ -150,7 +151,7 @@ public class DocumentManager {
 				// Párrafos del cuerpo del documento
 				if (parrafos != null) {
 					for (XWPFParagraph p : parrafos) {
-						editDocxParagraph(p, lChild.get(j), keyList.get(i));
+						editDocxParagraph(p, lChild.get(j), columnKeyName.get(i));
 					}
 				}
 
@@ -160,7 +161,7 @@ public class DocumentManager {
 						for (XWPFTableRow row : tbl.getRows()) {
 							for (XWPFTableCell cell : row.getTableCells()) {
 								for (XWPFParagraph p : cell.getParagraphs()) {
-									editDocxParagraph(p, lChild.get(j), keyList.get(i));
+									editDocxParagraph(p, lChild.get(j), columnKeyName.get(i));
 								}
 							}
 						}
@@ -171,7 +172,7 @@ public class DocumentManager {
 				if (comentarios != null) {
 					for (XWPFComment comms : comentarios) {
 						for (XWPFParagraph p : comms.getParagraphs()) {
-							editDocxParagraph(p, lChild.get(j), keyList.get(i));
+							editDocxParagraph(p, lChild.get(j), columnKeyName.get(i));
 						}
 					}
 				}
@@ -180,7 +181,7 @@ public class DocumentManager {
 				if (endNotes != null) {
 					for (XWPFEndnote endNote : endNotes) {
 						for (XWPFParagraph p : endNote.getParagraphs()) {
-							editDocxParagraph(p, lChild.get(j), keyList.get(i));
+							editDocxParagraph(p, lChild.get(j), columnKeyName.get(i));
 						}
 					}
 				}
@@ -189,7 +190,7 @@ public class DocumentManager {
 				if (piesPag != null) {
 					for (XWPFFooter footer : piesPag) {
 						for (XWPFParagraph p : footer.getParagraphs()) {
-							editDocxParagraph(p, lChild.get(j), keyList.get(i));
+							editDocxParagraph(p, lChild.get(j), columnKeyName.get(i));
 						}
 					}
 				}
@@ -198,7 +199,7 @@ public class DocumentManager {
 				if (notasPiesPag != null) {
 					for (XWPFFootnote footNote : notasPiesPag) {
 						for (XWPFParagraph p : footNote.getParagraphs()) {
-							editDocxParagraph(p, lChild.get(j), keyList.get(i));
+							editDocxParagraph(p, lChild.get(j), columnKeyName.get(i));
 						}
 					}
 				}
@@ -207,22 +208,22 @@ public class DocumentManager {
 				if (cabeceras != null) {
 					for (XWPFHeader header : cabeceras) {
 						for (XWPFParagraph p : header.getParagraphs()) {
-							editDocxParagraph(p, lChild.get(j), keyList.get(i));
+							editDocxParagraph(p, lChild.get(j), columnKeyName.get(i));
 						}
 					}
 				}
 				doc.write(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_"
-						+ (j + 1) + (i + 1) + ".docx"));
+						+ (j + 1) + "_" + (i + 1) + ".docx"));
 			}
 		}
 	}
 
-	public void replacePptxStrings(ObservableList<String> keyList,
-			ObservableList<ObservableList<String>> replaceKeyList, File f) throws InvalidFormatException, IOException {
+	private void replacePptxStrings(ObservableList<String> columnKeyName,
+			ObservableList<ObservableList<String>> columns, File f) throws InvalidFormatException, IOException {
 
-		for (int i = 0; i < replaceKeyList.size(); i++) { // iterando en las columnas
+		for (int i = 0; i < columns.size(); i++) { // iterando en las columnas
 
-			List<String> lChild = replaceKeyList.get(i);
+			List<String> lChild = columns.get(i);
 			for (int j = 0; j < lChild.size(); j++) { // iterando en las filas
 				XMLSlideShow slideShow = new XMLSlideShow(OPCPackage.open(f));// para reiniciar el doc a su estado
 																				// inicial para poder volver a
@@ -238,7 +239,7 @@ public class DocumentManager {
 
 								if (parrafos != null) {
 									for (XSLFTextParagraph p : parrafos) {
-										editPptxParagraph(p, lChild.get(j), keyList.get(i));
+										editPptxParagraph(p, lChild.get(j), columnKeyName.get(i));
 									}
 								}
 							}
@@ -246,7 +247,7 @@ public class DocumentManager {
 					}
 				}
 				slideShow.write(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_"
-						+ (j + 1) + (i + 1) + ".pptx"));
+						+ (j + 1) + "_" + (i + 1) + ".pptx"));
 
 			}
 
@@ -256,10 +257,10 @@ public class DocumentManager {
 		// https://javadoc.io/static/org.odftoolkit/odfdom-java/0.11.0/org/odftoolkit/odfdom/doc/package-summary.html
 	}
 
-	public void replaceXlsxStrings(ObservableList<String> keyList,
-			ObservableList<ObservableList<String>> replaceKeyList, File f) throws InvalidFormatException, IOException {
-		for (int i = 0; i < replaceKeyList.size(); i++) { // iterando en las columnas
-			List<String> lChild = replaceKeyList.get(i);
+	private void replaceXlsxStrings(ObservableList<String> columnKeyName,
+			ObservableList<ObservableList<String>> columns, File f) throws InvalidFormatException, IOException {
+		for (int i = 0; i < columns.size(); i++) { // iterando en las columnas
+			List<String> lChild = columns.get(i);
 			for (int j = 0; j < lChild.size(); j++) { // iterando en las filas
 				XSSFWorkbook spreadSheet = new XSSFWorkbook(OPCPackage.open(f));// para reiniciar el doc a su estado
 																				// inicial para poder volver a
@@ -273,51 +274,85 @@ public class DocumentManager {
 						Sheet sh = sheets.next(); // Se maneja cada hoja
 						for (Row row : sh) {
 							for (Cell cell : row) {
-								editXlxsCells(cell, lChild.get(j), keyList.get(i));
+								editXlxsCells(cell, lChild.get(j), columnKeyName.get(i));
 							}
 						}
 					}
 
 				}
 				spreadSheet.write(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_"
-						+ (j + 1) + (i + 1) + ".pptx"));
+						+ (j + 1) + "_" + (i + 1) + ".pptx"));
 
 			}
 		}
 	}
 
-	private void editDocxParagraph(XWPFParagraph p, String replaceableKey, String key) {
-		replaceableKey = stringModifyOptions(replaceableKey);
+	private void replaceOdpStrings(ObservableList<String> columnKeyName, ObservableList<ObservableList<String>> columns,
+			File f) throws Exception {
+
+		for (int i = 0; i < columns.size(); i++) { // iterando en las columnas
+			List<String> lChild = columns.get(i);
+			for (int j = 0; j < lChild.size(); j++) { // iterando en las filas
+				OdfPresentationDocument odpDocument = OdfPresentationDocument.loadDocument(f);
+
+				// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
+				// En este caso solo se escapea las comillas dobles porque es lo que se usa para
+				// el contains"" del xpath
+				String escapedKey1 = columnKeyName.get(i).replaceAll("\"", "\"\""); // Recibiendo el nombre de la
+																					// columna + escapeando los
+																					// caracteres
+
+				String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
+
+				Iterator<OdfSlide> it = odpDocument.getSlides();
+				while (it.hasNext()) {
+					OdfSlide odfSlide = it.next();
+					DrawPageElement slideElement = odfSlide.getOdfElement();
+					NodeList slideNodeList = slideElement.getChildNodes();
+
+					XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
+					NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(slideNodeList,
+							XPathConstants.NODE);
+					editStringNodeList(nodelist, lChild.get(j), columnKeyName.get(i));
+				}
+				odpDocument.save(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_"
+						+ (j + 1) + "_" + (i + 1) + ".odp"));
+			}
+		}
+	}
+
+	private void editDocxParagraph(XWPFParagraph p, String newKey, String key) {
+		String regexKey = stringModifyOptions(key);
 
 		List<XWPFRun> runs = p.getRuns();
 		if (runs != null) {
 			for (XWPFRun r : runs) {
 				String text = r.getText(0);
 				if (text != null && text.contains(key)) {
-					text = text.replaceAll(key, replaceableKey);
+					text = text.replaceAll(regexKey, newKey);
 					r.setText(text, 0);
 				}
 			}
 		}
 	}
 
-	private void editPptxParagraph(XSLFTextParagraph p, String replaceableKey, String key) {
-		replaceableKey = stringModifyOptions(replaceableKey);
+	private void editPptxParagraph(XSLFTextParagraph p, String newKey, String key) {
+		String regexKey = stringModifyOptions(key);
 
 		List<XSLFTextRun> runs = p.getTextRuns();
 		if (runs != null) {
 			for (XSLFTextRun r : runs) {
 				String text = r.getRawText();
 				if (text != null && text.contains(key)) {
-					text = text.replaceAll(key, replaceableKey);
+					text = text.replaceAll(regexKey, newKey);
 					r.setText(text);
 				}
 			}
 		}
 	}
 
-	private void editXlxsCells(Cell c, String replaceableKey, String key) {
-		replaceableKey = stringModifyOptions(replaceableKey);
+	private void editXlxsCells(Cell c, String newKey, String key) {
+		String regexKey = stringModifyOptions(key);
 
 		// Solo modificar las celdas que contengan contenido de texto
 		// Si contienen otras cosas que no sean texto, se ignoran ya que al modificar
@@ -325,22 +360,40 @@ public class DocumentManager {
 		if (c.getCellType().equals(CellType.STRING)) {
 			String text = c.getStringCellValue();
 			if (text != null && text.contains(key)) {
-				text = text.replaceAll(key, replaceableKey);
+				text = text.replaceAll(regexKey, newKey);
 				c.setCellValue(text);
 			}
 		}
 	}
 
+	private void editStringNodeList(NodeList nl, String newKey, String key) {
+		if (nl != null) {
+			// https://stackoverflow.com/questions/10664434/escaping-special-characters-in-java-regular-expressions
+			//https://stackoverflow.com/questions/14134558/list-of-all-special-characters-that-need-to-be-escaped-in-a-regex
+			for (int k = 0; k < nl.getLength(); k++) {
+				if (nl.item(k).getTextContent().contains(key)) {
+					String texto = nl.item(k).getTextContent();
+					String controlRegex = stringModifyOptions(key);
+					System.out.println("Texto clave - " + controlRegex);
+					System.out.println("Texto nuevo - " + newKey);
+					texto = texto.replaceAll(controlRegex, newKey);
+					nl.item(k).setTextContent(texto);
+				}
+			}
+		}
+	}
+
 	private String stringModifyOptions(String k) {
-		k = StringEscapeUtils.escapeJava(k); // es necesario el escape de caracteres para que
-		// pueda trabajar bien con el replaceAll
+		// k = StringEscapeUtils.escapeJava(k); // es necesario el escape de caracteres
+		// para que pueda trabajar bien con el replaceAll
+		//System.out.println("antes - " + k);
+		k = k.replaceAll("[\\<\\(\\[\\{\\\\\\^\\-\\=\\$\\!\\|\\]\\}\\)\\?\\*\\+\\.\\>]", "\\\\$0");
 		if (Controller.replaceExactWord.get()) {
 			// Si la BooleanProperty replaceExactWord está a true, se le añaden a la
-			// replaceableKey
-			// (k) escapeada en Java un "limitador" de palabras para seleccionar solo esas
-			// mismas palabras (\\b) y no otras que la puedan contener pero que no sean la
-			// misma, ya que el .replaceAll() puede trabajar con expresiones regulares
-			// (regex)
+			// replaceableKey (k) escapeada en Java un "limitador" de palabras para
+			// seleccionar solo esas mismas palabras (\\b) y no otras que la puedan contener
+			// pero que no sean la misma, ya que el .replaceAll() puede trabajar con
+			// expresiones regulares (regex)
 			k = "\\b" + k + "\\b";
 		}
 		return k;
