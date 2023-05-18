@@ -45,9 +45,9 @@ public class WordSeedExporterApp extends Application {
 		escena = new Scene(controller.getView());
 
 		primaryStage.setScene(escena);
-		primaryStage.setTitle("InformGenerator");
+		primaryStage.setTitle("WordSeedExporter");
 		// primaryStage.getIcons().add(new
-		// Image(CalendarApp.class.getResourceAsStream("/images/calendar-16x16.png")));
+		// Image(WordSeedExporterApp.class.getResourceAsStream("/images/calendar-16x16.png")));
 		primaryStage.show();
 
 		/**
@@ -81,16 +81,18 @@ public class WordSeedExporterApp extends Application {
 			link.setOnAction(t -> {
 				this.getHostServices().showDocument("https://www.libreoffice.org/download/download-libreoffice/");
 			});
-			Label l1 = new Label("Instale LibreOffice u OpenOffice en su equipo para poder ver");
-			Label l2 = new Label("los documentos importados en la aplicación. Haga click ");
+			Label l1 = new Label("Instale LibreOffice u OpenOffice en su equipo para poder");
+			Label l2 = new Label("ejecutar la aplicación. Haga click ");
 			link.setText("aquí");
-			Label l3 = new Label("si desea instalar LibreOffice en su equipo.");
-			HBox l2Content = new HBox(l2, link);
+			Label l3 = new Label(" si desea instalar");
+			Label l4 = new Label("LibreOffice en su equipo.");
+			HBox l2Content = new HBox(l2, link, l3);
 
-			alertContent.getChildren().addAll(l1, l2Content, l3);
+			alertContent.getChildren().addAll(l1, l2Content, l4);
 			nullPointExAlert.getDialogPane().contentProperty().set(alertContent);
-			nullPointExAlert.initOwner(WordSeedExporterApp.primaryStage);
+			//nullPointExAlert.initOwner(WordSeedExporterApp.primaryStage);
 			nullPointExAlert.show();
+			primaryStage.close();
 		}
 
 	}
