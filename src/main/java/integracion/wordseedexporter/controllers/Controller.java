@@ -79,8 +79,6 @@ public class Controller implements Initializable {
 		drawerController = new VBoxDrawerController();
 		drawerMenu.setSidePane(drawerController.getView());
 		drawerMenu.setPrefWidth(280);
-		//drawerMenu.setMaxWidth(280);
-		//drawerMenu.setVisible(false);
 		drawerController.setDrawerMenu(drawerMenu);
 		
 		// drawerMenu.close();
@@ -102,32 +100,23 @@ public class Controller implements Initializable {
 			}
 		});
 		
-//		drawerMenu.setOnMouseExited(e -> {
-//			System.out.println("ddssd");
-//		});
-//		
-//		drawerMenu.setOnDragDetected(null);
-//			
 		// Añadir la interfaz personalizada en Español al pdfViewer
 		pdfViewer.setSkin(new PDFViewSkinES(pdfViewer));
 
+		// Añadir hilo para cerrar 
 		WordSeedExporterApp.primaryStage.setOnCloseRequest(e -> {
-			// Iniciando nuevo hilo javafx y ejecutar ahí el closeOfficeManager()
-//			Task<Void> task = new Task<>() {
-//				protected Void call() throws Exception {
-//					drawerController.closeOfficeManager();
-//					System.out.println("closed");
-//					return null;
+//			Platform.runLater(new Runnable() {
+//				@Override
+//				public void run() {
+					try {
+						drawerController.closeOfficeManager();
+					} catch (OfficeException es) {
+						// TODO Auto-generated catch block
+						es.printStackTrace();
+					}
 //				}
-//			};
-//			new Thread(task).start();
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					drawerController.closeOfficeManager();
-				}
-
-			});
+//
+//			});
 		});
 	}
 

@@ -5,9 +5,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -34,10 +37,14 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.docx4j.utils.XPathFactoryUtil;
+import org.odftoolkit.odfdom.doc.OdfGraphicsDocument;
 import org.odftoolkit.odfdom.doc.OdfPresentationDocument;
+import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.OdfTextDocument;
 import org.odftoolkit.odfdom.doc.presentation.OdfSlide;
 import org.odftoolkit.odfdom.dom.element.draw.DrawPageElement;
+import org.odftoolkit.odfdom.dom.element.office.OfficeDrawingElement;
+import org.odftoolkit.odfdom.dom.element.office.OfficeSpreadsheetElement;
 import org.odftoolkit.odfdom.dom.element.office.OfficeTextElement;
 import org.w3c.dom.NodeList;
 
@@ -94,7 +101,7 @@ public class DocumentManager {
 
 			ObservableList<ObservableList<String>> columnas = Controller.columnList.get();
 
-			if (columnas != null && nombresColumnas != null) {
+			if ((columnas != null && nombresColumnas != null) && (columnas.size() > 0 && nombresColumnas.size() > 0)) {
 				if (f.getName().endsWith(".docx")) {
 					replaceDocxStrings(nombresColumnas, columnas, f);
 
@@ -106,13 +113,22 @@ public class DocumentManager {
 
 				} else {
 
-					XPathFactoryUtil.setxPathFactory(new XPathFactoryImpl());
+					// XPathFactoryUtil.setxPathFactory(new XPathFactoryImpl());
+
+					XPathFactory factory = XPathFactoryImpl.newInstance(XPathConstants.DOM_OBJECT_MODEL);
+					XPathFactoryUtil.setxPathFactory(factory);
 
 					if (f.getName().endsWith(".odt")) {
 						replaceOdtStrings(nombresColumnas, columnas, f);
 
 					} else if (f.getName().endsWith(".odp")) {
 						replaceOdpStrings(nombresColumnas, columnas, f);
+
+					} else if (f.getName().endsWith(".ods")) {
+						replaceOdsStrings(nombresColumnas, columnas, f);
+
+					} else if (f.getName().endsWith(".odg")) {
+						replaceOdgStrings(nombresColumnas, columnas, f);
 
 					}
 				}
@@ -308,8 +324,7 @@ public class DocumentManager {
 				// En este caso solo se escapea las comillas dobles porque es lo que se usa para
 				// el contains"" del xpath
 				String escapedKey1 = columnKeyName.get(i).replaceAll("\"", "\"\""); // Recibiendo el nombre de la
-																					// columna + escapeando los
-																					// caracteres
+																					// columna + escapeando las comillas
 
 				String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
 
@@ -337,9 +352,7 @@ public class DocumentManager {
 				// En este caso solo se escapea las comillas dobles porque es lo que se usa para
 				// el contains"" del xpath
 				String escapedKey1 = columnKeyName.get(i).replaceAll("\"", "\"\""); // Recibiendo el nombre de la
-																					// columna + escapeando los
-																					// caracteres
-
+																					// columna + escapeando las barras
 				String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
 
 				Iterator<OdfSlide> it = odpDocument.getSlides();
@@ -358,7 +371,63 @@ public class DocumentManager {
 			}
 		}
 	}
-	
+
+	private void replaceOdsStrings(ObservableList<String> columnKeyName, ObservableList<ObservableList<String>> columns,
+			File f) throws Exception {
+
+		for (int i = 0; i < columns.size(); i++) { // iterando en las columnas
+			List<String> lChild = columns.get(i);
+			for (int j = 0; j < lChild.size(); j++) { // iterando en las filas
+				OdfSpreadsheetDocument odsDocument = OdfSpreadsheetDocument.loadDocument(f);
+
+				// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
+				// En este caso solo se escapea las comillas dobles porque es lo que se usa para
+				// el contains"" del xpath
+				String escapedKey1 = columnKeyName.get(i).replaceAll("\"", "\"\""); // Recibiendo el nombre de la
+																					// columna + escapeando las comillas
+
+				String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
+				OfficeSpreadsheetElement odtSShEl = odsDocument.getContentRoot();
+				NodeList odtNodes = odtSShEl.getChildNodes();
+
+				XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
+				// ((XPathEvaluator)xpath).getStaticContext().setDefaultElementNamespace(NamespaceUri.getUriForConventionalPrefix("http://www.w3.org/1999/xhtml"));
+				NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(odtNodes, XPathConstants.NODE);
+				System.out.println(nodelist);
+				editStringNodeList(nodelist, lChild.get(j), columnKeyName.get(i));
+				odsDocument.save(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_"
+						+ (j + 1) + "_" + (i + 1) + ".ods"));
+			}
+		}
+	}
+
+	private void replaceOdgStrings(ObservableList<String> columnKeyName, ObservableList<ObservableList<String>> columns,
+			File f) throws Exception {
+
+		for (int i = 0; i < columns.size(); i++) { // iterando en las columnas
+			List<String> lChild = columns.get(i);
+			for (int j = 0; j < lChild.size(); j++) { // iterando en las filas
+				OdfGraphicsDocument odgDocument = OdfGraphicsDocument.loadDocument(f);
+
+				// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
+				// En este caso solo se escapea las comillas dobles porque es lo que se usa para
+				// el contains"" del xpath
+				String escapedKey1 = columnKeyName.get(i).replaceAll("\"", "\"\""); // Recibiendo el nombre de la
+																					// columna + escapeando las comillas
+
+				String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
+
+				OfficeDrawingElement odgDrawEl = odgDocument.getContentRoot();
+				NodeList odtNodes = odgDrawEl.getChildNodes();
+
+				XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
+				NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(odtNodes, XPathConstants.NODE);
+				editStringNodeList(nodelist, lChild.get(j), columnKeyName.get(i));
+				odgDocument.save(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_"
+						+ (j + 1) + "_" + (i + 1) + ".odg"));
+			}
+		}
+	}
 
 	private void editDocxParagraph(XWPFParagraph p, String newKey, String key) {
 		String regexKey = stringModifyOptions(key);
@@ -407,14 +476,11 @@ public class DocumentManager {
 
 	private void editStringNodeList(NodeList nl, String newKey, String key) {
 		if (nl != null) {
-			// https://stackoverflow.com/questions/10664434/escaping-special-characters-in-java-regular-expressions
-			// https://stackoverflow.com/questions/14134558/list-of-all-special-characters-that-need-to-be-escaped-in-a-regex
 			for (int k = 0; k < nl.getLength(); k++) {
 				if (nl.item(k).getTextContent().contains(key)) {
 					String texto = nl.item(k).getTextContent();
+
 					String controlRegex = stringModifyOptions(key);
-					System.out.println("Texto clave - " + controlRegex);
-					System.out.println("Texto nuevo - " + newKey);
 					texto = texto.replaceAll(controlRegex, newKey);
 					nl.item(k).setTextContent(texto);
 				}
@@ -423,17 +489,18 @@ public class DocumentManager {
 	}
 
 	private String stringModifyOptions(String k) {
-		// k = StringEscapeUtils.escapeJava(k); // es necesario el escape de caracteres
-		// para que pueda trabajar bien con el replaceAll
-		// System.out.println("antes - " + k);
-		k = k.replaceAll("[\\<\\(\\[\\{\\\\\\^\\-\\=\\$\\!\\|\\]\\}\\)\\?\\*\\+\\.\\>]", "\\\\$0");
+		k = Pattern.quote(k); // con este método se obtiene un patrón "literal" del string, deforma que los
+								// caracteres especiales que puedatener el string quedan "asegurados" en lo que
+								// se refiere a lasintaxis de las expresiones regulares que utiliza el
+								// método.replaceAll(), evitando así posible errores de sintaxis en
+								// estas expresiones
+								// Ojo: no es lo mismo que Matcher.quoteReplacement(k)
 		if (Controller.replaceExactWord.get()) {
-			// Si la BooleanProperty replaceExactWord está a true, se le añaden a la
-			// replaceableKey (k) escapeada en Java un "limitador" de palabras para
-			// seleccionar solo esas mismas palabras (\\b) y no otras que la puedan contener
-			// pero que no sean la misma, ya que el .replaceAll() puede trabajar con
-			// expresiones regulares (regex)
-			k = "\\b" + k + "\\b";
+			// Si la BooleanProperty replaceExactWord está a true, se le añaden a k un
+			// "limitador" de palabras para seleccionar solo esas mismas palabras (.* + k +
+			// *.) y no otras que la puedan contener pero que no sean la misma, ya que el
+			// .replaceAll() puede trabajar con expresiones regulares (regex)
+			k = ".*" + k + "*.";
 		}
 		return k;
 	}

@@ -68,9 +68,10 @@ public class VBoxDrawerController implements Initializable {
 		}
 	}
 
-	public void closeOfficeManager() {
+	public void closeOfficeManager() throws OfficeException {
 		if (officeManager != null) {
-			OfficeUtils.stopQuietly(officeManager);
+			//OfficeUtils.stopQuietly(officeManager);
+			officeManager.stop();
 		}
 		// TODO: Hilo de javafx para nueva ventana/alerta indicando que se está cerrando
 		// el programa hasta que se cierre
@@ -107,6 +108,7 @@ public class VBoxDrawerController implements Initializable {
 
 	@FXML
 	void importarFuente(ActionEvent event) {
+		// TODO: Terminar la importación de la fuente de datos
 		reemplazarTexto();
 	}
 
@@ -114,26 +116,28 @@ public class VBoxDrawerController implements Initializable {
 		DocumentManager docManager = new DocumentManager();
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File("."));
-		fileChooser.getExtensionFilters().addAll(//
+		fileChooser.getExtensionFilters().addAll(
 				new FileChooser.ExtensionFilter("Microsoft Word Document (2007)", "*.docx"),
 				new FileChooser.ExtensionFilter("Microsoft PowerPoint Document (2007)", "*.pptx"),
 				new FileChooser.ExtensionFilter("Microsoft Excel Document (2007)", "*.xlsx"),
 				new FileChooser.ExtensionFilter("Office Text Document", "*.odt"),
-				new FileChooser.ExtensionFilter("Office Presentation Document", "*.odp"));
+				new FileChooser.ExtensionFilter("Office Presentation Document", "*.odp"),
+				new FileChooser.ExtensionFilter("Office SpreadSheet Document", "*.ods"),
+				new FileChooser.ExtensionFilter("Office Graphics Document", "*.odg"));
 		try {
 			docManager.giveDocument(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
-		} catch (InvalidFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText(
+					"Error al procesar el documento. Es posible que el archivo tenga un formato incorrecto.");
+			alert.setContentText("Error: " + e.getMessage());
+			alert.initOwner(WordSeedExporterApp.primaryStage);
+			alert.showAndWait();
 			e.printStackTrace();
 		}
 
-		// TODO: Terminar la importación de la fuente de datos
+		
 	}
 
 	@FXML

@@ -4,5 +4,7 @@
 /bin/
 /target/
 *.odt
+*.ods
+*.odp
 *.docx
 *.xml
