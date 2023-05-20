@@ -5,12 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -89,16 +87,10 @@ public class DocumentManager {
 	public void giveDocument(File f) throws Exception {
 
 		if (f != null) {
-			// ej. // Registros de la columna de "Nombres"
-			// List<String> nombres = Arrays.asList("Pepe", "Carlos"); // registros de una
-			// columna
-			// List<List<String>> listaClaves = Arrays.asList(nombres); // aquí irían más si
-			// hubiesen más columnas
 			// Nombre de las columnas del excel - serán las palabras a reemplazar
-			// List<String> nombresColumnas = Arrays.asList("Sociedad");
-
 			ObservableList<String> nombresColumnas = Controller.keyList.get();
 
+			// Registros de la columna de Palabras (lista de columnas que contienen filas)
 			ObservableList<ObservableList<String>> columnas = Controller.columnList.get();
 
 			if ((columnas != null && nombresColumnas != null) && (columnas.size() > 0 && nombresColumnas.size() > 0)) {
@@ -113,10 +105,7 @@ public class DocumentManager {
 
 				} else {
 
-					// XPathFactoryUtil.setxPathFactory(new XPathFactoryImpl());
-
-					XPathFactory factory = XPathFactoryImpl.newInstance(XPathConstants.DOM_OBJECT_MODEL);
-					XPathFactoryUtil.setxPathFactory(factory);
+					XPathFactoryUtil.setxPathFactory(new XPathFactoryImpl());
 
 					if (f.getName().endsWith(".odt")) {
 						replaceOdtStrings(nombresColumnas, columnas, f);
@@ -133,7 +122,6 @@ public class DocumentManager {
 					}
 				}
 			}
-
 		}
 	}
 
@@ -393,7 +381,6 @@ public class DocumentManager {
 				XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
 				// ((XPathEvaluator)xpath).getStaticContext().setDefaultElementNamespace(NamespaceUri.getUriForConventionalPrefix("http://www.w3.org/1999/xhtml"));
 				NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(odtNodes, XPathConstants.NODE);
-				System.out.println(nodelist);
 				editStringNodeList(nodelist, lChild.get(j), columnKeyName.get(i));
 				odsDocument.save(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + "output_"
 						+ (j + 1) + "_" + (i + 1) + ".ods"));
