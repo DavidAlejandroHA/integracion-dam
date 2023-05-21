@@ -34,7 +34,7 @@
                   <Font size="26.0" />
                </font>
             </JFXButton>
-            <JFXButton alignment="CENTER" graphicTextGap="20.0" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Exportar documento" textAlignment="CENTER" wrapText="true">
+            <JFXButton alignment="CENTER" graphicTextGap="20.0" onAction="#onExportarDocumento" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Exportar documento" textAlignment="CENTER" wrapText="true">
                <graphic>
                   <FontIcon iconColor="#1f48a6" iconLiteral="gmi-save" iconSize="60" />
                </graphic>
@@ -52,7 +52,7 @@
             </JFXButton>
          </children>
       </VBox>
-      <JFXButton contentDisplay="CENTER" ellipsisString="" graphicTextGap="0.0" maxWidth="20.0" minWidth="20.0" prefHeight="200.0" prefWidth="20.0" styleClass="drawerSlideButton" textAlignment="CENTER">
+      <JFXButton contentDisplay="CENTER" ellipsisString="" graphicTextGap="0.0" maxWidth="20.0" minWidth="20.0" onAction="#onDrawerButton" prefHeight="200.0" prefWidth="20.0" styleClass="drawerSlideButton" textAlignment="CENTER">
          <graphic>
             <FontIcon iconLiteral="gmi-keyboard-arrow-right" iconSize="30" styleClass="drawerSlideButton" textAlignment="CENTER" />
          </graphic>

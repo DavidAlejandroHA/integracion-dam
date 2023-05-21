@@ -79,7 +79,7 @@ public class Controller implements Initializable {
 		drawerMenu.setSidePane(drawerController.getView());
 		drawerMenu.setPrefWidth(280);
 		drawerController.setDrawerMenu(drawerMenu);
-		
+
 		// drawerMenu.close();
 		// create app folder
 
@@ -98,24 +98,17 @@ public class Controller implements Initializable {
 				pdfViewer.unload();
 			}
 		});
-		
+
 		// Añadir la interfaz personalizada en Español al pdfViewer
 		pdfViewer.setSkin(new PDFViewSkinES(pdfViewer));
 
-		// Añadir hilo para cerrar 
+		// Añadir hilo para cerrar
 		WordSeedExporterApp.primaryStage.setOnCloseRequest(e -> {
-//			Platform.runLater(new Runnable() {
-//				@Override
-//				public void run() {
-					try {
-						drawerController.closeOfficeManager();
-					} catch (OfficeException es) {
-						// TODO Auto-generated catch block
-						es.printStackTrace();
-					}
-//				}
-//
-//			});
+			try {
+				drawerController.closeOfficeManager();
+			} catch (OfficeException es) {
+				es.printStackTrace();
+			}
 		});
 	}
 
@@ -128,17 +121,17 @@ public class Controller implements Initializable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@FXML
-    void onDrawerClosed(JFXDrawerEvent event) {
+	void onDrawerClosed(JFXDrawerEvent event) {
 		drawerMenu.setPrefWidth(300);
-    }
-	
+	}
+
 	@FXML
-    void onDrawerOpened(JFXDrawerEvent event) {
-		//drawerMenu.setPrefWidth(300);
-    }
-	
+	void onDrawerOpened(JFXDrawerEvent event) {
+		// drawerMenu.setPrefWidth(300);
+	}
+
 	public AnchorPane getView() {
 		return view;
 	}
@@ -147,6 +140,7 @@ public class Controller implements Initializable {
 		this.officeManager = officeManager;
 		try {
 			this.officeManager.start();
+			drawerController.setOfficeManager(this.officeManager);
 		} catch (OfficeException e) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");

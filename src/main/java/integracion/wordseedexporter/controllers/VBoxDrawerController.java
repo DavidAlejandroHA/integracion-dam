@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.office.OfficeException;
+import org.jodconverter.core.office.OfficeUtils;
 import org.jodconverter.local.JodConverter;
 import org.jodconverter.local.office.LocalOfficeManager;
 
@@ -68,8 +69,7 @@ public class VBoxDrawerController implements Initializable {
 
 	public void closeOfficeManager() throws OfficeException {
 		if (officeManager != null) {
-			//OfficeUtils.stopQuietly(officeManager);
-			officeManager.stop();
+			OfficeUtils.stopQuietly(officeManager);
 		}
 		// TODO: Hilo de javafx para nueva ventana/alerta indicando que se está cerrando
 		// el programa hasta que se cierre
@@ -107,7 +107,23 @@ public class VBoxDrawerController implements Initializable {
 	@FXML
 	void importarFuente(ActionEvent event) {
 		// TODO: Terminar la importación de la fuente de datos
-		reemplazarTexto();
+		// reemplazarTexto();
+		cargarFuente();
+	}
+
+	public void cargarFuente() {
+		DocumentManager docManager = new DocumentManager();
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(new File("."));
+		fileChooser.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("Microsoft Excel Document (2007)", "*.xlsx"),
+				new FileChooser.ExtensionFilter("Office SpreadSheet Document", "*.ods"));
+		try {
+			docManager.readData(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void reemplazarTexto() {
@@ -135,7 +151,11 @@ public class VBoxDrawerController implements Initializable {
 			e.printStackTrace();
 		}
 
-		
+	}
+
+	@FXML
+	void onExportarDocumento(ActionEvent event) {
+		reemplazarTexto();
 	}
 
 	@FXML
@@ -154,6 +174,11 @@ public class VBoxDrawerController implements Initializable {
 			Stage stage = (Stage) drawerView.getScene().getWindow();
 			stage.close();
 		}
+	}
+
+	@FXML
+	void onDrawerButton(ActionEvent event) {
+
 	}
 
 	@FXML
