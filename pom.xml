@@ -86,12 +86,12 @@
 			<groupId>org.docx4j</groupId>
 			<artifactId>docx4j</artifactId>
 			<version>6.1.2</version>
-			<exclusions>
+			<!--<exclusions>
 				<exclusion>
 					<groupId>xml-apis</groupId>
 					<artifactId>xml-apis</artifactId>
 				</exclusion>
-			</exclusions>
+			</exclusions>-->
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-text -->
 		<dependency>

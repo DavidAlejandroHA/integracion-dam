@@ -129,41 +129,108 @@ public class DocumentManager {
 	}
 
 	public void readData(File f) throws Exception {
-		if (f.getName().endsWith(".ods")) {
-			OdfSpreadsheetDocument odsDocument = OdfSpreadsheetDocument.loadDocument(f);
-			List<OdfTable> tablas = odsDocument.getSpreadsheetTables();
-			if (tablas != null) {
-				String texto = null;
-				ObservableList<String> filas = FXCollections.observableArrayList();
-				ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
+		if (f != null) {
+			if (f.getName().endsWith(".ods")) {
+				OdfSpreadsheetDocument odsDocument = OdfSpreadsheetDocument.loadDocument(f);
+				List<OdfTable> tablas = odsDocument.getSpreadsheetTables();
+				if (tablas != null) {
+					String texto = null;
+					ObservableList<String> filas = FXCollections.observableArrayList();
+					ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
 
-				ObservableList<ObservableList<String>> columnas = FXCollections
-						.<ObservableList<String>>observableArrayList();
+					ObservableList<ObservableList<String>> columnas = FXCollections
+							.<ObservableList<String>>observableArrayList();
 
-				for (OdfTable t : tablas) {
-					for (int i = 0; i < t.getColumnCount(); i++) {
-						filas = FXCollections.observableArrayList();
-						for (int j = 0; j < t.getRowCount(); j++) {
-							OdfTableCell cell = t.getCellByPosition(i, j);
-							if (cell.getValueType() == null) {
-								texto = "";
-							} else {
-								texto = cell.getStringValue();
+					for (OdfTable t : tablas) {
+						for (int i = 0; i < t.getColumnCount(); i++) {
+							filas = FXCollections.observableArrayList(); // reset de filas
+							for (int j = 0; j < t.getRowCount(); j++) {
+								OdfTableCell cell = t.getCellByPosition(i, j);
+								if (cell.getValueType() == null) { // si hay datos el texto son los datos de la casilla
+									texto = ""; // si no se pone a string vacío
+								} else {
+									texto = cell.getStringValue();
+								}
+								if (j == 0) { // si es el primer registro se usa como una palabra a reemplazar en el
+												// documento
+									if (texto != null && texto.trim().length() > 0) {
+										nombresReemplazo.add(texto);
+									}
+								} else { // si no como una de las claves a usar para el reemplazo de palabras
+									filas.add(texto);
+								}
 							}
-							if (j == 0) {
-								nombresReemplazo.add(texto);
-							} else {
-								filas.add(texto);
+							columnas.add(filas); // una vez procesadas todas las filas se añaden a la lista de columnas
+						}
+					}
+//					System.out.println("filas - " + filas);
+//					System.out.println("columnas - " + columnas);
+//					System.out.println("nombres - " + nombresReemplazo);
+					Controller.columnList.set(columnas);
+					Controller.keyList.set(nombresReemplazo);
+				}
+			}
+			if (f.getName().endsWith(".xlsx")) {
+				XSSFWorkbook spreadSheet = new XSSFWorkbook(new FileInputStream(f));
+
+				Iterator<Sheet> sheets = spreadSheet.sheetIterator();
+
+				if (sheets != null) {
+
+					ObservableList<String> rowElements = FXCollections.observableArrayList();
+					ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
+
+					ObservableList<ObservableList<String>> columnas = FXCollections
+							.<ObservableList<String>>observableArrayList();
+
+					ObservableList<ObservableList<String>> rowList = FXCollections.observableArrayList();
+					// Para cada página del documento excel
+					while (sheets.hasNext()) {
+						Sheet sh = sheets.next(); // Se maneja cada hoja
+						// https://poi.apache.org/components/spreadsheet/quick-guide.html#TextExtraction
+						for (Row row : sh) { // manejando cada fila
+							rowElements = FXCollections.observableArrayList();
+
+							if (row != null) {
+								for (int cn = 0; cn < row.getLastCellNum(); cn++) { // manejandp cada celda de las filas
+									Cell cell = row.getCell(cn);
+									String texto = "";
+									if (cell != null) {
+										texto = readCell(cell); // se empieza a analizar el texto
+										System.out.println("texto - " + texto);
+										System.out.println(row.getFirstCellNum() + " - ");
+										System.out.println(cell.getRowIndex());
+										int lineaActual = cell.getRowIndex();
+										int numPrimeraLinea = row.getFirstCellNum();
+										if ((lineaActual - numPrimeraLinea) == numPrimeraLinea) { // si la celda es de
+																									// los nombres clave
+											nombresReemplazo.add(texto); // para añadirlo a la lista de nombres a
+																			// reemplazar
+											System.out.println("dssssssssssssssssssssssssssssssssd" + texto);
+
+										} else { // si no se añade a la lista de cada columna correspondiente de los
+													// nombres a
+													// mostrar después del reemplazo
+											rowElements.add(texto);
+										}
+									} else {
+										rowElements.add(texto); // string vacío
+										System.out.println("ñas");
+									}
+								}
+								if (rowElements.size() > 0) {
+									rowList.add(rowElements);
+								}
 							}
 						}
-						columnas.add(filas);
 					}
+					System.out.println(rowList);
+					columnas.setAll(transpose(rowList)); // se transforman
+					System.out.println("columnas - " + columnas);
+					System.out.println("nombres - " + nombresReemplazo);
+					Controller.columnList.set(columnas);
+					Controller.keyList.set(nombresReemplazo);
 				}
-//				System.out.println("filas - " + filas);
-//				System.out.println("columnas - " + columnas);
-//				System.out.println("nombres - " + nombresReemplazo);
-				Controller.columnList.set(columnas);
-				Controller.keyList.set(nombresReemplazo);
 			}
 		}
 	}
@@ -877,9 +944,12 @@ public class DocumentManager {
 		// System.out.println(k);
 		if (Controller.replaceExactWord.get()) {
 			// Si la BooleanProperty replaceExactWord está a true, se le añaden a k un
-			// "limitador" de palabras para seleccionar solo esas mismas palabras (.* + k +
-			// *.) y no otras que la puedan contener pero que no sean la misma, ya que el
+			// "limitador" de palabras para seleccionar solo esas mismas palabras (\\b + k +
+			// \\b) y no otras que la puedan contener pero que no sean la misma, ya que el
 			// .replaceAll() puede trabajar con expresiones regulares (regex)
+			// Al convertir la string a una string literal (Pattern.quote(k)), se puede
+			// tratar la string entera como una palabra y el limitador de palabras \\b no
+			// daría problemas con ningún carácter
 			k = "\\b" + k + "\\b";
 		}
 		return k;
@@ -918,5 +988,38 @@ public class DocumentManager {
 				FileUtils.deleteQuietly(file);
 			}
 		}
+	}
+
+	private String readCell(Cell c) {
+		String texto = "";
+		switch (c.getCellType()) {
+		case STRING:
+			texto = c.getStringCellValue();
+			break;
+		case BOOLEAN:
+			texto = c.getStringCellValue();
+			break;
+		case FORMULA:
+			texto = c.getCellFormula();
+			break;
+		case NUMERIC:
+			texto = c.getNumericCellValue() + "";
+		default:
+			break;
+		}
+		return texto;
+	}
+
+	private <T> ObservableList<ObservableList<T>> transpose(ObservableList<ObservableList<T>> table) {
+		ObservableList<ObservableList<T>> result = FXCollections.observableArrayList();
+		final int N = table.get(0).size();
+		for (int i = 0; i < N; i++) {
+			ObservableList<T> col = FXCollections.observableArrayList();
+			for (ObservableList<T> row : table) {
+				col.add(row.get(i));
+			}
+			result.add(col);
+		}
+		return result;
 	}
 }
