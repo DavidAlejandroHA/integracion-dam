@@ -188,29 +188,77 @@ public class DocumentManager {
 					while (sheets.hasNext()) {
 						Sheet sh = sheets.next(); // Se maneja cada hoja
 						// https://poi.apache.org/components/spreadsheet/quick-guide.html#TextExtraction
-						for (Row row : sh) { // manejando cada fila
+
+						// leer el tamaño de la tabla
+						int width = 0;
+						int height = 0;
+						int rowIndexStart = 0;
+						int columnIndexStart = 0;
+						boolean lock = false;
+						// boolean lockFirstRow = false;
+
+						for (int i = sh.getFirstRowNum(); i < sh.getLastRowNum(); i++) {
+							Row row = sh.getRow(i);
+							if (row != null) { // si la celda no es nula
+								int firstCellAux = row.getFirstCellNum();
+								int lastCellAux = row.getLastCellNum();
+								boolean contains = false;
+								for (int colNum = firstCellAux; colNum < lastCellAux; colNum++) {
+									Cell cell = row.getCell(colNum);
+
+									if (cell != null && readCell(cell).trim().length() > 0) { // si hay algo en la celda
+										contains = true;
+										if (!lock) {
+											rowIndexStart = cell.getRowIndex();
+											columnIndexStart = cell.getColumnIndex();
+											width = lastCellAux - firstCellAux; // el ancho de la tabla vendrá
+											// dado por el ancho de la primera fila
+											lock = true;
+										}
+
+//										if (!lockFirstRow) { // 
+//											width++;
+//										}
+									}
+								}
+//								if (contains) {
+//									lockFirstRow = true;
+//								}
+
+								if (contains) {
+									height++;
+								}
+							}
+						}
+						// System.out.println(numFilas + " - " + numColumnas);currentWidth
+						System.out.println(width + "w - " + height + " h" + " row index st-" + rowIndexStart
+								+ "col index st " + columnIndexStart);
+
+						for (int i = rowIndexStart; i < rowIndexStart + height; i++) { // manejando cada fila
 							rowElements = FXCollections.observableArrayList();
+							Row row = sh.getRow(i);
 
 							if (row != null) {
-								for (int cn = 0; cn < row.getLastCellNum(); cn++) { // manejandp cada celda de las filas
+								for (int cn = columnIndexStart; cn < columnIndexStart + width; cn++) { // manejandp
+									// cada celda de
+									// las filas
 									Cell cell = row.getCell(cn);
 									String texto = "";
 									if (cell != null) {
 										texto = readCell(cell); // se empieza a analizar el texto
 										System.out.println("texto - " + texto);
-										System.out.println(row.getFirstCellNum() + " - ");
-										System.out.println(cell.getRowIndex());
 										int lineaActual = cell.getRowIndex();
-										int numPrimeraLinea = row.getFirstCellNum();
-										if ((lineaActual - numPrimeraLinea) == numPrimeraLinea) { // si la celda es de
-																									// los nombres clave
+										if (lineaActual == rowIndexStart) {
+											// si la celda es de los nombres clave
+
 											nombresReemplazo.add(texto); // para añadirlo a la lista de nombres a
-																			// reemplazar
-											System.out.println("dssssssssssssssssssssssssssssssssd" + texto);
+											// reemplazar
 
 										} else { // si no se añade a la lista de cada columna correspondiente de los
-													// nombres a
-													// mostrar después del reemplazo
+													// nombres a mostrar después del reemplazo
+											if (texto.equals("sa")) {
+												System.out.println("por aqui else");
+											}
 											rowElements.add(texto);
 										}
 									} else {
@@ -225,6 +273,7 @@ public class DocumentManager {
 						}
 					}
 					System.out.println(rowList);
+					System.out.println(nombresReemplazo);
 					columnas.setAll(transpose(rowList)); // se transforman
 					System.out.println("columnas - " + columnas);
 					System.out.println("nombres - " + nombresReemplazo);
