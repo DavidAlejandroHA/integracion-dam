@@ -183,7 +183,11 @@ public class VBoxDrawerController implements Initializable {
 
 	@FXML
 	void onDrawerButton(ActionEvent event) {
-
+		if(drawerMenu.isOpening() || drawerMenu.isOpened()) {
+			drawerMenu.close();
+		} else if (drawerMenu.isClosing() || drawerMenu.isClosed()) {
+			drawerMenu.open();
+		}
 	}
 
 	@FXML

@@ -54,9 +54,6 @@ public class Controller implements Initializable {
 	// model
 	public static BooleanProperty replaceExactWord = new SimpleBooleanProperty(true); // valor por defecto a true
 
-	// private ObservableList<String> replaceList =
-	// FXCollections.observableArrayList();
-
 	public static ListProperty<ObservableList<String>> columnList = new SimpleListProperty<>(
 			FXCollections.<ObservableList<String>>observableArrayList());
 	// https://stackoverflow.com/questions/16317949/javafx-two-dimensional-observablelist
@@ -69,12 +66,6 @@ public class Controller implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// load data
-		ObservableList<String> replaceList = FXCollections.observableArrayList("soso", "toro");
-		Controller.columnList.add(replaceList);
-		Controller.keyList.add("pepe");
-//		columnList TODO Continuar Todo
-		// replaceList.setAll(FXCollections.observableArrayList());
-		// columnList.add(replaceList);
 		drawerController = new VBoxDrawerController();
 		drawerMenu.setSidePane(drawerController.getView());
 		drawerMenu.setPrefWidth(280);
