@@ -106,8 +106,6 @@ public class VBoxDrawerController implements Initializable {
 
 	@FXML
 	void importarFuente(ActionEvent event) {
-		// TODO: Terminar la importación de la fuente de datos
-		// reemplazarTexto();
 		cargarFuente();
 	}
 
@@ -186,6 +184,7 @@ public class VBoxDrawerController implements Initializable {
 		if(drawerMenu.isOpening() || drawerMenu.isOpened()) {
 			drawerMenu.close();
 		} else if (drawerMenu.isClosing() || drawerMenu.isClosed()) {
+			drawerMenu.setPrefWidth(600);
 			drawerMenu.open();
 		}
 	}
@@ -200,7 +199,7 @@ public class VBoxDrawerController implements Initializable {
 	@FXML
 	void onMouseDrawerExited(MouseEvent event) {
 		if (!drawerMenu.isPressed() && !drawerMenu.isOpening() && !drawerMenu.isClosing() && !drawerMenu.isOpened()) {
-			drawerMenu.setPrefWidth(300);
+			drawerMenu.setPrefWidth(280);
 		}
 	}
 

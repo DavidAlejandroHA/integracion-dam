@@ -115,14 +115,14 @@ public class Controller implements Initializable {
 
 	@FXML
 	void onDrawerClosed(JFXDrawerEvent event) {
-		drawerMenu.setPrefWidth(300);
+		drawerMenu.setPrefWidth(280);
 	}
 
 	@FXML
 	void onDrawerOpened(JFXDrawerEvent event) {
-		// drawerMenu.setPrefWidth(300);
+		//drawerMenu.setPrefWidth(600);
 	}
-
+	
 	public AnchorPane getView() {
 		return view;
 	}
