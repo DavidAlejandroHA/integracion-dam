@@ -163,6 +163,10 @@ public class VBoxDrawerController implements Initializable {
 
 	@FXML
 	void salir(ActionEvent event) {
+		salirApp();
+	}
+	
+	public void salirApp() {
 		ButtonType siButtonType = new ButtonType("Sí", ButtonData.OK_DONE);
 
 		Alert exitAlert = new Alert(AlertType.WARNING, "", siButtonType, ButtonType.CANCEL);

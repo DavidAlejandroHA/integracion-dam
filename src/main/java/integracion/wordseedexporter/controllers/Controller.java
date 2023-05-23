@@ -71,7 +71,6 @@ public class Controller implements Initializable {
 		drawerMenu.setPrefWidth(280);
 		drawerController.setDrawerMenu(drawerMenu);
 
-		// drawerMenu.close();
 		// create app folder
 
 		if (!Controller.APPFOLDER.exists()) {
@@ -93,13 +92,19 @@ public class Controller implements Initializable {
 		// Añadir la interfaz personalizada en Español al pdfViewer
 		pdfViewer.setSkin(new PDFViewSkinES(pdfViewer));
 
-		// Añadir hilo para cerrar
+		// Crear setOnCloseRequest para cerrar los servicios de office y advertir de
+		// salida
 		WordSeedExporterApp.primaryStage.setOnCloseRequest(e -> {
 			try {
 				drawerController.closeOfficeManager();
 			} catch (OfficeException es) {
-				es.printStackTrace();
+				Alert officeAlert = new Alert(AlertType.WARNING);
+				officeAlert.setTitle("Advertencia");
+				officeAlert.setHeaderText("No se han podido parar los servicios de LibreOffice/OpenOffice.");
+				officeAlert.initOwner(WordSeedExporterApp.primaryStage);
+				officeAlert.showAndWait();
 			}
+			drawerController.salirApp();
 		});
 	}
 
@@ -120,9 +125,9 @@ public class Controller implements Initializable {
 
 	@FXML
 	void onDrawerOpened(JFXDrawerEvent event) {
-		//drawerMenu.setPrefWidth(600);
+		// drawerMenu.setPrefWidth(600);
 	}
-	
+
 	public AnchorPane getView() {
 		return view;
 	}
