@@ -124,6 +124,7 @@ public class VBoxDrawerController implements Initializable {
 			alerta.setHeaderText("Error al cargar la fuente de datos");
 			alerta.setContentText("La fuente de datos contiene un formato incorrecto respecto a la \n"
 					+ "gestión de la aplicación.");
+			e.printStackTrace();
 			alerta.initOwner(WordSeedExporterApp.primaryStage);
 			alerta.showAndWait();
 		}
@@ -152,6 +153,7 @@ public class VBoxDrawerController implements Initializable {
 			alert.initOwner(WordSeedExporterApp.primaryStage);
 			alert.showAndWait();
 			e.printStackTrace();
+			System.out.println("b");
 		}
 
 	}
