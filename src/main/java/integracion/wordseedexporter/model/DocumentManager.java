@@ -131,155 +131,10 @@ public class DocumentManager {
 	public void readData(File f) throws Exception {
 		if (f != null) {
 			if (f.getName().endsWith(".ods")) {
-				OdfSpreadsheetDocument odsDocument = OdfSpreadsheetDocument.loadDocument(f);
-				List<OdfTable> tablas = odsDocument.getSpreadsheetTables();
-				if (tablas != null) {
-					String texto = null;
-					ObservableList<String> filas = FXCollections.observableArrayList();
-					ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
-
-					ObservableList<ObservableList<String>> columnas = FXCollections
-							.<ObservableList<String>>observableArrayList();
-
-					for (OdfTable t : tablas) {
-						for (int i = 0; i < t.getColumnCount(); i++) {
-							filas = FXCollections.observableArrayList(); // reset de filas
-							for (int j = 0; j < t.getRowCount(); j++) {
-								OdfTableCell cell = t.getCellByPosition(i, j);
-								if (cell.getValueType() == null) { // si hay datos el texto son los datos de la casilla
-									texto = ""; // si no se pone a string vacío
-								} else {
-									texto = cell.getStringValue();
-								}
-								if (j == 0) { // si es el primer registro se usa como una palabra a reemplazar en el
-												// documento
-									if (texto != null && texto.trim().length() > 0) {
-										nombresReemplazo.add(texto);
-									}
-								} else { // si no como una de las claves a usar para el reemplazo de palabras
-									filas.add(texto);
-								}
-							}
-							columnas.add(filas); // una vez procesadas todas las filas se añaden a la lista de columnas
-						}
-					}
-//					System.out.println("filas - " + filas);
-//					System.out.println("columnas - " + columnas);
-//					System.out.println("nombres - " + nombresReemplazo);
-					Controller.columnList.set(columnas);
-					Controller.keyList.set(nombresReemplazo);
-				}
+				readOds(f);
 			}
 			if (f.getName().endsWith(".xlsx")) {
-				XSSFWorkbook spreadSheet = new XSSFWorkbook(new FileInputStream(f));
-
-				Iterator<Sheet> sheets = spreadSheet.sheetIterator();
-
-				if (sheets != null) {
-
-					ObservableList<String> rowElements = FXCollections.observableArrayList();
-					ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
-
-					ObservableList<ObservableList<String>> columnas = FXCollections
-							.<ObservableList<String>>observableArrayList();
-
-					ObservableList<ObservableList<String>> rowList = FXCollections.observableArrayList();
-					// Para cada página del documento excel
-					while (sheets.hasNext()) {
-						Sheet sh = sheets.next(); // Se maneja cada hoja
-						// https://poi.apache.org/components/spreadsheet/quick-guide.html#TextExtraction
-
-						// leer el tamaño de la tabla
-						int width = 0;
-						int height = 0;
-						int rowIndexStart = 0;
-						int columnIndexStart = 0;
-						boolean lock = false;
-						// boolean lockFirstRow = false;
-
-						for (int i = sh.getFirstRowNum(); i < sh.getLastRowNum(); i++) {
-							Row row = sh.getRow(i);
-							if (row != null) { // si la celda no es nula
-								int firstCellAux = row.getFirstCellNum();
-								int lastCellAux = row.getLastCellNum();
-								boolean contains = false;
-								for (int colNum = firstCellAux; colNum < lastCellAux; colNum++) {
-									Cell cell = row.getCell(colNum);
-
-									if (cell != null && readCell(cell).trim().length() > 0) { // si hay algo en la celda
-										contains = true;
-										if (!lock) {
-											rowIndexStart = cell.getRowIndex();
-											columnIndexStart = cell.getColumnIndex();
-											width = lastCellAux - firstCellAux; // el ancho de la tabla vendrá
-											// dado por el ancho de la primera fila
-											lock = true;
-										}
-
-//										if (!lockFirstRow) { // 
-//											width++;
-//										}
-									}
-								}
-//								if (contains) {
-//									lockFirstRow = true;
-//								}
-
-								if (contains) {
-									height++;
-								}
-							}
-						}
-						// System.out.println(numFilas + " - " + numColumnas);currentWidth
-						System.out.println(width + "w - " + height + " h" + " row index st-" + rowIndexStart
-								+ "col index st " + columnIndexStart);
-
-						for (int i = rowIndexStart; i < rowIndexStart + height; i++) { // manejando cada fila
-							rowElements = FXCollections.observableArrayList();
-							Row row = sh.getRow(i);
-
-							if (row != null) {
-								for (int cn = columnIndexStart; cn < columnIndexStart + width; cn++) { // manejandp
-									// cada celda de
-									// las filas
-									Cell cell = row.getCell(cn);
-									String texto = "";
-									if (cell != null) {
-										texto = readCell(cell); // se empieza a analizar el texto
-										System.out.println("texto - " + texto);
-										int lineaActual = cell.getRowIndex();
-										if (lineaActual == rowIndexStart) {
-											// si la celda es de los nombres clave
-
-											nombresReemplazo.add(texto); // para añadirlo a la lista de nombres a
-											// reemplazar
-
-										} else { // si no se añade a la lista de cada columna correspondiente de los
-													// nombres a mostrar después del reemplazo
-											if (texto.equals("sa")) {
-												System.out.println("por aqui else");
-											}
-											rowElements.add(texto);
-										}
-									} else {
-										rowElements.add(texto); // string vacío
-										System.out.println("ñas");
-									}
-								}
-								if (rowElements.size() > 0) {
-									rowList.add(rowElements);
-								}
-							}
-						}
-					}
-					System.out.println(rowList);
-					System.out.println(nombresReemplazo);
-					columnas.setAll(transpose(rowList)); // se transforman
-					System.out.println("columnas - " + columnas);
-					System.out.println("nombres - " + nombresReemplazo);
-					Controller.columnList.set(columnas);
-					Controller.keyList.set(nombresReemplazo);
-				}
+				readXlsx(f);
 			}
 		}
 	}
@@ -990,7 +845,6 @@ public class DocumentManager {
 								// método.replaceAll(), evitando así posible errores de sintaxis en
 								// estas expresiones
 								// Ojo: no es lo mismo que Matcher.quoteReplacement(k)
-		// System.out.println(k);
 		if (Controller.replaceExactWord.get()) {
 			// Si la BooleanProperty replaceExactWord está a true, se le añaden a k un
 			// "limitador" de palabras para seleccionar solo esas mismas palabras (\\b + k +
@@ -1036,6 +890,175 @@ public class DocumentManager {
 			if (!ls.contains(file.getName()) && !file.getName().endsWith(".pdf")) {
 				FileUtils.deleteQuietly(file);
 			}
+		}
+	}
+	
+	private void readOds(File f) throws Exception {
+		OdfSpreadsheetDocument odsDocument = OdfSpreadsheetDocument.loadDocument(f);
+		List<OdfTable> tablas = odsDocument.getSpreadsheetTables();
+		if (tablas != null) {
+			String texto = null;
+			ObservableList<String> filas = FXCollections.observableArrayList();
+			ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
+
+			ObservableList<ObservableList<String>> columnas = FXCollections
+					.<ObservableList<String>>observableArrayList();
+
+			for (OdfTable t : tablas) {
+				for (int i = 0; i < t.getColumnCount(); i++) {
+					filas = FXCollections.observableArrayList(); // reset de filas
+					for (int j = 0; j < t.getRowCount(); j++) {
+						OdfTableCell cell = t.getCellByPosition(i, j);
+						if (cell.getValueType() == null) { // si hay datos el texto son los datos de la casilla
+							texto = ""; // si no se pone a string vacío
+						} else {
+							texto = cell.getStringValue();
+						}
+						if (j == 0) { // si es el primer registro se usa como una palabra a reemplazar en el
+										// documento
+							if (texto != null && texto.trim().length() > 0) {
+								nombresReemplazo.add(texto);
+							}
+						} else { // si no como una de las claves a usar para el reemplazo de palabras
+							filas.add(texto);
+						}
+					}
+					columnas.add(filas); // una vez procesadas todas las filas se añaden a la lista de columnas
+				}
+			}
+			Controller.columnList.set(columnas);
+			Controller.keyList.set(nombresReemplazo);
+		}
+	}
+	
+	private void readXlsx(File f) throws Exception {
+		XSSFWorkbook spreadSheet = new XSSFWorkbook(new FileInputStream(f));
+
+		Iterator<Sheet> sheets = spreadSheet.sheetIterator();
+
+		if (sheets != null) {
+
+			ObservableList<String> rowElements = FXCollections.observableArrayList();
+			ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
+
+			ObservableList<ObservableList<String>> columnas = FXCollections
+					.<ObservableList<String>>observableArrayList();
+
+			ObservableList<ObservableList<String>> rowList = FXCollections.observableArrayList();
+			// Para cada página del documento excel
+			while (sheets.hasNext()) {
+				Sheet sh = sheets.next(); // Se maneja cada hoja
+				// https://poi.apache.org/components/spreadsheet/quick-guide.html#TextExtraction
+
+				// leer el tamaño de la tabla
+				int width = 0;
+				int height = 0;
+				int rowIndexStart = 0;
+				int columnIndexStart = 0;
+				boolean lock = false;
+				// boolean lockFirstRow = false;
+				System.out.println(sh.getLastRowNum() + " " + sh.getFirstRowNum());
+				for (int i = sh.getFirstRowNum(); i < sh.getLastRowNum() + 1; i++) {
+					Row row = sh.getRow(i);
+					boolean contains = false;
+					if (row != null) { // si la celda no es nula
+						int firstCellAux = row.getFirstCellNum();
+						int lastCellAux = row.getLastCellNum();
+
+						for (int colNum = firstCellAux; colNum < lastCellAux; colNum++) {
+							Cell cell = row.getCell(colNum);
+
+							if (cell != null && readCell(cell).trim().length() > 0) { // si hay algo en la celda
+								contains = true;
+								System.out.println("texto - " + readCell(cell));
+								if (!lock) {
+									rowIndexStart = cell.getRowIndex();
+									columnIndexStart = cell.getColumnIndex();
+									width = lastCellAux - firstCellAux; // el ancho de la tabla vendrá
+									// dado por el ancho de la primera fila
+									lock = true;
+								}
+//								if (!lockFirstRow) { // 
+//									width++;
+//								}
+							}
+						}
+//						if (contains) {
+//							lockFirstRow = true;
+//						}
+						if (contains) {
+							height++;
+						}
+					}
+				}
+				if (height <= 1) {
+					throw new Exception();
+				}
+				System.out.println(width + "w - " + height + " h" + " row index st-" + rowIndexStart
+						+ "col index st " + columnIndexStart);
+
+				for (int i = rowIndexStart; i < rowIndexStart + height; i++) { // manejando cada fila
+					rowElements = FXCollections.observableArrayList();
+					Row row = sh.getRow(i);
+
+					if (row != null) {
+						for (int cn = columnIndexStart; cn < columnIndexStart + width; cn++) { // manejandp
+							// cada celda de
+							// las filas
+							Cell cell = row.getCell(cn);
+							String texto = "";
+							if (cell != null) {
+								texto = readCell(cell); // se empieza a analizar el texto
+								// System.out.println("texto - " + texto);
+								int lineaActual = cell.getRowIndex();
+								if (lineaActual == rowIndexStart) {
+									// si la celda es de los nombres clave
+
+									nombresReemplazo.add(texto); // para añadirlo a la lista de nombres a
+									// reemplazar
+
+								} else { // si no se añade a la lista de cada columna correspondiente de los
+											// nombres a mostrar después del reemplazo
+									if (texto.equals("sa")) {
+										System.out.println("por aqui else");
+									}
+									rowElements.add(texto);
+								}
+							} else {
+
+								if (row.getRowNum() == rowIndexStart) {
+									// si la celda es de los nombres clave
+
+									nombresReemplazo.add(texto); // para añadirlo a la lista de nombres a
+									// reemplazar
+
+								} else {
+									rowElements.add(texto); // string vacío
+								}
+							}
+						}
+						if (rowElements.size() > 0) {
+							rowList.add(rowElements);
+						}
+					}
+				}
+			}
+
+			columnas.setAll(transpose(rowList)); // se transforman las filas a columnas con transpose()
+
+			// Se eliminan las posibles "palabras clave" vacías que pueda contener la tabla,
+			// y con ello las respectivas columnas ya que no interesarían
+			for (int i = 0; i < nombresReemplazo.size(); i++) {
+				System.out.println(nombresReemplazo.get(i));
+				if (nombresReemplazo.get(i).trim().length() == 0) {
+					System.out.println("pas");
+					nombresReemplazo.remove(i);
+					columnas.remove(i);
+					i--;
+				}
+			}
+			Controller.columnList.set(columnas);
+			Controller.keyList.set(nombresReemplazo);
 		}
 	}
 

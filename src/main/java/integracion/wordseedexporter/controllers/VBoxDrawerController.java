@@ -98,7 +98,7 @@ public class VBoxDrawerController implements Initializable {
 			}
 
 		} catch (OfficeException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		} finally {
 			System.out.println("b");
 		}
@@ -121,8 +121,13 @@ public class VBoxDrawerController implements Initializable {
 		try {
 			docManager.readData(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Alert alerta = new Alert(AlertType.ERROR);
+			alerta.setTitle("Error");
+			alerta.setHeaderText("Error al cargar la fuente de datos");
+			alerta.setContentText("La fuente de datos contiene un formato incorrecto respecto a la \n"
+					+ "gestión de la aplicación.");
+			alerta.initOwner(WordSeedExporterApp.primaryStage);
+			alerta.showAndWait();
 		}
 	}
 
