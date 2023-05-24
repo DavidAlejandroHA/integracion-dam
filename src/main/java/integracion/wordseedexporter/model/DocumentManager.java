@@ -952,8 +952,9 @@ public class DocumentManager {
 					+ ((i < ls.size() - 1) ? ", " : " ");
 		}
 		alerta.setHeaderText("Las palabras " + textoPalabras + "no se han encontrado en el fichero importado.");
-		alerta.setContentText("Varias palabras especificadas en la fuente de datos no han sido encontradas, por lo que no\n"
-				+ "se han aplicado los cambios correspondientes respecto a estas palabras.");
+		alerta.setContentText(
+				"Varias palabras especificadas en la fuente de datos no han sido encontradas, por lo que no\n"
+						+ "se han aplicado los cambios correspondientes respecto a estas palabras.");
 		alerta.initOwner(WordSeedExporterApp.primaryStage);
 		alerta.showAndWait();
 	}
@@ -981,37 +982,93 @@ public class DocumentManager {
 		OdfSpreadsheetDocument odsDocument = OdfSpreadsheetDocument.loadDocument(f);
 		List<OdfTable> tablas = odsDocument.getSpreadsheetTables();
 		if (tablas != null) {
-			String texto = null;
-			ObservableList<String> filas = FXCollections.observableArrayList();
+
+			ObservableList<String> celdas = FXCollections.observableArrayList();
 			ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
 
-			ObservableList<ObservableList<String>> columnas = FXCollections
-					.<ObservableList<String>>observableArrayList();
+			ObservableList<ObservableList<String>> filas = FXCollections.<ObservableList<String>>observableArrayList();
+
+			// leer el tamaño de la tabla
+			int width = 0;
+			int height = 0;
+			int rowIndexStart = 0;
+			int columnIndexStart = 0;
+			boolean lock = false;
 
 			for (OdfTable t : tablas) {
-				for (int i = 0; i < t.getColumnCount(); i++) {
-					filas = FXCollections.observableArrayList(); // reset de filas
-					for (int j = 0; j < t.getRowCount(); j++) {
-						OdfTableCell cell = t.getCellByPosition(i, j);
-						if (cell.getValueType() == null) { // si hay datos el texto son los datos de la casilla
+
+				// lecutra de las dimensiones de la tabla y su punto de partida
+				for (int i = 0; i < t.getRowCount(); i++) {
+					boolean contains = false;
+
+					celdas = FXCollections.observableArrayList(); // reset de filas
+					for (int j = 0; j < t.getColumnCount(); j++) {
+						OdfTableCell cell = t.getCellByPosition(j, i);
+
+						if (cell != null && cell.getValueType() != null && cell.getStringValue().trim().length() > 0) {
+							contains = true;
+
+							if (!lock) {
+								rowIndexStart = i;
+								columnIndexStart = j;
+								lock = true;
+							}
+
+							if (rowIndexStart == i) { // si está en la primera fila y lee un registro
+								width = j - columnIndexStart + 1; // apunta la anchura hasta llegar a el último de ellos
+							}
+						}
+					}
+					if (contains) {
+						height++;
+					}
+				}
+
+				if (height <= 1) {
+					throw new Exception();
+				}
+
+				String texto = null;
+				for (int i = rowIndexStart; i < rowIndexStart + height; i++) {
+					celdas = FXCollections.observableArrayList(); // reset de filas
+					for (int j = columnIndexStart; j < columnIndexStart + width; j++) {
+						OdfTableCell cell = t.getCellByPosition(j, i);
+						if (cell == null) { // si hay datos el texto son los datos de la casilla
 							texto = ""; // si no se pone a string vacío
 						} else {
 							texto = cell.getStringValue();
 						}
-						if (j == 0) { // si es el primer registro se usa como una palabra a reemplazar en el
-										// documento
-							if (texto != null && texto.trim().length() > 0) {
-								nombresReemplazo.add(texto);
-							}
+						if (i == rowIndexStart) { // si es el primer registro se usa como una palabra a reemplazar en el
+							// documento
+							// if (texto != null && texto.trim().length() > 0) {
+							nombresReemplazo.add(texto);
+							// }
 						} else { // si no como una de las claves a usar para el reemplazo de palabras
-							filas.add(texto);
+							celdas.add(texto);
 						}
 					}
-					columnas.add(filas); // una vez procesadas todas las filas se añaden a la lista de columnas
+					if (celdas.size() > 0) {
+						filas.add(celdas); // una vez procesadas todas las filas se añaden a la lista de columnas
+					}
 				}
 			}
-			Controller.columnList.set(columnas);
+			
+			// eliminar las columnas que no tienen nombres clave
+			for (int i = 0; i < nombresReemplazo.size(); i++) {
+				// System.out.println(nombresReemplazo.get(i));
+				if (nombresReemplazo.get(i).trim().length() == 0) {
+					nombresReemplazo.remove(i);
+					for (int j = 0; j < filas.size(); j++) {
+						filas.get(j).remove(i);
+					}
+					i--;
+				}
+			}
+
+			Controller.columnList.set(filas);
 			Controller.keyList.set(nombresReemplazo);
+			System.out.println(filas);
+			System.out.println(nombresReemplazo);
 		}
 	}
 
@@ -1040,8 +1097,6 @@ public class DocumentManager {
 				int rowIndexStart = 0;
 				int columnIndexStart = 0;
 				boolean lock = false;
-				// boolean lockFirstRow = false;
-				// System.out.println(sh.getLastRowNum() + " " + sh.getFirstRowNum());
 				for (int i = sh.getFirstRowNum(); i < sh.getLastRowNum() + 1; i++) {
 					Row row = sh.getRow(i);
 					boolean contains = false;
@@ -1054,7 +1109,6 @@ public class DocumentManager {
 
 							if (cell != null && readCell(cell).trim().length() > 0) { // si hay algo en la celda
 								contains = true;
-								// System.out.println("texto - " + readCell(cell));
 								if (!lock) {
 									rowIndexStart = cell.getRowIndex();
 									columnIndexStart = cell.getColumnIndex();
@@ -1062,14 +1116,8 @@ public class DocumentManager {
 									// dado por el ancho de la primera fila
 									lock = true;
 								}
-//								if (!lockFirstRow) { // 
-//									width++;
-//								}
 							}
 						}
-//						if (contains) {
-//							lockFirstRow = true;
-//						}
 						if (contains) {
 							height++;
 						}
@@ -1085,17 +1133,14 @@ public class DocumentManager {
 
 					if (row != null) {
 						for (int cn = columnIndexStart; cn < columnIndexStart + width; cn++) { // manejandp
-							// cada celda de
-							// las filas
+							// cada celda de las filas
 							Cell cell = row.getCell(cn);
 							String texto = "";
 							if (cell != null) {
 								texto = readCell(cell); // se empieza a analizar el texto
-								// System.out.println("texto - " + texto);
 								int lineaActual = cell.getRowIndex();
 								if (lineaActual == rowIndexStart) {
 									// si la celda es de los nombres clave
-
 									nombresReemplazo.add(texto); // para añadirlo a la lista de nombres a
 									// reemplazar
 
@@ -1107,7 +1152,6 @@ public class DocumentManager {
 
 								if (row.getRowNum() == rowIndexStart) {
 									// si la celda es de los nombres clave
-
 									nombresReemplazo.add(texto); // para añadirlo a la lista de nombres a
 									// reemplazar
 
@@ -1130,9 +1174,8 @@ public class DocumentManager {
 			for (int i = 0; i < nombresReemplazo.size(); i++) {
 				// System.out.println(nombresReemplazo.get(i));
 				if (nombresReemplazo.get(i).trim().length() == 0) {
-					// System.out.println("pas");
 					nombresReemplazo.remove(i);
-					for (int j = 0; j < columnas.size(); j++) { // las columnas ahora son filas
+					for (int j = 0; j < columnas.size(); j++) {
 						columnas.get(j).remove(i);
 					}
 					i--;
@@ -1165,16 +1208,16 @@ public class DocumentManager {
 		return texto;
 	}
 
-	private <T> ObservableList<ObservableList<T>> transpose(ObservableList<ObservableList<T>> table) {
-		ObservableList<ObservableList<T>> result = FXCollections.observableArrayList();
-		final int N = table.get(0).size();
-		for (int i = 0; i < N; i++) {
-			ObservableList<T> col = FXCollections.observableArrayList();
-			for (ObservableList<T> row : table) {
-				col.add(row.get(i));
-			}
-			result.add(col);
-		}
-		return result;
-	}
+//	private <T> ObservableList<ObservableList<T>> transpose(ObservableList<ObservableList<T>> table) {
+//		ObservableList<ObservableList<T>> result = FXCollections.observableArrayList();
+//		final int N = table.get(0).size();
+//		for (int i = 0; i < N; i++) {
+//			ObservableList<T> col = FXCollections.observableArrayList();
+//			for (ObservableList<T> row : table) {
+//				col.add(row.get(i));
+//			}
+//			result.add(col);
+//		}
+//		return result;
+//	}
 }
