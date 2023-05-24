@@ -54,12 +54,10 @@ public class Controller implements Initializable {
 	// model
 	public static BooleanProperty replaceExactWord = new SimpleBooleanProperty(true); // valor por defecto a true
 
-	public static ListProperty<ObservableList<String>> columnList = new SimpleListProperty<>(
+	public static ListProperty<ObservableList<String>> rowList = new SimpleListProperty<>(
 			FXCollections.<ObservableList<String>>observableArrayList());
 	// https://stackoverflow.com/questions/16317949/javafx-two-dimensional-observablelist
 
-	// La listproperty dentro de columnList deberá iterar por el mismo índice que
-	// la listproperty keyList
 	public static ListProperty<String> keyList = new SimpleListProperty<>(FXCollections.observableArrayList());
 
 	@Override

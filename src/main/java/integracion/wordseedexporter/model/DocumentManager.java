@@ -91,37 +91,36 @@ public class DocumentManager {
 
 		if (f != null) {
 			// Nombre de las columnas del excel - serán las palabras a reemplazar
-			ObservableList<String> nombresColumnas = Controller.keyList.get();
+			ObservableList<String> palabrasClave = Controller.keyList.get();
 
-			// Registros de la columna de Palabras (lista de columnas que contienen filas)
-			ObservableList<ObservableList<String>> columnas = Controller.columnList.get();
+			// Registros de las filas de palabras para nuevos valores
+			ObservableList<ObservableList<String>> filas = Controller.rowList.get();
 
-			// TODO: Volver a poner los ifs
-			if ((columnas != null && nombresColumnas != null) && (columnas.size() > 0 && nombresColumnas.size() > 0)) {
+			if ((filas != null && palabrasClave != null) && (filas.size() > 0 && palabrasClave.size() > 0)) {
 				XPathFactoryUtil.setxPathFactory(new XPathFactoryImpl());
 
 				if (f.getName().endsWith(".docx")) {
-					replaceDocxStrings(nombresColumnas, columnas, f);
+					replaceDocxStrings(palabrasClave, filas, f);
 
 				} else if (f.getName().endsWith(".pptx")) {
-					replacePptxStrings(nombresColumnas, columnas, f);
+					replacePptxStrings(palabrasClave, filas, f);
 
 				} else if (f.getName().endsWith(".xlsx")) {
-					replaceXlsxStrings(nombresColumnas, columnas, f);
+					replaceXlsxStrings(palabrasClave, filas, f);
 
 				} else {
 
 					if (f.getName().endsWith(".odt")) {
-						replaceOdtStrings(nombresColumnas, columnas, f);
+						replaceOdtStrings(palabrasClave, filas, f);
 
 					} else if (f.getName().endsWith(".odp")) {
-						replaceOdpStrings(nombresColumnas, columnas, f);
+						replaceOdpStrings(palabrasClave, filas, f);
 
 					} else if (f.getName().endsWith(".ods")) {
-						replaceOdsStrings(nombresColumnas, columnas, f);
+						replaceOdsStrings(palabrasClave, filas, f);
 
 					} else if (f.getName().endsWith(".odg")) {
-						replaceOdgStrings(nombresColumnas, columnas, f);
+						replaceOdgStrings(palabrasClave, filas, f);
 
 					}
 				}
@@ -485,7 +484,7 @@ public class DocumentManager {
 					String escapedKey1 = columnKeyName.get(j);
 					escapedKey1 = escapedKey1.replaceAll("\"", "\"\"");
 
-					// Recibiendo el nombre de la columna
+					// Recibiendo el nombre de la palabra clave
 					String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
 
 					OfficeTextElement odtTextEl = odtDocument.getContentRoot();
@@ -564,7 +563,7 @@ public class DocumentManager {
 					String escapedKey1 = columnKeyName.get(j);
 					escapedKey1 = escapedKey1.replaceAll("\"", "\"\"");
 
-					// Recibiendo el nombre de la columna
+					// Recibiendo el nombre de la palabra clave
 					String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
 
 					Iterator<OdfSlide> it = odpDocument.getSlides();
@@ -644,7 +643,7 @@ public class DocumentManager {
 					String escapedKey1 = columnKeyName.get(j);
 					escapedKey1 = escapedKey1.replaceAll("\"", "\"\"");
 
-					// Recibiendo el nombre de la columna
+					// Recibiendo el nombre de la palabra clave
 					String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
 					OfficeSpreadsheetElement odtSShEl = odsDocument.getContentRoot();
 					NodeList odtNodes = odtSShEl.getChildNodes();
@@ -720,7 +719,7 @@ public class DocumentManager {
 					String escapedKey1 = columnKeyName.get(j);
 					escapedKey1 = escapedKey1.replaceAll("\"", "\"\"");
 
-					// Recibiendo el nombre de la columna
+					// Recibiendo el nombre de la palabra clave
 					String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
 					OfficeDrawingElement odgDrawEl = odgDocument.getContentRoot();
 					NodeList odtNodes = odgDrawEl.getChildNodes();
@@ -753,62 +752,6 @@ public class DocumentManager {
 			}
 			odgDocument.close();
 		}
-//		int iEffective = 0;
-//		int jEffective = 0;
-//		int numCambios = 0;
-//		List<String> notFound = new ArrayList<>();
-//		List<String> createdFiles = new ArrayList<>();
-//		for (int i = 0; i < columns.size(); i++) { // iterando en las columnas
-//			iEffective = 0;
-//			numCambios = 0;
-//			List<String> lChild = columns.get(i);
-//			for (int j = 0; j < lChild.size(); j++) { // iterando en las filas
-//				if ((columnKeyName.get(i) != null && columnKeyName.get(i).trim().length() > 0) // si ninguno de los 2
-//						&& (lChild.get(j) != null && lChild.get(j).trim().length() > 0)) {// registros está vacío
-//					OdfGraphicsDocument odgDocument = OdfGraphicsDocument.loadDocument(f);
-//					boolean cambios = false;
-//					// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
-//					// En este caso solo se escapea las comillas dobles porque es lo que se usa para
-//					// el contains"" del xpath
-//					String escapedKey1 = columnKeyName.get(i).replaceAll("\"", "\"\""); // Recibiendo el nombre de la
-//																						// columna + escapeando las
-//																						// comillas
-//
-//					String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
-//
-//					OfficeDrawingElement odgDrawEl = odgDocument.getContentRoot();
-//					NodeList odtNodes = odgDrawEl.getChildNodes();
-//
-//					XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
-//					NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(odtNodes,
-//							XPathConstants.NODE);
-//					cambios = editStringNodeList(nodelist, lChild.get(j), columnKeyName.get(i));
-//					if (cambios) {
-//						numCambios++;
-//					}
-//					if (numCambios > 0) {
-//						String fileName = "output_" + (jEffective + 1) + "_" + (iEffective + 1) + ".odg";
-//						odgDocument.save(
-//								new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
-//						createdFiles.add(fileName);
-//						iEffective++;
-//					}
-//					odgDocument.close();
-//				}
-//			}
-//			boolean checkColumn = false;
-//			for (String s : lChild) {
-//				if (s != null && s.trim().length() > 0) {
-//					checkColumn = true;
-//				}
-//			}
-//			if (checkColumn) {
-//				jEffective++;
-//			}
-//			if (numCambios == 0) {
-//				notFound.add(columnKeyName.get(i));
-//			}
-//		}
 
 		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
 		// incluir los pdf
@@ -1047,12 +990,12 @@ public class DocumentManager {
 							celdas.add(texto);
 						}
 					}
-					if (celdas.size() > 0) {
-						filas.add(celdas); // una vez procesadas todas las filas se añaden a la lista de columnas
+					if (celdas.size() > 0) { // celdas = 1 fila
+						filas.add(celdas); // una vez procesadas todas las filas se añaden a la lista de filas
 					}
 				}
 			}
-			
+
 			// eliminar las columnas que no tienen nombres clave
 			for (int i = 0; i < nombresReemplazo.size(); i++) {
 				// System.out.println(nombresReemplazo.get(i));
@@ -1065,10 +1008,31 @@ public class DocumentManager {
 				}
 			}
 
-			Controller.columnList.set(filas);
+			// En esta última parte, en caso de leer varias hojas, es posible que las tablas
+			// puedan tener distintos tamaños, por lo que una vez juntas todas las tablas y
+			// las filas, se le añaden strings vacíos que no influirán en el reemplazo de
+			// palabras a cada fila que sea necesaria para que todas tengan el mismo tamaño
+			// y no se produzca posteriormente un IndexOutOfBoundException
+			int topRowLength = 0;
+			for (int i = 0; i < filas.size(); i++) {
+				for (int j = 0; j < filas.get(i).size(); j++) {
+					if (filas.get(i).size() > topRowLength) {
+						topRowLength = filas.get(i).size();
+					}
+				}
+
+				int missingElemNum = topRowLength - filas.get(i).size();
+				if (missingElemNum != 0) {
+					for (int k = 0; k < missingElemNum; k++) {
+						filas.get(i).add("");
+					}
+				}
+			}
+
+			Controller.rowList.set(filas);
 			Controller.keyList.set(nombresReemplazo);
-			System.out.println(filas);
-			System.out.println(nombresReemplazo);
+			//System.out.println(filas);
+			//System.out.println(nombresReemplazo);
 		}
 	}
 
@@ -1082,8 +1046,7 @@ public class DocumentManager {
 			ObservableList<String> rowElements = FXCollections.observableArrayList();
 			ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
 
-			ObservableList<ObservableList<String>> columnas = FXCollections
-					.<ObservableList<String>>observableArrayList();
+			ObservableList<ObservableList<String>> filas = FXCollections.<ObservableList<String>>observableArrayList();
 
 			ObservableList<ObservableList<String>> rowList = FXCollections.observableArrayList();
 			// Para cada página del documento excel
@@ -1167,7 +1130,7 @@ public class DocumentManager {
 				}
 			}
 
-			columnas.setAll(rowList); // se transforman las filas a columnas con transpose()
+			filas.setAll(rowList);
 
 			// Se eliminan las posibles "palabras clave" vacías que pueda contener la tabla,
 			// y con ello las columnas correspondientes ya que no interesarían
@@ -1175,15 +1138,38 @@ public class DocumentManager {
 				// System.out.println(nombresReemplazo.get(i));
 				if (nombresReemplazo.get(i).trim().length() == 0) {
 					nombresReemplazo.remove(i);
-					for (int j = 0; j < columnas.size(); j++) {
-						columnas.get(j).remove(i);
+					for (int j = 0; j < filas.size(); j++) {
+						filas.get(j).remove(i);
 					}
 					i--;
 				}
 			}
-			System.out.println(columnas);
+
+			// En esta última parte, en caso de leer varias hojas, es posible que las tablas
+			// puedan tener distintos tamaños, por lo que una vez juntas todas las tablas y
+			// las filas, se le añaden strings vacíos que no influirán en el reemplazo de
+			// palabras a cada fila que sea necesaria para que todas tengan el mismo tamaño
+			// y no se produzca posteriormente un IndexOutOfBoundException
+			int topRowLength = 0;
+			for (int i = 0; i < filas.size(); i++) {
+				for (int j = 0; j < filas.get(i).size(); j++) {
+					if (filas.get(i).size() > topRowLength) {
+						topRowLength = filas.get(i).size();
+					}
+				}
+
+				int missingElemNum = topRowLength - filas.get(i).size();
+				if (missingElemNum != 0) {
+					for (int k = 0; k < missingElemNum; k++) {
+						filas.get(i).add("");
+					}
+				}
+				System.out.println(missingElemNum);
+			}
+			
+			System.out.println(filas);
 			System.out.println(nombresReemplazo);
-			Controller.columnList.set(columnas);
+			Controller.rowList.set(filas);
 			Controller.keyList.set(nombresReemplazo);
 		}
 	}
