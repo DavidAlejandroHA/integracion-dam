@@ -67,8 +67,8 @@ public class WordSeedExporterApp extends Application {
 	 */
 	public void checkOffice() {
 		try {
-			officeManager = LocalOfficeManager.install();
-			controller.setOfficeManager(officeManager);
+			//officeManager = LocalOfficeManager.install();
+			//controller.setOfficeManager(officeManager);
 		} catch (NullPointerException e) {
 			Alert nullPointExAlert = new Alert(AlertType.WARNING);
 			nullPointExAlert.setTitle("LibreOffice no está instalado");

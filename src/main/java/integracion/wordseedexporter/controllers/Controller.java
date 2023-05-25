@@ -17,6 +17,7 @@ import com.jfoenix.controls.events.JFXDrawerEvent;
 
 import integracion.wordseedexporter.WordSeedExporterApp;
 import integracion.wordseedexporter.components.PDFViewSkinES;
+import integracion.wordseedexporter.model.DataSource;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
@@ -65,6 +66,8 @@ public class Controller implements Initializable {
 	// https://stackoverflow.com/questions/16317949/javafx-two-dimensional-observablelist
 
 	public static ListProperty<String> keyList = new SimpleListProperty<>(FXCollections.observableArrayList());
+	
+	//public static ListProperty<DataSource> dataSources = new SimpleListProperty<>(FXCollections.observableArrayList());
 
 	public static ObjectProperty<File> ficheroImportado = new SimpleObjectProperty<>();
 

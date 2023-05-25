@@ -924,7 +924,7 @@ public class DocumentManager {
 
 	private void readOds(File f) throws Exception {
 		OdfSpreadsheetDocument odsDocument = OdfSpreadsheetDocument.loadDocument(f);
-		List<OdfTable> tablas = odsDocument.getSpreadsheetTables();
+		List<OdfTable> tablas = odsDocument.getTableList(false);
 		if (tablas != null) {
 
 			ObservableList<String> celdas = FXCollections.observableArrayList();
@@ -937,6 +937,7 @@ public class DocumentManager {
 			int height = 0;
 			int rowIndexStart = 0;
 			int columnIndexStart = 0;
+			int emptyCellsCount = 0;
 			boolean lock = false;
 
 			for (OdfTable t : tablas) {
@@ -948,10 +949,13 @@ public class DocumentManager {
 					celdas = FXCollections.observableArrayList(); // reset de filas
 					for (int j = 0; j < t.getColumnCount(); j++) {
 						OdfTableCell cell = t.getCellByPosition(j, i);
-
+						if(emptyCellsCount > 100) {
+							throw new Exception();
+						}
 						if (cell != null && cell.getValueType() != null && cell.getStringValue().trim().length() > 0) {
 							contains = true;
-
+							emptyCellsCount = 0;
+							
 							if (!lock) {
 								rowIndexStart = i;
 								columnIndexStart = j;
@@ -961,10 +965,16 @@ public class DocumentManager {
 							if (rowIndexStart == i) { // si está en la primera fila y lee un registro
 								width = j - columnIndexStart + 1; // apunta la anchura hasta llegar a el último de ellos
 							}
+						} else {
+							if (rowIndexStart == i) { // si está en la primera fila y lee un registro
+								emptyCellsCount++;
+							}
 						}
 					}
 					if (contains) {
 						height++;
+					} else {
+						
 					}
 				}
 
@@ -1060,6 +1070,7 @@ public class DocumentManager {
 				int height = 0;
 				int rowIndexStart = 0;
 				int columnIndexStart = 0;
+				int emptyCellsCount = 0;
 				boolean lock = false;
 				for (int i = sh.getFirstRowNum(); i < sh.getLastRowNum() + 1; i++) {
 					Row row = sh.getRow(i);
@@ -1070,15 +1081,23 @@ public class DocumentManager {
 
 						for (int colNum = firstCellAux; colNum < lastCellAux; colNum++) {
 							Cell cell = row.getCell(colNum);
+							if(emptyCellsCount > 100) {
+								throw new Exception();
+							}
 
 							if (cell != null && readCell(cell).trim().length() > 0) { // si hay algo en la celda
 								contains = true;
+								emptyCellsCount = 0;
 								if (!lock) {
 									rowIndexStart = cell.getRowIndex();
 									columnIndexStart = cell.getColumnIndex();
 									width = lastCellAux - firstCellAux; // el ancho de la tabla vendrá
 									// dado por el ancho de la primera fila
 									lock = true;
+								}
+							} else {
+								if (rowIndexStart == i) { // si está en la primera fila y lee un registro
+									emptyCellsCount++;
 								}
 							}
 						}
