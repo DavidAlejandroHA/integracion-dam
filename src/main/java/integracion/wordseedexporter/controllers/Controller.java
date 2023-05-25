@@ -3,6 +3,7 @@ package integracion.wordseedexporter.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
@@ -28,6 +29,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 
@@ -74,6 +76,7 @@ public class Controller implements Initializable {
 		drawerMenu.setSidePane(drawerController.getView());
 		drawerMenu.setPrefWidth(280);
 		drawerController.setDrawerMenu(drawerMenu);
+		pdfViewer.setDisable(true);
 
 		// crear carpeta de la app si no existe
 
@@ -87,8 +90,10 @@ public class Controller implements Initializable {
 		drawerController.pdfFileProperty().addListener((o, ov, nv) -> {
 			// El if y el else es para forzar al pdfViewer que cambie de pdf
 			if (nv != null) {
+				pdfViewer.setDisable(false);
 				pdfViewer.load(nv);
 			} else {
+				pdfViewer.setDisable(true);
 				pdfViewer.unload();
 			}
 		});
@@ -109,11 +114,8 @@ public class Controller implements Initializable {
 					drawerController.pdfFileProperty().set(pdfFileOut);
 
 				} catch (OfficeException | IllegalStateException e) { // informar de que
-					Alert alerta = new Alert(AlertType.WARNING);
-					alerta.setTitle("Advertencia");
-					alerta.setHeaderText("No se ha podido crear la previsualización \n" + "del documento importado.");
-					alerta.initOwner(WordSeedExporterApp.primaryStage);
-					alerta.show();
+					crearAlerta(AlertType.WARNING, "Advertencia",
+							"No se ha podido crear la previsualización \n" + "del documento importado.", null, false);
 				}
 			}
 		});
@@ -127,14 +129,12 @@ public class Controller implements Initializable {
 			try {
 				drawerController.closeOfficeManager();
 			} catch (OfficeException es) {
-				Alert officeAlert = new Alert(AlertType.WARNING);
-				officeAlert.setTitle("Advertencia");
-				officeAlert.setHeaderText("No se han podido parar los servicios de LibreOffice/OpenOffice.");
-				officeAlert.initOwner(WordSeedExporterApp.primaryStage);
-				officeAlert.showAndWait();
+				crearAlerta(AlertType.WARNING, "Advertencia",
+						"No se han podido parar los servicios de LibreOffice/OpenOffice.", null, false);
 			}
 			drawerController.salirApp();
-			e.consume(); // Si llega hasta aquí es porque el usuario ha decidido cancelar la salida de la aplicación
+			e.consume(); // Si llega hasta aquí es porque el usuario ha decidido cancelar la salida de la
+							// aplicación
 		});
 	}
 
@@ -158,6 +158,11 @@ public class Controller implements Initializable {
 		// drawerMenu.setPrefWidth(600);
 	}
 
+	/**
+	 * Retorna la vista del elemento DrawerController
+	 * 
+	 * @return AnchorPane la vista del Conrolador Principal
+	 */
 	public AnchorPane getView() {
 		return view;
 	}
@@ -168,11 +173,58 @@ public class Controller implements Initializable {
 			this.officeManager.start();
 			drawerController.setOfficeManager(this.officeManager);
 		} catch (OfficeException e) {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setHeaderText("Se ha producido un error al iniciar LibeOffice/OpenOffice");
-			alert.initOwner(WordSeedExporterApp.primaryStage);
-			alert.show();
+			crearAlerta(AlertType.ERROR, "Error", "Se ha producido un error al iniciar LibeOffice/OpenOffice", null,
+					false);
 		}
+	}
+
+	/**
+	 * Crea una alerta Alert de javafx según el tipo de alerta, el título, la
+	 * cabecera y el texto contenido especificado.
+	 * 
+	 * @param at   El tipo de alerta en cuestión ({@link AlertType AlertType})
+	 * @param t    El título de la alerta
+	 * @param ht   El texto de cabecera a mostrar
+	 * @param ct   El texto de la alerta
+	 * @param wait Si los demás procesos de la aplicación se detienen hasta esperar
+	 *             una acción en la alerta por el usuario (diálogo bloqueante)
+	 */
+	public static void crearAlerta(AlertType at, String t, String ht, String ct, boolean wait) {
+		Alert alerta = new Alert(at);
+		alerta.setTitle(t);
+		alerta.setHeaderText(ht);
+		alerta.setContentText(ct);
+		alerta.initOwner(WordSeedExporterApp.primaryStage);
+		if (wait) {
+			alerta.showAndWait();
+		} else {
+			alerta.show();
+		}
+	}
+
+	/**
+	 * Modifica el título, el texto de cabecera y de contenido de la alerta ofrecida
+	 * y muestra dicha alerta en pantalla.
+	 * 
+	 * @param al   La alerta a modificar ({@link Alert})
+	 * @param t    El título de la alerta
+	 * @param ht   El texto de cabecera a mostrar
+	 * @param ct   El texto de la alerta
+	 * @param wait Si los demás procesos de la aplicación se detienen hasta esperar
+	 *             una acción en la alerta por el usuario (diálogo bloqueante)
+	 */
+	public static Optional<ButtonType> crearAlerta(Alert al, String t, String ht, String ct, boolean wait) {
+		al.setTitle(t);
+		Optional<ButtonType> optional = null;
+		al.setHeaderText(ht);
+		al.setContentText(ct);
+		al.initOwner(WordSeedExporterApp.primaryStage);
+		if (wait) {
+			optional = al.showAndWait();
+		} else {
+			al.show();
+			optional = Optional.empty();
+		}
+		return optional;
 	}
 }

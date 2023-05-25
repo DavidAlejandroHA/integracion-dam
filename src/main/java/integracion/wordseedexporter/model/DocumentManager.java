@@ -83,8 +83,8 @@ public class DocumentManager {
 	}
 
 	/**
-	 * Este método gestiona el tipo de documento entregado (.docx, pptx, xlsx, odt, odp, ods o odg) y
-	 * ejecuta el método apropiado para editar el documento.
+	 * Este método gestiona el tipo de documento entregado (.docx, pptx, xlsx, odt,
+	 * odp, ods o odg) y ejecuta el método apropiado para editar el documento.
 	 * 
 	 * @param f El fichero (documento) a modificar
 	 * @throws Exception
@@ -147,8 +147,7 @@ public class DocumentManager {
 	 * Edita el fichero (documento) entregado previamente por la función
 	 * {@link #giveDocument(File)} junto a la lista de palabras clave y la lista de
 	 * palabras a reemplazar que contendrán en sus índices correspondientes los
-	 * Strings almacenados a través del menú de creación de la fuente de datos o de
-	 * la opción de importación.
+	 * Strings almacenados a través del menú de importación de la fuente de datos.
 	 * 
 	 * @param rows
 	 * @param columnKeyName
@@ -1134,6 +1133,10 @@ public class DocumentManager {
 
 			filas.setAll(rowList);
 
+			int topRowLength = 0;
+
+			filas = fillMissingCells(topRowLength, filas);
+
 			// Se eliminan las posibles "palabras clave" vacías que pueda contener la tabla,
 			// y con ello las columnas correspondientes ya que no interesarían
 			for (int i = 0; i < nombresReemplazo.size(); i++) {
@@ -1146,34 +1149,48 @@ public class DocumentManager {
 					i--;
 				}
 			}
-
-			// En esta última parte, en caso de leer varias hojas, es posible que las tablas
-			// puedan tener distintos tamaños, por lo que una vez juntas todas las tablas y
-			// las filas, se le añaden strings vacíos que no influirán en el reemplazo de
-			// palabras a cada fila que sea necesaria para que todas tengan el mismo tamaño
-			// y no se produzca posteriormente un IndexOutOfBoundException
-			int topRowLength = 0;
-			for (int i = 0; i < filas.size(); i++) {
-				for (int j = 0; j < filas.get(i).size(); j++) {
-					if (filas.get(i).size() > topRowLength) {
-						topRowLength = filas.get(i).size();
-					}
-				}
-
-				int missingElemNum = topRowLength - filas.get(i).size();
-				if (missingElemNum != 0) {
-					for (int k = 0; k < missingElemNum; k++) {
-						filas.get(i).add("");
-					}
-				}
-				System.out.println(missingElemNum);
-			}
-
+			// TODO darle la vuelta a esto ultimo
+			// TODO Crear objeto para almacenar distintas fuentes de datos
 			System.out.println(filas);
 			System.out.println(nombresReemplazo);
 			Controller.rowList.set(filas);
 			Controller.keyList.set(nombresReemplazo);
 		}
+		spreadSheet.close();
+	}
+
+	/**
+	 * En caso de que la fuente de datos importada tenga varias hojas, es posible
+	 * que las tablas que hayan en<br>
+	 * las distintas hojas puedan tener distintos tamaños, por lo que una vez juntas
+	 * junto a las filas que<br>
+	 * contienen, se le añaden strings vacíos que no influirán en el reemplazo de
+	 * palabras a cada fila que sea<br>
+	 * necesaria para que todas tengan el mismo tamaño y no se produzca
+	 * posteriormente<br>
+	 * un IndexOutOfBoundException
+	 * 
+	 * @param topRowLength La longitud máxima entre las filas contenidas en la tabla
+	 * @param filas
+	 * @return
+	 */
+	private ObservableList<ObservableList<String>> fillMissingCells(int topRowLength,
+			ObservableList<ObservableList<String>> filas) {
+		for (int i = 0; i < filas.size(); i++) {
+			for (int j = 0; j < filas.get(i).size(); j++) {
+				if (filas.get(i).size() > topRowLength) {
+					topRowLength = filas.get(i).size();
+				}
+			}
+			int missingElemNum = topRowLength - filas.get(i).size();
+			if (missingElemNum != 0) {
+				for (int k = 0; k < missingElemNum; k++) {
+					filas.get(i).add("");
+				}
+			}
+			System.out.println(missingElemNum);
+		}
+		return filas;
 	}
 
 	private String readCell(Cell c) {

@@ -158,14 +158,10 @@ public class DrawerController implements Initializable {
 		try {
 			docManager.readData(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
 		} catch (Exception e) {
-			Alert alerta = new Alert(AlertType.ERROR);
-			alerta.setTitle("Error");
-			alerta.setHeaderText("Error al cargar la fuente de datos");
-			alerta.setContentText(
-					"La fuente de datos contiene un formato incorrecto respecto a la \n" + "gestión de la aplicación.");
+			Controller.crearAlerta(AlertType.ERROR, "Error", "Error al cargar la fuente de datos",
+					"La fuente de datos contiene un formato incorrecto respecto a la \n" + "gestión de la aplicación.",
+					false);
 			e.printStackTrace();
-			alerta.initOwner(WordSeedExporterApp.primaryStage);
-			alerta.show();
 		}
 	}
 
@@ -184,7 +180,7 @@ public class DrawerController implements Initializable {
 				docManager.giveDocument(Controller.ficheroImportado.get());
 			}
 		} catch (Exception e) {
-			crearAlerta(AlertType.ERROR, "Error",
+			Controller.crearAlerta(AlertType.ERROR, "Error",
 					"Error al procesar el documento. Es posible que el archivo tenga un formato incorrecto.",
 					"Error: " + e.getMessage(), false);
 		}
@@ -200,7 +196,27 @@ public class DrawerController implements Initializable {
 	 */
 	@FXML
 	void onExportarDocumento(ActionEvent event) {
-		reemplazarTexto();
+		if (Controller.ficheroImportado.get() != null && !Controller.keyList.isEmpty()
+				&& !Controller.rowList.isEmpty()) {
+			reemplazarTexto();
+		} else {
+			if ((Controller.keyList.isEmpty() || Controller.rowList.isEmpty())) {
+				if (Controller.ficheroImportado.get() != null) {
+					Controller.crearAlerta(AlertType.WARNING, "Advertencia",
+							"Se necesita importar antes una fuente de datos para exportar los archivos.", null, false);
+				} else {
+					Controller.crearAlerta(AlertType.WARNING, "Advertencia",
+							"Se necesita importar antes una fuente de datos y un documento \n"
+									+ "a modificar para exportar los archivos.",
+							null, false);
+				}
+
+			} else {
+				Controller.crearAlerta(AlertType.WARNING, "Advertencia",
+						"Se necesita importar antes un documento a modificar para exportar los archivos.", null, false);
+			}
+		}
+
 	}
 
 	/**
@@ -233,8 +249,8 @@ public class DrawerController implements Initializable {
 	public void salirApp() {
 		ButtonType siButtonType = new ButtonType("Sí", ButtonData.OK_DONE);
 		Alert exitAlert = new Alert(AlertType.WARNING, "", siButtonType, ButtonType.CANCEL);
-		Optional<ButtonType> result = crearAlerta(exitAlert, "Salir", "Está apunto de salir de la aplicación.",
-				"¿Desea salir de la aplicación?", true);
+		Optional<ButtonType> result = Controller.crearAlerta(exitAlert, "Salir",
+				"Está apunto de salir de la aplicación.", "¿Desea salir de la aplicación?", true);
 
 		if (result.get() == siButtonType) {
 			Stage stage = (Stage) drawerView.getScene().getWindow();
@@ -285,56 +301,6 @@ public class DrawerController implements Initializable {
 		if (!drawerMenu.isPressed() && !drawerMenu.isOpening() && !drawerMenu.isClosing() && !drawerMenu.isOpened()) {
 			drawerMenu.setPrefWidth(280);
 		}
-	}
-
-	/**
-	 * Crea una alerta Alert de javafx según el tipo de alerta, el título, la
-	 * cabecera y el texto contenido especificado.
-	 * 
-	 * @param at   El tipo de alerta en cuestión ({@link AlertType AlertType})
-	 * @param t    El título de la alerta
-	 * @param ht   El texto de cabecera a mostrar
-	 * @param ct   El texto de la alerta
-	 * @param wait Si los demás procesos de la aplicación se detienen hasta esperar
-	 *             una acción en la alerta por el usuario (diálogo bloqueante)
-	 */
-	private void crearAlerta(AlertType at, String t, String ht, String ct, boolean wait) {
-		Alert alerta = new Alert(at);
-		alerta.setTitle(t);
-		alerta.setHeaderText(ht);
-		alerta.setContentText(ct);
-		alerta.initOwner(WordSeedExporterApp.primaryStage);
-		if (wait) {
-			alerta.showAndWait();
-		} else {
-			alerta.show();
-		}
-	}
-
-	/**
-	 * Modifica el título, el texto de cabecera y de contenido de la alerta ofrecida
-	 * y muestra dicha alerta en pantalla.
-	 * 
-	 * @param al   La alerta a modificar ({@link Alert})
-	 * @param t    El título de la alerta
-	 * @param ht   El texto de cabecera a mostrar
-	 * @param ct   El texto de la alerta
-	 * @param wait Si los demás procesos de la aplicación se detienen hasta esperar
-	 *             una acción en la alerta por el usuario (diálogo bloqueante)
-	 */
-	private Optional<ButtonType> crearAlerta(Alert al, String t, String ht, String ct, boolean wait) {
-		al.setTitle(t);
-		Optional<ButtonType> optional = null;
-		al.setHeaderText(ht);
-		al.setContentText(ct);
-		al.initOwner(WordSeedExporterApp.primaryStage);
-		if (wait) {
-			optional = al.showAndWait();
-		} else {
-			al.show();
-			optional = Optional.empty();
-		}
-		return optional;
 	}
 
 	/**
