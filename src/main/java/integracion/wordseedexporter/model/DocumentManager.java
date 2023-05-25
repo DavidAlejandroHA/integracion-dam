@@ -60,7 +60,9 @@ import net.sf.saxon.xpath.XPathFactoryImpl;
 
 /**
  * <p>
- * Esta clase se encarga de, dado un documento entregado, cambiar<br>
+ * Esta clase se encarga de, dado un documento entregado, generar distintos<br>
+ * documentos, cada uno con los cambios de palabras correspondientes<br>
+ * respecto a la fuente de datos previamente importada en la aplicación<br>
  * una palabra o una serie de palabras en el documento entregado.
  * </p>
  * <p>
@@ -81,7 +83,7 @@ public class DocumentManager {
 	}
 
 	/**
-	 * Este método gestiona el tipo de documento entregado (.docx, pptx, xlsx) y
+	 * Este método gestiona el tipo de documento entregado (.docx, pptx, xlsx, odt, odp, ods o odg) y
 	 * ejecuta el método apropiado para editar el documento.
 	 * 
 	 * @param f El fichero (documento) a modificar
@@ -1031,8 +1033,8 @@ public class DocumentManager {
 
 			Controller.rowList.set(filas);
 			Controller.keyList.set(nombresReemplazo);
-			//System.out.println(filas);
-			//System.out.println(nombresReemplazo);
+			// System.out.println(filas);
+			// System.out.println(nombresReemplazo);
 		}
 	}
 
@@ -1166,7 +1168,7 @@ public class DocumentManager {
 				}
 				System.out.println(missingElemNum);
 			}
-			
+
 			System.out.println(filas);
 			System.out.println(nombresReemplazo);
 			Controller.rowList.set(filas);

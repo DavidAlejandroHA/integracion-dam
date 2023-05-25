@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.office.OfficeException;
+import org.jodconverter.local.JodConverter;
 import org.jodconverter.local.office.LocalOfficeManager;
 
 import com.dlsc.pdfviewfx.PDFView;
@@ -16,8 +18,10 @@ import integracion.wordseedexporter.WordSeedExporterApp;
 import integracion.wordseedexporter.components.PDFViewSkinES;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -38,7 +42,7 @@ public class Controller implements Initializable {
 	@FXML
 	private PDFView pdfViewer;
 
-	private VBoxDrawerController drawerController;
+	private DrawerController drawerController;
 
 	private LocalOfficeManager officeManager;
 
@@ -60,16 +64,18 @@ public class Controller implements Initializable {
 
 	public static ListProperty<String> keyList = new SimpleListProperty<>(FXCollections.observableArrayList());
 
+	public static ObjectProperty<File> ficheroImportado = new SimpleObjectProperty<>();
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// load data
-		drawerController = new VBoxDrawerController();
+		drawerController = new DrawerController();
 		drawerMenu.setSidePane(drawerController.getView());
 		drawerMenu.setPrefWidth(280);
 		drawerController.setDrawerMenu(drawerMenu);
 
-		// create app folder
+		// crear carpeta de la app si no existe
 
 		if (!Controller.APPFOLDER.exists()) {
 			Controller.APPFOLDER.mkdirs();
@@ -84,6 +90,31 @@ public class Controller implements Initializable {
 				pdfViewer.load(nv);
 			} else {
 				pdfViewer.unload();
+			}
+		});
+
+		// listener para el fichero importado
+		// en este caso se intenta hacer una previsualización del documento en el visor
+		// de pdfs
+		ficheroImportado.addListener((o, ov, nv) -> {
+			if (nv != null) {
+				try {
+					File pdfFileOut = new File(Controller.TEMPDOCSFOLDER + File.separator + "preview.pdf");
+					JodConverter.convert(nv)// .as(DefaultDocumentFormatRegistry.DOC)
+							.to(pdfFileOut)//
+							.as(DefaultDocumentFormatRegistry.PDF)//
+							.execute();
+					// El null es para forzar al pdfViewer que cambie de pdf
+					drawerController.pdfFileProperty().set(null);
+					drawerController.pdfFileProperty().set(pdfFileOut);
+
+				} catch (OfficeException | IllegalStateException e) { // informar de que
+					Alert alerta = new Alert(AlertType.WARNING);
+					alerta.setTitle("Advertencia");
+					alerta.setHeaderText("No se ha podido crear la previsualización \n" + "del documento importado.");
+					alerta.initOwner(WordSeedExporterApp.primaryStage);
+					alerta.show();
+				}
 			}
 		});
 
@@ -103,6 +134,7 @@ public class Controller implements Initializable {
 				officeAlert.showAndWait();
 			}
 			drawerController.salirApp();
+			e.consume(); // Si llega hasta aquí es porque el usuario ha decidido cancelar la salida de la aplicación
 		});
 	}
 
