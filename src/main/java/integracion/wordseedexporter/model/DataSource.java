@@ -12,6 +12,14 @@ public class DataSource {
 
 	}
 
+	public ObservableList<ObservableList<String>> getRows() {
+		return rows;
+	}
+
+	public ObservableList<String> getKeyNames() {
+		return keyNames;
+	}
+
 	public void addRow(ObservableList<String> obL) {
 		rows.add(obL);
 	}

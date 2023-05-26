@@ -50,7 +50,6 @@ import org.odftoolkit.odfdom.dom.element.office.OfficeSpreadsheetElement;
 import org.odftoolkit.odfdom.dom.element.office.OfficeTextElement;
 import org.w3c.dom.NodeList;
 
-import integracion.wordseedexporter.WordSeedExporterApp;
 import integracion.wordseedexporter.controllers.Controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -86,43 +85,45 @@ public class DocumentManager {
 	 * Este método gestiona el tipo de documento entregado (.docx, pptx, xlsx, odt,
 	 * odp, ods o odg) y ejecuta el método apropiado para editar el documento.
 	 * 
-	 * @param f El fichero (documento) a modificar
+	 * @param input El fichero (documento) a modificar
+	 * @param output La ruta en la que los documentos generados se almacenarán
 	 * @throws Exception
 	 */
-	public void giveDocument(File f) throws Exception {
+	public void giveDocument(File input, File output) throws Exception {
 
-		if (f != null) {
+		if (input != null) {
 			// Nombre de las columnas del excel - serán las palabras a reemplazar
-			ObservableList<String> palabrasClave = Controller.keyList.get();
+			// ObservableList<String> palabrasClave = Controller.keyList.get();
 
 			// Registros de las filas de palabras para nuevos valores
-			ObservableList<ObservableList<String>> filas = Controller.rowList.get();
+			// ObservableList<ObservableList<String>> filas = Controller.rowList.get();
+			ObservableList<DataSource> dataSources = Controller.dataSources;
 
-			if ((filas != null && palabrasClave != null) && (filas.size() > 0 && palabrasClave.size() > 0)) {
+			if (dataSources != null && dataSources.size() > 0) {
 				XPathFactoryUtil.setxPathFactory(new XPathFactoryImpl());
+				// TODO Hcaer que se exporten usando el nombre que tienen
+				if (input.getName().endsWith(".docx")) {
+					replaceDocxStrings(dataSources, input, output);
 
-				if (f.getName().endsWith(".docx")) {
-					replaceDocxStrings(palabrasClave, filas, f);
+				} else if (input.getName().endsWith(".pptx")) {
+					replacePptxStrings(dataSources, input);
 
-				} else if (f.getName().endsWith(".pptx")) {
-					replacePptxStrings(palabrasClave, filas, f);
-
-				} else if (f.getName().endsWith(".xlsx")) {
-					replaceXlsxStrings(palabrasClave, filas, f);
+				} else if (input.getName().endsWith(".xlsx")) {
+					replaceXlsxStrings(dataSources, input);
 
 				} else {
 
-					if (f.getName().endsWith(".odt")) {
-						replaceOdtStrings(palabrasClave, filas, f);
+					if (input.getName().endsWith(".odt")) {
+						// replaceOdtStrings(palabrasClave, filas, f);
 
-					} else if (f.getName().endsWith(".odp")) {
-						replaceOdpStrings(palabrasClave, filas, f);
+					} else if (input.getName().endsWith(".odp")) {
+						// replaceOdpStrings(palabrasClave, filas, f);
 
-					} else if (f.getName().endsWith(".ods")) {
-						replaceOdsStrings(palabrasClave, filas, f);
+					} else if (input.getName().endsWith(".ods")) {
+						// replaceOdsStrings(palabrasClave, filas, f);
 
-					} else if (f.getName().endsWith(".odg")) {
-						replaceOdgStrings(palabrasClave, filas, f);
+					} else if (input.getName().endsWith(".odg")) {
+						// replaceOdgStrings(palabrasClave, filas, f);
 
 					}
 				}
@@ -151,192 +152,68 @@ public class DocumentManager {
 	 * 
 	 * @param rows
 	 * @param columnKeyName
-	 * @param f
+	 * @param input
 	 * @throws InvalidFormatException
 	 * @throws IOException
 	 */
-	public void replaceDocxStrings(ObservableList<String> columnKeyName, ObservableList<ObservableList<String>> rows,
-			File f) throws InvalidFormatException, IOException {
+	public void replaceDocxStrings(ObservableList<DataSource> dataSources, File input, File output)
+			throws InvalidFormatException, IOException {
 		int iEffective = 0;
+		int jEffective = 0;
 		int numCambios = 0;
 		int numCambiosRow = 0;
 		List<String> notFound = new ArrayList<>();
 		List<String> createdFiles = new ArrayList<>();
 
-		// La interfaz IBody es la que implementa el método .getParagraphs() y las
-		// clases que manejan el contenido de los párrafos en los docx
-		for (int i = 0; i < rows.size(); i++) { // iterando en las filas
-			numCambiosRow = 0;
+		for (int dim = 0; dim < dataSources.size(); dim++) {
+			ObservableList<String> columnKeyName = dataSources.get(dim).getKeyNames();
+			ObservableList<ObservableList<String>> rows = dataSources.get(dim).getRows();
 
-			List<String> cellString = rows.get(i);
-			XWPFDocument doc = new XWPFDocument(new FileInputStream(f)); // para reiniciar el doc a su estado inicial
-																			// para poder volver a reemplazar texto
+			iEffective = 0;
+			jEffective++;
+			// La interfaz IBody es la que implementa el método .getParagraphs() y las
+			// clases que manejan el contenido de los párrafos en los docx
+			for (int i = 0; i < rows.size(); i++) { // iterando en las filas
+				numCambiosRow = 0;
 
-			for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
-															// correspondiente palabra clave
-				if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
-						&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
+				List<String> cellString = rows.get(i);
+				XWPFDocument doc = new XWPFDocument(new FileInputStream(input)); // para reiniciar el doc a su estado
+																				// inicial
+																				// para poder volver a reemplazar texto
 
-					numCambios = 0;
-					boolean cambios = false;
+				for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
+																// correspondiente palabra clave
+					if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
+							&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
 
-					List<XWPFParagraph> parrafos = doc.getParagraphs();
-					List<XWPFTable> tablas = doc.getTables();
-					XWPFComment[] comentarios = doc.getComments();
-					List<XWPFEndnote> endNotes = doc.getEndnotes();
-					List<XWPFFooter> piesPag = doc.getFooterList();
-					List<XWPFFootnote> notasPiesPag = doc.getFootnotes();
-					List<XWPFHeader> cabeceras = doc.getHeaderList();
+						numCambios = 0;
+						boolean cambios = false;
 
-					// Párrafos del cuerpo del documento
-					if (parrafos != null) {
-						for (XWPFParagraph p : parrafos) {
-							cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
-							if (cambios) {
-								numCambios++;
-							}
-						}
-					}
+						List<XWPFParagraph> parrafos = doc.getParagraphs();
+						List<XWPFTable> tablas = doc.getTables();
+						XWPFComment[] comentarios = doc.getComments();
+						List<XWPFEndnote> endNotes = doc.getEndnotes();
+						List<XWPFFooter> piesPag = doc.getFooterList();
+						List<XWPFFootnote> notasPiesPag = doc.getFootnotes();
+						List<XWPFHeader> cabeceras = doc.getHeaderList();
 
-					// Tablas
-					if (tablas != null) {
-						for (XWPFTable tbl : tablas) {
-							for (XWPFTableRow row : tbl.getRows()) {
-								for (XWPFTableCell cell : row.getTableCells()) {
-									for (XWPFParagraph p : cell.getParagraphs()) {
-										cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
-										if (cambios) {
-											numCambios++;
-										}
-									}
-								}
-							}
-						}
-					}
-
-					// Comentarios
-					if (comentarios != null) {
-						for (XWPFComment comms : comentarios) {
-							for (XWPFParagraph p : comms.getParagraphs()) {
+						// Párrafos del cuerpo del documento
+						if (parrafos != null) {
+							for (XWPFParagraph p : parrafos) {
 								cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
 								if (cambios) {
 									numCambios++;
 								}
 							}
 						}
-					}
 
-					// EndNotes
-					if (endNotes != null) {
-						for (XWPFEndnote endNote : endNotes) {
-							for (XWPFParagraph p : endNote.getParagraphs()) {
-								cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
-								if (cambios) {
-									numCambios++;
-								}
-							}
-						}
-					}
-
-					// Pies de páginas
-					if (piesPag != null) {
-						for (XWPFFooter footer : piesPag) {
-							for (XWPFParagraph p : footer.getParagraphs()) {
-								cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
-								if (cambios) {
-									numCambios++;
-								}
-							}
-						}
-					}
-
-					// Notas de pies de páginas
-					if (notasPiesPag != null) {
-						for (XWPFFootnote footNote : notasPiesPag) {
-							for (XWPFParagraph p : footNote.getParagraphs()) {
-								cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
-								if (cambios) {
-									numCambios++;
-								}
-							}
-						}
-					}
-
-					// Cabeceras
-					if (cabeceras != null) {
-						for (XWPFHeader header : cabeceras) {
-							for (XWPFParagraph p : header.getParagraphs()) {
-								cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
-								if (cambios) {
-									numCambios++;
-								}
-							}
-						}
-					}
-
-					if (numCambios > 0) { // si ha habido cambios
-						numCambiosRow++;
-					}
-					if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se vuelve
-																						// a agregar
-						notFound.add(columnKeyName.get(j));
-					}
-				}
-			}
-			if (numCambiosRow > 0) {
-				iEffective++;
-				String fileName = "output_" + (iEffective) + ".docx";
-				doc.write(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
-				createdFiles.add(fileName);
-			}
-			doc.close();
-		}
-
-		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
-		// incluir los pdf
-		deleteOldFiles(createdFiles);
-
-		if (notFound.size() > 0) { // si hay palabras-clave que no se han encontrado en el documento
-			notFoundWords(notFound);
-		} else { // si no las hay es que se han generado todos los documentos correspondientes
-			allWordsSuccess();
-		}
-
-	}
-
-	private void replacePptxStrings(ObservableList<String> columnKeyName, ObservableList<ObservableList<String>> rows,
-			File f) throws InvalidFormatException, IOException {
-		int iEffective = 0;
-		int numCambios = 0;
-		int numCambiosRow = 0;
-		List<String> notFound = new ArrayList<>();
-		List<String> createdFiles = new ArrayList<>();
-
-		for (int i = 0; i < rows.size(); i++) { // iterando en las filas
-			numCambiosRow = 0;
-
-			List<String> cellString = rows.get(i);
-			XMLSlideShow slideShow = new XMLSlideShow(new FileInputStream(f));
-			// para reiniciar el doc a su estado inicial para poder volver a reemplazar
-			// texto
-			for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
-															// correspondiente palabra clave
-				if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
-						&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
-
-					numCambios = 0;
-					boolean cambios = false;
-					List<XSLFSlide> slides = slideShow.getSlides();
-					if (slides != null) {
-						for (XSLFSlide slide : slideShow.getSlides()) {
-							for (XSLFShape sh : slide.getShapes()) {
-								if (sh instanceof XSLFTextShape) {
-
-									List<XSLFTextParagraph> parrafos = ((XSLFTextShape) sh).getTextParagraphs();
-
-									if (parrafos != null) {
-										for (XSLFTextParagraph p : parrafos) {
-											cambios = editPptxParagraph(p, cellString.get(j), columnKeyName.get(j));
+						// Tablas
+						if (tablas != null) {
+							for (XWPFTable tbl : tablas) {
+								for (XWPFTableRow row : tbl.getRows()) {
+									for (XWPFTableCell cell : row.getTableCells()) {
+										for (XWPFParagraph p : cell.getParagraphs()) {
+											cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
 											if (cambios) {
 												numCambios++;
 											}
@@ -345,26 +222,172 @@ public class DocumentManager {
 								}
 							}
 						}
-					}
 
-					if (numCambios > 0) { // si ha habido cambios
-						numCambiosRow++;
-					}
-					if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se vuelve
-																						// a agregar
-						notFound.add(columnKeyName.get(j));
+						// Comentarios
+						if (comentarios != null) {
+							for (XWPFComment comms : comentarios) {
+								for (XWPFParagraph p : comms.getParagraphs()) {
+									cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
+									if (cambios) {
+										numCambios++;
+									}
+								}
+							}
+						}
+
+						// EndNotes
+						if (endNotes != null) {
+							for (XWPFEndnote endNote : endNotes) {
+								for (XWPFParagraph p : endNote.getParagraphs()) {
+									cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
+									if (cambios) {
+										numCambios++;
+									}
+								}
+							}
+						}
+
+						// Pies de páginas
+						if (piesPag != null) {
+							for (XWPFFooter footer : piesPag) {
+								for (XWPFParagraph p : footer.getParagraphs()) {
+									cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
+									if (cambios) {
+										numCambios++;
+									}
+								}
+							}
+						}
+
+						// Notas de pies de páginas
+						if (notasPiesPag != null) {
+							for (XWPFFootnote footNote : notasPiesPag) {
+								for (XWPFParagraph p : footNote.getParagraphs()) {
+									cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
+									if (cambios) {
+										numCambios++;
+									}
+								}
+							}
+						}
+
+						// Cabeceras
+						if (cabeceras != null) {
+							for (XWPFHeader header : cabeceras) {
+								for (XWPFParagraph p : header.getParagraphs()) {
+									cambios = editDocxParagraph(p, cellString.get(j), columnKeyName.get(j));
+									if (cambios) {
+										numCambios++;
+									}
+								}
+							}
+						}
+
+						if (numCambios > 0) { // si ha habido cambios
+							numCambiosRow++;
+						}
+						if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se
+																							// vuelve
+																							// a agregar
+							notFound.add(columnKeyName.get(j));
+						}
 					}
 				}
+				if (numCambiosRow > 0) {
+					iEffective++;
+					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".docx";
+					//doc.write(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
+					doc.write(new FileOutputStream(output + File.separator + fileName));
+					System.out.println(output + File.separator + fileName);
+					createdFiles.add(fileName);
+				}
+				doc.close();
 			}
+		}
 
-			if (numCambiosRow > 0) {
-				System.out.println("cambiosrow");
-				iEffective++;
-				String fileName = "output_" + (iEffective) + ".pptx";
-				slideShow.write(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
-				createdFiles.add(fileName);
+		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
+		// incluir los pdf
+		deleteOldFiles(createdFiles);
+
+		if (notFound.size() > 0) { // si hay palabras-clave que no se han encontrado en el documento
+			notFoundWords(notFound);
+		} else { // si no las hay es que se han generado todos los documentos correspondientes
+			allWordsSuccess();
+		}
+
+	}
+
+	private void replacePptxStrings(ObservableList<DataSource> dataSources, File f)
+			throws InvalidFormatException, IOException {
+		int iEffective = 0;
+		int jEffective = 0;
+		int numCambios = 0;
+		int numCambiosRow = 0;
+		List<String> notFound = new ArrayList<>();
+		List<String> createdFiles = new ArrayList<>();
+
+		for (int dim = 0; dim < dataSources.size(); dim++) {
+			ObservableList<String> columnKeyName = dataSources.get(dim).getKeyNames();
+			ObservableList<ObservableList<String>> rows = dataSources.get(dim).getRows();
+
+			iEffective = 0;
+			jEffective++;
+			for (int i = 0; i < rows.size(); i++) { // iterando en las filas
+				numCambiosRow = 0;
+
+				List<String> cellString = rows.get(i);
+				XMLSlideShow slideShow = new XMLSlideShow(new FileInputStream(f));
+				// para reiniciar el doc a su estado inicial para poder volver a reemplazar
+				// texto
+				for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
+																// correspondiente palabra clave
+					if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
+							&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
+
+						numCambios = 0;
+						boolean cambios = false;
+						List<XSLFSlide> slides = slideShow.getSlides();
+						if (slides != null) {
+							for (XSLFSlide slide : slideShow.getSlides()) {
+								for (XSLFShape sh : slide.getShapes()) {
+									if (sh instanceof XSLFTextShape) {
+
+										List<XSLFTextParagraph> parrafos = ((XSLFTextShape) sh).getTextParagraphs();
+
+										if (parrafos != null) {
+											for (XSLFTextParagraph p : parrafos) {
+												cambios = editPptxParagraph(p, cellString.get(j), columnKeyName.get(j));
+												if (cambios) {
+													numCambios++;
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+
+						if (numCambios > 0) { // si ha habido cambios
+							numCambiosRow++;
+						}
+						if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se
+																							// vuelve
+																							// a agregar
+							notFound.add(columnKeyName.get(j));
+						}
+					}
+				}
+
+				if (numCambiosRow > 0) {
+					System.out.println("cambiosrow");
+					iEffective++;
+					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".pptx";
+					slideShow.write(
+							new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
+					createdFiles.add(fileName);
+				}
+				slideShow.close();
 			}
-			slideShow.close();
 		}
 
 		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
@@ -378,62 +401,70 @@ public class DocumentManager {
 		}
 	}
 
-	private void replaceXlsxStrings(ObservableList<String> columnKeyName, ObservableList<ObservableList<String>> rows,
-			File f) throws InvalidFormatException, IOException {
+	private void replaceXlsxStrings(ObservableList<DataSource> dataSources, File f)
+			throws InvalidFormatException, IOException {
 		int iEffective = 0;
+		int jEffective = 0;
 		int numCambios = 0;
 		int numCambiosRow = 0;
 		List<String> notFound = new ArrayList<>();
 		List<String> createdFiles = new ArrayList<>();
 
-		for (int i = 0; i < rows.size(); i++) { // iterando en las filas
-			numCambiosRow = 0;
+		for (int dim = 0; dim < dataSources.size(); dim++) {
+			ObservableList<String> columnKeyName = dataSources.get(dim).getKeyNames();
+			ObservableList<ObservableList<String>> rows = dataSources.get(dim).getRows();
 
-			List<String> cellString = rows.get(i);
+			iEffective = 0;
+			jEffective++;
+			for (int i = 0; i < rows.size(); i++) { // iterando en las filas
+				numCambiosRow = 0;
 
-			XSSFWorkbook spreadSheet = new XSSFWorkbook(new FileInputStream(f));
-			// para reiniciar el doc a su estado inicial para poder volver a reemplazar
-			// texto
-			for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
-															// correspondiente palabra clave
-				if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
-						&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
+				List<String> cellString = rows.get(i);
 
-					numCambios = 0;
-					boolean cambios = false;
-					Iterator<Sheet> sheets = spreadSheet.sheetIterator();
-					if (sheets != null) {
-						// Para cada página del documento excel
-						while (sheets.hasNext()) {
-							Sheet sh = sheets.next(); // Se maneja cada hoja
-							for (Row row : sh) {
-								for (Cell cell : row) {
-									cambios = editXlxsCells(cell, cellString.get(j), columnKeyName.get(j));
-									if (cambios) {
-										numCambios++;
+				XSSFWorkbook spreadSheet = new XSSFWorkbook(new FileInputStream(f));
+				// para reiniciar el doc a su estado inicial para poder volver a reemplazar
+				// texto
+				for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
+																// correspondiente palabra clave
+					if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
+							&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
+
+						numCambios = 0;
+						boolean cambios = false;
+						Iterator<Sheet> sheets = spreadSheet.sheetIterator();
+						if (sheets != null) {
+							// Para cada página del documento excel
+							while (sheets.hasNext()) {
+								Sheet sh = sheets.next(); // Se maneja cada hoja
+								for (Row row : sh) {
+									for (Cell cell : row) {
+										cambios = editXlxsCells(cell, cellString.get(j), columnKeyName.get(j));
+										if (cambios) {
+											numCambios++;
+										}
 									}
 								}
 							}
 						}
-					}
-					if (numCambios > 0) { // si ha habido cambios
-						numCambiosRow++;
-					}
-					if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se
-																						// vuelve a agregar
-						notFound.add(columnKeyName.get(j));
+						if (numCambios > 0) { // si ha habido cambios
+							numCambiosRow++;
+						}
+						if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se
+																							// vuelve a agregar
+							notFound.add(columnKeyName.get(j));
+						}
 					}
 				}
-			}
 
-			if (numCambiosRow > 0) {
-				iEffective++;
-				String fileName = "output_" + (iEffective) + ".xlsx";
-				spreadSheet
-						.write(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
-				createdFiles.add(fileName);
+				if (numCambiosRow > 0) {
+					iEffective++;
+					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".xlsx";
+					spreadSheet.write(
+							new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
+					createdFiles.add(fileName);
+				}
+				spreadSheet.close();
 			}
-			spreadSheet.close();
 		}
 
 		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
@@ -878,21 +909,18 @@ public class DocumentManager {
 			textoPalabras += ((i < ls.size() - 1) ? "" : "y ") + "\"" + ls.get(i) + "\""
 					+ ((i < ls.size() - 1) ? ", " : " ");
 		}
-		alerta.setHeaderText("Las palabras " + textoPalabras + "no se han encontrado en el fichero importado.");
-		alerta.setContentText(
+		Controller.crearAlerta(AlertType.WARNING, "No se han encontrado algunas palabras",
+				"Las palabras " + textoPalabras + "no se han encontrado en el fichero importado.",
 				"Varias palabras especificadas en la fuente de datos no han sido encontradas, por lo que no\n"
-						+ "se han aplicado los cambios correspondientes respecto a estas palabras.");
-		alerta.initOwner(WordSeedExporterApp.primaryStage);
-		alerta.showAndWait();
+						+ "se han aplicado los cambios correspondientes respecto a estas palabras.",
+				false);
 	}
 
 	private void allWordsSuccess() {
-		Alert alerta = new Alert(AlertType.INFORMATION);
-		alerta.setTitle("Operación exitosa");
-		alerta.setHeaderText("Se han reemplazado todas las palabras de la fuente de datos\n"
-				+ "y aplicado los cambios correspondientes.");
-		alerta.initOwner(WordSeedExporterApp.primaryStage);
-		alerta.showAndWait();
+		Controller.crearAlerta(AlertType.INFORMATION, "Operación exitosa",
+				"Se han reemplazado todas las palabras de la fuente de datos\n"
+						+ "y aplicado los cambios correspondientes.",
+				null, false);
 	}
 
 	private void deleteOldFiles(List<String> ls) {

@@ -61,11 +61,11 @@ public class Controller implements Initializable {
 	// model
 	public static BooleanProperty replaceExactWord = new SimpleBooleanProperty(true); // valor por defecto a true
 
-	public static ListProperty<ObservableList<String>> rowList = new SimpleListProperty<>(
-			FXCollections.<ObservableList<String>>observableArrayList());
+	//public static ListProperty<ObservableList<String>> rowList = new SimpleListProperty<>(
+			//FXCollections.<ObservableList<String>>observableArrayList());
 	// https://stackoverflow.com/questions/16317949/javafx-two-dimensional-observablelist
 
-	public static ListProperty<String> keyList = new SimpleListProperty<>(FXCollections.observableArrayList());
+	//public static ListProperty<String> keyList = new SimpleListProperty<>(FXCollections.observableArrayList());
 	
 	public static ListProperty<DataSource> dataSources = new SimpleListProperty<>(FXCollections.observableArrayList());
 
@@ -113,6 +113,7 @@ public class Controller implements Initializable {
 							.as(DefaultDocumentFormatRegistry.PDF)//
 							.execute();
 					// El null es para forzar al pdfViewer que cambie de pdf
+					
 					drawerController.pdfFileProperty().set(null);
 					drawerController.pdfFileProperty().set(pdfFileOut);
 
@@ -120,6 +121,7 @@ public class Controller implements Initializable {
 					crearAlerta(AlertType.WARNING, "Advertencia",
 							"No se ha podido crear la previsualización \n" + "del documento importado.", null, false);
 				}
+				System.out.println(nv);
 			}
 		});
 

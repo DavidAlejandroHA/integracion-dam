@@ -28,6 +28,7 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -151,7 +152,7 @@ public class DrawerController implements Initializable {
 	public void cargarFuente() {
 		DocumentManager docManager = new DocumentManager();
 		FileChooser fileChooser = new FileChooser();
-		fileChooser.setInitialDirectory(new File("."));
+		// fileChooser.setInitialDirectory(new File("."));
 		fileChooser.getExtensionFilters().addAll(
 				new FileChooser.ExtensionFilter("Microsoft Excel Document (2007)", "*.xlsx"),
 				new FileChooser.ExtensionFilter("Office SpreadSheet Document", "*.ods"));
@@ -173,16 +174,19 @@ public class DrawerController implements Initializable {
 	 * estructura interna <br>
 	 * (p. ej. renombrar el archivo a un formato distinto) se lanzará una alerta
 	 * avisando del error ocurrido.
+	 * 
+	 * @param f La ruta hacia dónde se van a guardar los ficheros generados
 	 */
-	public void reemplazarTexto() {
+	public void reemplazarTexto(File f) {
 		DocumentManager docManager = new DocumentManager();
 		try {
 			if (Controller.ficheroImportado.get() != null) { // si no se canceló la importación del documento
-				docManager.giveDocument(Controller.ficheroImportado.get());
+				docManager.giveDocument(Controller.ficheroImportado.get(), f);
 			}
 		} catch (Exception e) {
 			Controller.crearAlerta(AlertType.ERROR, "Error",
-					"Error al procesar el documento. Es posible que el archivo tenga un formato incorrecto.",
+					"Error al procesar el documento. Es posible que el archivo tenga un formato incorrecto\n"
+							+ "o se haya eliminado.",
 					"Error: " + e.getMessage(), false);
 		}
 
@@ -197,11 +201,16 @@ public class DrawerController implements Initializable {
 	 */
 	@FXML
 	void onExportarDocumento(ActionEvent event) {
-		if (Controller.ficheroImportado.get() != null && !Controller.keyList.isEmpty()
-				&& !Controller.rowList.isEmpty()) {
-			reemplazarTexto();
+		if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty()) {
+			DirectoryChooser chooser = new DirectoryChooser();
+			// chooser.setTitle("Guardar documentos");
+			File f = chooser.showDialog(WordSeedExporterApp.primaryStage);
+			if (f != null) {
+				reemplazarTexto(f);
+			}
 		} else {
-			if ((Controller.keyList.isEmpty() || Controller.rowList.isEmpty())) {
+			System.out.println(Controller.ficheroImportado.get() != null);
+			if (Controller.dataSources.get().isEmpty()) {
 				if (Controller.ficheroImportado.get() != null) {
 					Controller.crearAlerta(AlertType.WARNING, "Advertencia",
 							"Se necesita importar antes una fuente de datos para exportar los archivos.", null, false);
