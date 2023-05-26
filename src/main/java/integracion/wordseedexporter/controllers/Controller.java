@@ -67,7 +67,7 @@ public class Controller implements Initializable {
 
 	public static ListProperty<String> keyList = new SimpleListProperty<>(FXCollections.observableArrayList());
 	
-	//public static ListProperty<DataSource> dataSources = new SimpleListProperty<>(FXCollections.observableArrayList());
+	public static ListProperty<DataSource> dataSources = new SimpleListProperty<>(FXCollections.observableArrayList());
 
 	public static ObjectProperty<File> ficheroImportado = new SimpleObjectProperty<>();
 

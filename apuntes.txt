@@ -1,0 +1,59 @@
+https://poi.apache.org/components/spreadsheet/quick-guide.html#TextExtraction
+
+
+
+
+
+
+
+
+
+private <T> ObservableList<ObservableList<T>> transpose(ObservableList<ObservableList<T>> table) {
+//		ObservableList<ObservableList<T>> result = FXCollections.observableArrayList();
+//		final int N = table.get(0).size();
+//		for (int i = 0; i < N; i++) {
+//			ObservableList<T> col = FXCollections.observableArrayList();
+//			for (ObservableList<T> row : table) {
+//				col.add(row.get(i));
+//			}
+//			result.add(col);
+//		}
+//		return result;
+//	}
+
+
+
+/**
+	 * En caso de que la fuente de datos importada tenga varias hojas, es posible
+	 * que las tablas que hayan en<br>
+	 * las distintas hojas puedan tener distintos tamaños, por lo que una vez juntas
+	 * junto a las filas que<br>
+	 * contienen, se le añaden strings vacíos que no influirán en el reemplazo de
+	 * palabras a cada fila que sea<br>
+	 * necesaria para que todas tengan el mismo tamaño y no se produzca
+	 * posteriormente<br>
+	 * un IndexOutOfBoundException
+	 * 
+	 * @param topRowLength La longitud máxima entre las filas contenidas en la tabla
+	 * @param filas
+	 * @return
+	 */
+//	private ObservableList<ObservableList<String>> fillMissingCells(int topRowLength,
+//			ObservableList<ObservableList<String>> filas) {
+//		for (int i = 0; i < filas.size(); i++) {
+//			for (int j = 0; j < filas.get(i).size(); j++) {
+//				if (filas.get(i).size() > topRowLength) {
+//					topRowLength = filas.get(i).size();
+//				}
+//			}
+//			int missingElemNum = topRowLength - filas.get(i).size();
+//			if (missingElemNum != 0) {
+//				for (int k = 0; k < missingElemNum; k++) {
+//					filas.get(i).add("");
+//				}
+//			}
+//			System.out.println(missingElemNum);
+//		}
+//		return filas;
+//	}
+

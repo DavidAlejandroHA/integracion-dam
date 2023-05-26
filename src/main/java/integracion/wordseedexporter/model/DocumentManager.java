@@ -273,17 +273,16 @@ public class DocumentManager {
 							}
 						}
 					}
+
 					if (numCambios > 0) { // si ha habido cambios
 						numCambiosRow++;
 					}
-
 					if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se vuelve
 																						// a agregar
 						notFound.add(columnKeyName.get(j));
 					}
 				}
 			}
-
 			if (numCambiosRow > 0) {
 				iEffective++;
 				String fileName = "output_" + (iEffective) + ".docx";
@@ -317,10 +316,9 @@ public class DocumentManager {
 			numCambiosRow = 0;
 
 			List<String> cellString = rows.get(i);
-			XMLSlideShow slideShow = new XMLSlideShow(new FileInputStream(f)); // para reiniciar el doc a su estado
-																				// inicial
-																				// para poder volver a reemplazar texto
-
+			XMLSlideShow slideShow = new XMLSlideShow(new FileInputStream(f));
+			// para reiniciar el doc a su estado inicial para poder volver a reemplazar
+			// texto
 			for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
 															// correspondiente palabra clave
 				if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
@@ -352,7 +350,6 @@ public class DocumentManager {
 					if (numCambios > 0) { // si ha habido cambios
 						numCambiosRow++;
 					}
-
 					if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se vuelve
 																						// a agregar
 						notFound.add(columnKeyName.get(j));
@@ -394,11 +391,9 @@ public class DocumentManager {
 
 			List<String> cellString = rows.get(i);
 
-			XSSFWorkbook spreadSheet = new XSSFWorkbook(new FileInputStream(f)); // para reiniciar el doc a su estado
-																					// inicial
-																					// para poder volver a reemplazar
-																					// texto
-
+			XSSFWorkbook spreadSheet = new XSSFWorkbook(new FileInputStream(f));
+			// para reiniciar el doc a su estado inicial para poder volver a reemplazar
+			// texto
 			for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
 															// correspondiente palabra clave
 				if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
@@ -424,7 +419,6 @@ public class DocumentManager {
 					if (numCambios > 0) { // si ha habido cambios
 						numCambiosRow++;
 					}
-
 					if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se
 																						// vuelve a agregar
 						notFound.add(columnKeyName.get(j));
@@ -466,11 +460,9 @@ public class DocumentManager {
 
 			List<String> cellString = rows.get(i);
 
-			OdfTextDocument odtDocument = OdfTextDocument.loadDocument(f); // para reiniciar el doc a su estado
-																			// inicial
-																			// para poder volver a reemplazar
-																			// texto
-
+			OdfTextDocument odtDocument = OdfTextDocument.loadDocument(f);
+			// para reiniciar el doc a su estado inicial para poder volver a reemplazar
+			// texto
 			for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
 															// correspondiente palabra clave
 				if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
@@ -498,11 +490,9 @@ public class DocumentManager {
 					if (cambios) {
 						numCambios++;
 					}
-
 					if (numCambios > 0) { // si ha habido cambios
 						numCambiosRow++;
 					}
-
 					if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se
 																						// vuelve a agregar
 						notFound.add(columnKeyName.get(j));
@@ -515,7 +505,6 @@ public class DocumentManager {
 				String fileName = "output_" + (iEffective) + ".odt";
 				odtDocument.save(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
 				createdFiles.add(fileName);
-
 			}
 			odtDocument.close();
 		}
@@ -544,12 +533,9 @@ public class DocumentManager {
 
 			List<String> cellString = rows.get(i);
 
-			OdfPresentationDocument odpDocument = OdfPresentationDocument.loadDocument(f); // para reiniciar el doc a su
-																							// estado
-			// inicial
-			// para poder volver a reemplazar
+			OdfPresentationDocument odpDocument = OdfPresentationDocument.loadDocument(f);
+			// para reiniciar el doc a su estado inicial para poder volver a reemplazar
 			// texto
-
 			for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
 															// correspondiente palabra clave
 				if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
@@ -624,12 +610,9 @@ public class DocumentManager {
 
 			List<String> cellString = rows.get(i);
 
-			OdfSpreadsheetDocument odsDocument = OdfSpreadsheetDocument.loadDocument(f); // para reiniciar el doc a su
-																							// estado
-			// inicial
-			// para poder volver a reemplazar
+			OdfSpreadsheetDocument odsDocument = OdfSpreadsheetDocument.loadDocument(f);
+			// para reiniciar el doc a su estado inicial para poder volver a reemplazar
 			// texto
-
 			for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
 															// correspondiente palabra clave
 				if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
@@ -927,35 +910,51 @@ public class DocumentManager {
 		List<OdfTable> tablas = odsDocument.getTableList(false);
 		if (tablas != null) {
 
-			ObservableList<String> celdas = FXCollections.observableArrayList();
-			ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
-
-			ObservableList<ObservableList<String>> filas = FXCollections.<ObservableList<String>>observableArrayList();
-
-			// leer el tamaño de la tabla
-			int width = 0;
-			int height = 0;
-			int rowIndexStart = 0;
-			int columnIndexStart = 0;
-			int emptyCellsCount = 0;
-			boolean lock = false;
+			ObservableList<DataSource> dsList = FXCollections.observableArrayList();
 
 			for (OdfTable t : tablas) {
+				// leer el tamaño de la tabla
+				int width = 0;
+				int height = 0;
+				int rowIndexStart = 0;
+				int columnIndexStart = 0;
+				boolean lock = false;
 
-				// lecutra de las dimensiones de la tabla y su punto de partida
-				for (int i = 0; i < t.getRowCount(); i++) {
+				DataSource ds = new DataSource();
+
+				ObservableList<String> celdas = FXCollections.observableArrayList();
+				ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
+
+				ObservableList<ObservableList<String>> filas = FXCollections
+						.<ObservableList<String>>observableArrayList();
+
+				// se obtiene un tamaño para buscar los registros de la tabla y desde donde
+				// empieza
+				int searchHeight = t.getRowElementList().size();
+				int searchWidth = 0;
+
+				// encontrando la anchura máxima
+				for (int i = 0; i < searchHeight; i++) {
+					if (t.getRowElementList().get(i).getLength() > searchWidth) {
+						searchWidth = t.getRowElementList().get(i).getLength() + 1;
+					}
+				}
+
+				// lecutra de las dimensiones reales (quitando las columnas en blanco) de la
+				// tabla
+				// y su punto de partida
+				for (int i = 0; i < searchHeight; i++) {
 					boolean contains = false;
 
 					celdas = FXCollections.observableArrayList(); // reset de filas
-					for (int j = 0; j < t.getColumnCount(); j++) {
+					for (int j = 0; j < searchWidth; j++) {
 						OdfTableCell cell = t.getCellByPosition(j, i);
-						if(emptyCellsCount > 100) {
-							throw new Exception();
-						}
+//						if (emptyCellsCount > 100) {
+//							throw new Exception("La tabla contiene demasiados registros vacíos. Es posible que\n"
+//									+ "sea necesario cortar y pegar la tabla en el inicio de un nuevo documento.");
+//						}
 						if (cell != null && cell.getValueType() != null && cell.getStringValue().trim().length() > 0) {
 							contains = true;
-							emptyCellsCount = 0;
-							
 							if (!lock) {
 								rowIndexStart = i;
 								columnIndexStart = j;
@@ -965,26 +964,20 @@ public class DocumentManager {
 							if (rowIndexStart == i) { // si está en la primera fila y lee un registro
 								width = j - columnIndexStart + 1; // apunta la anchura hasta llegar a el último de ellos
 							}
-						} else {
-							if (rowIndexStart == i) { // si está en la primera fila y lee un registro
-								emptyCellsCount++;
-							}
 						}
 					}
 					if (contains) {
 						height++;
-					} else {
-						
 					}
 				}
 
 				if (height <= 1) {
-					throw new Exception();
+					throw new Exception("La tabla debe de tener más de una fila");
 				}
 
 				String texto = null;
 				for (int i = rowIndexStart; i < rowIndexStart + height; i++) {
-					celdas = FXCollections.observableArrayList(); // reset de filas
+					celdas = FXCollections.observableArrayList(); // reset de celdas
 					for (int j = columnIndexStart; j < columnIndexStart + width; j++) {
 						OdfTableCell cell = t.getCellByPosition(j, i);
 						if (cell == null) { // si hay datos el texto son los datos de la casilla
@@ -994,9 +987,7 @@ public class DocumentManager {
 						}
 						if (i == rowIndexStart) { // si es el primer registro se usa como una palabra a reemplazar en el
 							// documento
-							// if (texto != null && texto.trim().length() > 0) {
 							nombresReemplazo.add(texto);
-							// }
 						} else { // si no como una de las claves a usar para el reemplazo de palabras
 							celdas.add(texto);
 						}
@@ -1005,45 +996,23 @@ public class DocumentManager {
 						filas.add(celdas); // una vez procesadas todas las filas se añaden a la lista de filas
 					}
 				}
-			}
 
-			// eliminar las columnas que no tienen nombres clave
-			for (int i = 0; i < nombresReemplazo.size(); i++) {
-				// System.out.println(nombresReemplazo.get(i));
-				if (nombresReemplazo.get(i).trim().length() == 0) {
-					nombresReemplazo.remove(i);
-					for (int j = 0; j < filas.size(); j++) {
-						filas.get(j).remove(i);
-					}
-					i--;
-				}
-			}
-
-			// En esta última parte, en caso de leer varias hojas, es posible que las tablas
-			// puedan tener distintos tamaños, por lo que una vez juntas todas las tablas y
-			// las filas, se le añaden strings vacíos que no influirán en el reemplazo de
-			// palabras a cada fila que sea necesaria para que todas tengan el mismo tamaño
-			// y no se produzca posteriormente un IndexOutOfBoundException
-			int topRowLength = 0;
-			for (int i = 0; i < filas.size(); i++) {
-				for (int j = 0; j < filas.get(i).size(); j++) {
-					if (filas.get(i).size() > topRowLength) {
-						topRowLength = filas.get(i).size();
+				// eliminar las columnas que no tienen nombres clave
+				for (int i = 0; i < nombresReemplazo.size(); i++) {
+					// System.out.println(nombresReemplazo.get(i));
+					if (nombresReemplazo.get(i).trim().length() == 0) {
+						nombresReemplazo.remove(i);
+						for (int j = 0; j < filas.size(); j++) {
+							filas.get(j).remove(i);
+						}
+						i--;
 					}
 				}
-
-				int missingElemNum = topRowLength - filas.get(i).size();
-				if (missingElemNum != 0) {
-					for (int k = 0; k < missingElemNum; k++) {
-						filas.get(i).add("");
-					}
-				}
+				ds.setKeyNames(nombresReemplazo);
+				ds.setRows(filas);
+				dsList.add(ds);
 			}
-
-			Controller.rowList.set(filas);
-			Controller.keyList.set(nombresReemplazo);
-			// System.out.println(filas);
-			// System.out.println(nombresReemplazo);
+			Controller.dataSources.set(dsList);
 		}
 	}
 
@@ -1053,24 +1022,24 @@ public class DocumentManager {
 		Iterator<Sheet> sheets = spreadSheet.sheetIterator();
 
 		if (sheets != null) {
+			ObservableList<DataSource> dSList = FXCollections.observableArrayList();
 
-			ObservableList<String> rowElements = FXCollections.observableArrayList();
-			ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
-
-			ObservableList<ObservableList<String>> filas = FXCollections.<ObservableList<String>>observableArrayList();
-
-			ObservableList<ObservableList<String>> rowList = FXCollections.observableArrayList();
 			// Para cada página del documento excel
 			while (sheets.hasNext()) {
+				DataSource ds = new DataSource();
+
+				ObservableList<String> rowElements = FXCollections.observableArrayList();
+				ObservableList<String> nombresReemplazo = FXCollections.observableArrayList();
+
+				ObservableList<ObservableList<String>> rowList = FXCollections.observableArrayList();
+
 				Sheet sh = sheets.next(); // Se maneja cada hoja
-				// https://poi.apache.org/components/spreadsheet/quick-guide.html#TextExtraction
 
 				// leer el tamaño de la tabla
 				int width = 0;
 				int height = 0;
 				int rowIndexStart = 0;
 				int columnIndexStart = 0;
-				int emptyCellsCount = 0;
 				boolean lock = false;
 				for (int i = sh.getFirstRowNum(); i < sh.getLastRowNum() + 1; i++) {
 					Row row = sh.getRow(i);
@@ -1081,23 +1050,14 @@ public class DocumentManager {
 
 						for (int colNum = firstCellAux; colNum < lastCellAux; colNum++) {
 							Cell cell = row.getCell(colNum);
-							if(emptyCellsCount > 100) {
-								throw new Exception();
-							}
-
 							if (cell != null && readCell(cell).trim().length() > 0) { // si hay algo en la celda
 								contains = true;
-								emptyCellsCount = 0;
 								if (!lock) {
 									rowIndexStart = cell.getRowIndex();
 									columnIndexStart = cell.getColumnIndex();
 									width = lastCellAux - firstCellAux; // el ancho de la tabla vendrá
 									// dado por el ancho de la primera fila
 									lock = true;
-								}
-							} else {
-								if (rowIndexStart == i) { // si está en la primera fila y lee un registro
-									emptyCellsCount++;
 								}
 							}
 						}
@@ -1107,7 +1067,7 @@ public class DocumentManager {
 					}
 				}
 				if (height <= 1) {
-					throw new Exception();
+					throw new Exception("La tabla debe de tener más de una fila");
 				}
 
 				for (int i = rowIndexStart; i < rowIndexStart + height; i++) { // manejando cada fila
@@ -1148,68 +1108,24 @@ public class DocumentManager {
 						}
 					}
 				}
-			}
-
-			filas.setAll(rowList);
-
-			int topRowLength = 0;
-
-			filas = fillMissingCells(topRowLength, filas);
-
-			// Se eliminan las posibles "palabras clave" vacías que pueda contener la tabla,
-			// y con ello las columnas correspondientes ya que no interesarían
-			for (int i = 0; i < nombresReemplazo.size(); i++) {
-				// System.out.println(nombresReemplazo.get(i));
-				if (nombresReemplazo.get(i).trim().length() == 0) {
-					nombresReemplazo.remove(i);
-					for (int j = 0; j < filas.size(); j++) {
-						filas.get(j).remove(i);
+				// Se eliminan las posibles "palabras clave" vacías que pueda contener la tabla,
+				// y con ello las columnas correspondientes ya que no interesarían
+				for (int i = 0; i < nombresReemplazo.size(); i++) {
+					if (nombresReemplazo.get(i).trim().length() == 0) {
+						nombresReemplazo.remove(i);
+						for (int j = 0; j < rowList.size(); j++) {
+							rowList.get(j).remove(i);
+						}
+						i--;
 					}
-					i--;
 				}
+				ds.setKeyNames(nombresReemplazo);
+				ds.setRows(rowList);
+				dSList.add(ds);
 			}
-			// TODO darle la vuelta a esto ultimo
-			// TODO Crear objeto para almacenar distintas fuentes de datos
-			System.out.println(filas);
-			System.out.println(nombresReemplazo);
-			Controller.rowList.set(filas);
-			Controller.keyList.set(nombresReemplazo);
+			Controller.dataSources.set(dSList);
 		}
 		spreadSheet.close();
-	}
-
-	/**
-	 * En caso de que la fuente de datos importada tenga varias hojas, es posible
-	 * que las tablas que hayan en<br>
-	 * las distintas hojas puedan tener distintos tamaños, por lo que una vez juntas
-	 * junto a las filas que<br>
-	 * contienen, se le añaden strings vacíos que no influirán en el reemplazo de
-	 * palabras a cada fila que sea<br>
-	 * necesaria para que todas tengan el mismo tamaño y no se produzca
-	 * posteriormente<br>
-	 * un IndexOutOfBoundException
-	 * 
-	 * @param topRowLength La longitud máxima entre las filas contenidas en la tabla
-	 * @param filas
-	 * @return
-	 */
-	private ObservableList<ObservableList<String>> fillMissingCells(int topRowLength,
-			ObservableList<ObservableList<String>> filas) {
-		for (int i = 0; i < filas.size(); i++) {
-			for (int j = 0; j < filas.get(i).size(); j++) {
-				if (filas.get(i).size() > topRowLength) {
-					topRowLength = filas.get(i).size();
-				}
-			}
-			int missingElemNum = topRowLength - filas.get(i).size();
-			if (missingElemNum != 0) {
-				for (int k = 0; k < missingElemNum; k++) {
-					filas.get(i).add("");
-				}
-			}
-			System.out.println(missingElemNum);
-		}
-		return filas;
 	}
 
 	private String readCell(Cell c) {
@@ -1231,17 +1147,4 @@ public class DocumentManager {
 		}
 		return texto;
 	}
-
-//	private <T> ObservableList<ObservableList<T>> transpose(ObservableList<ObservableList<T>> table) {
-//		ObservableList<ObservableList<T>> result = FXCollections.observableArrayList();
-//		final int N = table.get(0).size();
-//		for (int i = 0; i < N; i++) {
-//			ObservableList<T> col = FXCollections.observableArrayList();
-//			for (ObservableList<T> row : table) {
-//				col.add(row.get(i));
-//			}
-//			result.add(col);
-//		}
-//		return result;
-//	}
 }

@@ -159,8 +159,9 @@ public class DrawerController implements Initializable {
 			docManager.readData(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
 		} catch (Exception e) {
 			Controller.crearAlerta(AlertType.ERROR, "Error", "Error al cargar la fuente de datos",
-					"La fuente de datos contiene un formato incorrecto respecto a la \n" + "gestión de la aplicación.",
-					false);
+					// "La fuente de datos contiene un formato incorrecto respecto a la \n" +
+					// "gestión de la aplicación."
+					"Error: " + e.getMessage(), false);
 			e.printStackTrace();
 		}
 	}

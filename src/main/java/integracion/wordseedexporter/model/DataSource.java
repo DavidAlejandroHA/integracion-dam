@@ -1,11 +1,12 @@
 package integracion.wordseedexporter.model;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class DataSource {
 
-	private ObservableList<ObservableList<String>> rows;
-	private ObservableList<String> keyNames;
+	private ObservableList<ObservableList<String>> rows = FXCollections.observableArrayList();
+	private ObservableList<String> keyNames = FXCollections.observableArrayList();
 
 	public DataSource() {
 
