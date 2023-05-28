@@ -26,7 +26,7 @@
                   <Font size="26.0" />
                </font>
             </JFXButton>
-            <JFXButton graphicTextGap="20.0" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Exportar informe a pdf" textAlignment="CENTER" wrapText="true">
+            <JFXButton graphicTextGap="20.0" onAction="#onExportarPdf" prefHeight="94.0" prefWidth="300.0" ripplerFill="#614f4f" styleClass="drawerButton" text="Exportar informe a pdf" textAlignment="CENTER" wrapText="true">
                <graphic>
                   <FontIcon iconColor="RED" iconLiteral="gmi-picture-as-pdf" iconSize="60" />
                </graphic>

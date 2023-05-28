@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 public class WordSeedExporterApp extends Application {
 
 	public static Stage primaryStage;
-	public Scene escena;
+	public static Scene escena;
 	private Controller controller;
 	private LocalOfficeManager officeManager;
 
@@ -67,9 +67,10 @@ public class WordSeedExporterApp extends Application {
 	 */
 	public void checkOffice() {
 		try {
-			//officeManager = LocalOfficeManager.install();
-			//controller.setOfficeManager(officeManager);
+			officeManager = LocalOfficeManager.install();
+			controller.setOfficeManager(officeManager);
 		} catch (NullPointerException e) {
+			Controller.officeInstalled = false;
 			Alert nullPointExAlert = new Alert(AlertType.WARNING);
 			nullPointExAlert.setTitle("LibreOffice no está instalado");
 			nullPointExAlert.setHeaderText("LibreOffice no está instalado en este equipo.");
@@ -94,7 +95,6 @@ public class WordSeedExporterApp extends Application {
 			nullPointExAlert.getDialogPane().contentProperty().set(alertContent);
 			nullPointExAlert.initOwner(WordSeedExporterApp.primaryStage);
 			nullPointExAlert.show();
-			//primaryStage.close();
 		}
 
 	}

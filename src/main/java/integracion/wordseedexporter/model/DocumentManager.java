@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +40,9 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.docx4j.utils.XPathFactoryUtil;
+import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
+import org.jodconverter.core.office.OfficeException;
+import org.jodconverter.local.JodConverter;
 import org.odftoolkit.odfdom.doc.OdfGraphicsDocument;
 import org.odftoolkit.odfdom.doc.OdfPresentationDocument;
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
@@ -85,7 +91,7 @@ public class DocumentManager {
 	 * Este método gestiona el tipo de documento entregado (.docx, pptx, xlsx, odt,
 	 * odp, ods o odg) y ejecuta el método apropiado para editar el documento.
 	 * 
-	 * @param input El fichero (documento) a modificar
+	 * @param input  El fichero (documento) a modificar
 	 * @param output La ruta en la que los documentos generados se almacenarán
 	 * @throws Exception
 	 */
@@ -106,24 +112,24 @@ public class DocumentManager {
 					replaceDocxStrings(dataSources, input, output);
 
 				} else if (input.getName().endsWith(".pptx")) {
-					replacePptxStrings(dataSources, input);
+					replacePptxStrings(dataSources, input, output);
 
 				} else if (input.getName().endsWith(".xlsx")) {
-					replaceXlsxStrings(dataSources, input);
+					replaceXlsxStrings(dataSources, input, output);
 
 				} else {
 
 					if (input.getName().endsWith(".odt")) {
-						// replaceOdtStrings(palabrasClave, filas, f);
+						replaceOdtStrings(dataSources, input, output);
 
 					} else if (input.getName().endsWith(".odp")) {
-						// replaceOdpStrings(palabrasClave, filas, f);
+						replaceOdpStrings(dataSources, input, output);
 
 					} else if (input.getName().endsWith(".ods")) {
-						// replaceOdsStrings(palabrasClave, filas, f);
+						replaceOdsStrings(dataSources, input, output);
 
 					} else if (input.getName().endsWith(".odg")) {
-						// replaceOdgStrings(palabrasClave, filas, f);
+						replaceOdgStrings(dataSources, input, output);
 
 					}
 				}
@@ -163,7 +169,7 @@ public class DocumentManager {
 		int numCambios = 0;
 		int numCambiosRow = 0;
 		List<String> notFound = new ArrayList<>();
-		List<String> createdFiles = new ArrayList<>();
+		List<File> createdFiles = new ArrayList<>();
 
 		for (int dim = 0; dim < dataSources.size(); dim++) {
 			ObservableList<String> columnKeyName = dataSources.get(dim).getKeyNames();
@@ -178,8 +184,9 @@ public class DocumentManager {
 
 				List<String> cellString = rows.get(i);
 				XWPFDocument doc = new XWPFDocument(new FileInputStream(input)); // para reiniciar el doc a su estado
-																				// inicial
-																				// para poder volver a reemplazar texto
+																					// inicial
+																					// para poder volver a reemplazar
+																					// texto
 
 				for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
 																// correspondiente palabra clave
@@ -296,35 +303,39 @@ public class DocumentManager {
 				if (numCambiosRow > 0) {
 					iEffective++;
 					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".docx";
-					//doc.write(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
-					doc.write(new FileOutputStream(output + File.separator + fileName));
-					System.out.println(output + File.separator + fileName);
-					createdFiles.add(fileName);
+					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
+					FileOutputStream fOut = new FileOutputStream(file);
+					doc.write(fOut);
+					fOut.close();
+					createdFiles.add(file);
 				}
 				doc.close();
 			}
 		}
 
-		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
+		// Eliminar los posibles ficheros que pueden haber quedado de acciones pasadas,
+		// sin
 		// incluir los pdf
 		deleteOldFiles(createdFiles);
-
+		if (Controller.officeInstalled) {
+			convertFileListToPdfs(createdFiles, ".docx");
+		}
 		if (notFound.size() > 0) { // si hay palabras-clave que no se han encontrado en el documento
 			notFoundWords(notFound);
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
-
+		moveFiles(createdFiles, output);
 	}
 
-	private void replacePptxStrings(ObservableList<DataSource> dataSources, File f)
+	private void replacePptxStrings(ObservableList<DataSource> dataSources, File input, File output)
 			throws InvalidFormatException, IOException {
 		int iEffective = 0;
 		int jEffective = 0;
 		int numCambios = 0;
 		int numCambiosRow = 0;
 		List<String> notFound = new ArrayList<>();
-		List<String> createdFiles = new ArrayList<>();
+		List<File> createdFiles = new ArrayList<>();
 
 		for (int dim = 0; dim < dataSources.size(); dim++) {
 			ObservableList<String> columnKeyName = dataSources.get(dim).getKeyNames();
@@ -336,7 +347,7 @@ public class DocumentManager {
 				numCambiosRow = 0;
 
 				List<String> cellString = rows.get(i);
-				XMLSlideShow slideShow = new XMLSlideShow(new FileInputStream(f));
+				XMLSlideShow slideShow = new XMLSlideShow(new FileInputStream(input));
 				// para reiniciar el doc a su estado inicial para poder volver a reemplazar
 				// texto
 				for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
@@ -379,12 +390,13 @@ public class DocumentManager {
 				}
 
 				if (numCambiosRow > 0) {
-					System.out.println("cambiosrow");
 					iEffective++;
 					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".pptx";
-					slideShow.write(
-							new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
-					createdFiles.add(fileName);
+					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
+					FileOutputStream fOut = new FileOutputStream(file);
+					slideShow.write(fOut);
+					fOut.close();
+					createdFiles.add(file);
 				}
 				slideShow.close();
 			}
@@ -393,22 +405,25 @@ public class DocumentManager {
 		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
 		// incluir los pdf
 		deleteOldFiles(createdFiles);
-
+		if (Controller.officeInstalled) {
+			convertFileListToPdfs(createdFiles, ".pptx");
+		}
 		if (notFound.size() > 0) { // si hay palabras-clave que no se han encontrado en el documento
 			notFoundWords(notFound);
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
+		moveFiles(createdFiles, output);
 	}
 
-	private void replaceXlsxStrings(ObservableList<DataSource> dataSources, File f)
+	private void replaceXlsxStrings(ObservableList<DataSource> dataSources, File input, File output)
 			throws InvalidFormatException, IOException {
 		int iEffective = 0;
 		int jEffective = 0;
 		int numCambios = 0;
 		int numCambiosRow = 0;
 		List<String> notFound = new ArrayList<>();
-		List<String> createdFiles = new ArrayList<>();
+		List<File> createdFiles = new ArrayList<>();
 
 		for (int dim = 0; dim < dataSources.size(); dim++) {
 			ObservableList<String> columnKeyName = dataSources.get(dim).getKeyNames();
@@ -421,7 +436,7 @@ public class DocumentManager {
 
 				List<String> cellString = rows.get(i);
 
-				XSSFWorkbook spreadSheet = new XSSFWorkbook(new FileInputStream(f));
+				XSSFWorkbook spreadSheet = new XSSFWorkbook(new FileInputStream(input));
 				// para reiniciar el doc a su estado inicial para poder volver a reemplazar
 				// texto
 				for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
@@ -459,9 +474,11 @@ public class DocumentManager {
 				if (numCambiosRow > 0) {
 					iEffective++;
 					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".xlsx";
-					spreadSheet.write(
-							new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
-					createdFiles.add(fileName);
+					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
+					FileOutputStream fOut = new FileOutputStream(file);
+					spreadSheet.write(fOut);
+					fOut.close();
+					createdFiles.add(file);
 				}
 				spreadSheet.close();
 			}
@@ -470,313 +487,376 @@ public class DocumentManager {
 		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
 		// incluir los pdf
 		deleteOldFiles(createdFiles);
-
+		if (Controller.officeInstalled) {
+			convertFileListToPdfs(createdFiles, ".xlsx");
+		}
 		if (notFound.size() > 0) { // si hay palabras-clave que no se han encontrado en el documento
 			notFoundWords(notFound);
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
+		moveFiles(createdFiles, output);
 	}
 
-	private void replaceOdtStrings(ObservableList<String> columnKeyName, ObservableList<ObservableList<String>> rows,
-			File f) throws Exception {
-		int iEffective = 0;
-		int numCambios = 0;
-		int numCambiosRow = 0;
-		List<String> notFound = new ArrayList<>();
-		List<String> createdFiles = new ArrayList<>();
-
-		for (int i = 0; i < rows.size(); i++) { // iterando en las filas
-			numCambiosRow = 0;
-
-			List<String> cellString = rows.get(i);
-
-			OdfTextDocument odtDocument = OdfTextDocument.loadDocument(f);
-			// para reiniciar el doc a su estado inicial para poder volver a reemplazar
-			// texto
-			for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
-															// correspondiente palabra clave
-				if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
-						&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
-
-					numCambios = 0;
-					boolean cambios = false;
-
-					// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
-					// En este caso solo se escapea las comillas dobles porque es lo que se usa para
-					// el contains"" del xpath
-					String escapedKey1 = columnKeyName.get(j);
-					escapedKey1 = escapedKey1.replaceAll("\"", "\"\"");
-
-					// Recibiendo el nombre de la palabra clave
-					String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
-
-					OfficeTextElement odtTextEl = odtDocument.getContentRoot();
-					NodeList odtNodes = odtTextEl.getChildNodes();
-
-					XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
-					NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(odtNodes,
-							XPathConstants.NODESET);
-					cambios = editStringNodeList(nodelist, cellString.get(j), columnKeyName.get(j));
-					if (cambios) {
-						numCambios++;
-					}
-					if (numCambios > 0) { // si ha habido cambios
-						numCambiosRow++;
-					}
-					if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se
-																						// vuelve a agregar
-						notFound.add(columnKeyName.get(j));
-					}
-				}
-			}
-
-			if (numCambiosRow > 0) {
-				iEffective++;
-				String fileName = "output_" + (iEffective) + ".odt";
-				odtDocument.save(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
-				createdFiles.add(fileName);
-			}
-			odtDocument.close();
-		}
-
-		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
-		// incluir los pdf
-		deleteOldFiles(createdFiles);
-
-		if (notFound.size() > 0) { // si hay palabras-clave que no se han encontrado en el documento
-			notFoundWords(notFound);
-		} else { // si no las hay es que se han generado todos los documentos correspondientes
-			allWordsSuccess();
+	private void moveFiles(List<File> createdFiles, File output) throws IOException {
+		for (int i = 0; i < createdFiles.size(); i++) {
+			Files.move(Paths.get(createdFiles.get(i).getPath()),
+					Paths.get(output.getPath() + File.separator + createdFiles.get(i).getName()),
+					StandardCopyOption.REPLACE_EXISTING);
 		}
 	}
 
-	private void replaceOdpStrings(ObservableList<String> columnKeyName, ObservableList<ObservableList<String>> rows,
-			File f) throws Exception {
+	private void replaceOdtStrings(ObservableList<DataSource> dataSources, File input, File output) throws Exception {
 		int iEffective = 0;
+		int jEffective = 0;
 		int numCambios = 0;
 		int numCambiosRow = 0;
 		List<String> notFound = new ArrayList<>();
-		List<String> createdFiles = new ArrayList<>();
+		List<File> createdFiles = new ArrayList<>();
 
-		for (int i = 0; i < rows.size(); i++) { // iterando en las filas
-			numCambiosRow = 0;
+		for (int dim = 0; dim < dataSources.size(); dim++) {
+			ObservableList<String> columnKeyName = dataSources.get(dim).getKeyNames();
+			ObservableList<ObservableList<String>> rows = dataSources.get(dim).getRows();
 
-			List<String> cellString = rows.get(i);
+			iEffective = 0;
+			jEffective++;
+			for (int i = 0; i < rows.size(); i++) { // iterando en las filas
+				numCambiosRow = 0;
 
-			OdfPresentationDocument odpDocument = OdfPresentationDocument.loadDocument(f);
-			// para reiniciar el doc a su estado inicial para poder volver a reemplazar
-			// texto
-			for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
-															// correspondiente palabra clave
-				if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
-						&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
+				List<String> cellString = rows.get(i);
 
-					numCambios = 0;
-					boolean cambios = false;
+				OdfTextDocument odtDocument = OdfTextDocument.loadDocument(input);
+				// para reiniciar el doc a su estado inicial para poder volver a reemplazar
+				// texto
+				for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
+																// correspondiente palabra clave
+					if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
+							&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
 
-					// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
-					// En este caso solo se escapea las comillas dobles porque es lo que se usa para
-					// el contains"" del xpath
-					String escapedKey1 = columnKeyName.get(j);
-					escapedKey1 = escapedKey1.replaceAll("\"", "\"\"");
+						numCambios = 0;
+						boolean cambios = false;
 
-					// Recibiendo el nombre de la palabra clave
-					String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
+						// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
+						// En este caso solo se escapea las comillas dobles porque es lo que se usa para
+						// el contains"" del xpath
+						String escapedKey1 = columnKeyName.get(j);
+						escapedKey1 = escapedKey1.replaceAll("\"", "\"\"");
 
-					Iterator<OdfSlide> it = odpDocument.getSlides();
-					while (it.hasNext()) {
-						OdfSlide odfSlide = it.next();
-						DrawPageElement slideElement = odfSlide.getOdfElement();
-						NodeList slideNodeList = slideElement.getChildNodes();
+						// Recibiendo el nombre de la palabra clave
+						String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
+
+						OfficeTextElement odtTextEl = odtDocument.getContentRoot();
+						NodeList odtNodes = odtTextEl.getChildNodes();
 
 						XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
-						NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(slideNodeList,
+						NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(odtNodes,
 								XPathConstants.NODESET);
 						cambios = editStringNodeList(nodelist, cellString.get(j), columnKeyName.get(j));
 						if (cambios) {
 							numCambios++;
 						}
+						if (numCambios > 0) { // si ha habido cambios
+							numCambiosRow++;
+						}
+						if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se
+																							// vuelve a agregar
+							notFound.add(columnKeyName.get(j));
+						}
 					}
-					if (numCambios > 0) { // si ha habido cambios
-						numCambiosRow++;
-					}
-					if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) {
-						notFound.add(columnKeyName.get(j));
-					} // si ya lo contiene no se vuelve a agregar
 				}
-			}
 
-			if (numCambiosRow > 0) {
-				iEffective++;
-				String fileName = "output_" + (iEffective) + ".odp";
-				odpDocument.save(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
-				createdFiles.add(fileName);
-
+				if (numCambiosRow > 0) {
+					iEffective++;
+					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".odt";
+					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
+					FileOutputStream fOut = new FileOutputStream(file);
+					odtDocument.save(fOut);
+					fOut.close();
+					createdFiles.add(file);
+				}
+				odtDocument.close();
 			}
-			odpDocument.close();
 		}
 
 		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
 		// incluir los pdf
 		deleteOldFiles(createdFiles);
-
+		if (Controller.officeInstalled) {
+			convertFileListToPdfs(createdFiles, ".odt");
+		}
 		if (notFound.size() > 0) { // si hay palabras-clave que no se han encontrado en el documento
 			notFoundWords(notFound);
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
+		moveFiles(createdFiles, output);
 	}
 
-	private void replaceOdsStrings(ObservableList<String> columnKeyName, ObservableList<ObservableList<String>> rows,
-			File f) throws Exception {
+	private void replaceOdpStrings(ObservableList<DataSource> dataSources, File input, File output) throws Exception {
 		int iEffective = 0;
+		int jEffective = 0;
 		int numCambios = 0;
 		int numCambiosRow = 0;
 		List<String> notFound = new ArrayList<>();
-		List<String> createdFiles = new ArrayList<>();
+		List<File> createdFiles = new ArrayList<>();
 
-		for (int i = 0; i < rows.size(); i++) { // iterando en las filas
-			numCambiosRow = 0;
+		for (int dim = 0; dim < dataSources.size(); dim++) {
+			ObservableList<String> columnKeyName = dataSources.get(dim).getKeyNames();
+			ObservableList<ObservableList<String>> rows = dataSources.get(dim).getRows();
 
-			List<String> cellString = rows.get(i);
+			iEffective = 0;
+			jEffective++;
+			for (int i = 0; i < rows.size(); i++) { // iterando en las filas
+				numCambiosRow = 0;
 
-			OdfSpreadsheetDocument odsDocument = OdfSpreadsheetDocument.loadDocument(f);
-			// para reiniciar el doc a su estado inicial para poder volver a reemplazar
-			// texto
-			for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
-															// correspondiente palabra clave
-				if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
-						&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
+				List<String> cellString = rows.get(i);
 
-					numCambios = 0;
-					boolean cambios = false;
+				OdfPresentationDocument odpDocument = OdfPresentationDocument.loadDocument(input);
+				// para reiniciar el doc a su estado inicial para poder volver a reemplazar
+				// texto
+				for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
+																// correspondiente palabra clave
+					if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
+							&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
 
-					// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
-					// En este caso solo se escapea las comillas dobles porque es lo que se usa para
-					// el contains"" del xpath
-					String escapedKey1 = columnKeyName.get(j);
-					escapedKey1 = escapedKey1.replaceAll("\"", "\"\"");
+						numCambios = 0;
+						boolean cambios = false;
 
-					// Recibiendo el nombre de la palabra clave
-					String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
-					OfficeSpreadsheetElement odtSShEl = odsDocument.getContentRoot();
-					NodeList odtNodes = odtSShEl.getChildNodes();
+						// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
+						// En este caso solo se escapea las comillas dobles porque es lo que se usa para
+						// el contains"" del xpath
+						String escapedKey1 = columnKeyName.get(j);
+						escapedKey1 = escapedKey1.replaceAll("\"", "\"\"");
 
-					XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
-					NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(odtNodes,
-							XPathConstants.NODESET);
-					cambios = editStringNodeList(nodelist, cellString.get(j), columnKeyName.get(j));
-					if (cambios) {
-						numCambios++;
-					}
+						// Recibiendo el nombre de la palabra clave
+						String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
 
-					if (numCambios > 0) { // si ha habido cambios
-						numCambiosRow++;
-					}
+						Iterator<OdfSlide> it = odpDocument.getSlides();
+						while (it.hasNext()) {
+							OdfSlide odfSlide = it.next();
+							DrawPageElement slideElement = odfSlide.getOdfElement();
+							NodeList slideNodeList = slideElement.getChildNodes();
 
-					if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se
-																						// vuelve a agregar
-						notFound.add(columnKeyName.get(j));
+							XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
+							NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(slideNodeList,
+									XPathConstants.NODESET);
+							cambios = editStringNodeList(nodelist, cellString.get(j), columnKeyName.get(j));
+							if (cambios) {
+								numCambios++;
+							}
+						}
+						if (numCambios > 0) { // si ha habido cambios
+							numCambiosRow++;
+						}
+						if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) {
+							notFound.add(columnKeyName.get(j));
+						} // si ya lo contiene no se vuelve a agregar
 					}
 				}
-			}
 
-			if (numCambiosRow > 0) {
-				iEffective++;
-				String fileName = "output_" + (iEffective) + ".ods";
-				odsDocument.save(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
-				createdFiles.add(fileName);
+				if (numCambiosRow > 0) {
+					iEffective++;
+					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".odp";
+					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
+					FileOutputStream fOut = new FileOutputStream(file);
+					odpDocument.save(fOut);
+					fOut.close();
+					createdFiles.add(file);
 
+				}
+				odpDocument.close();
 			}
-			odsDocument.close();
 		}
+
 		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
 		// incluir los pdf
 		deleteOldFiles(createdFiles);
-
+		if (Controller.officeInstalled) {
+			convertFileListToPdfs(createdFiles, ".odp");
+		}
 		if (notFound.size() > 0) { // si hay palabras-clave que no se han encontrado en el documento
 			notFoundWords(notFound);
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
+		moveFiles(createdFiles, output);
 	}
 
-	private void replaceOdgStrings(ObservableList<String> columnKeyName, ObservableList<ObservableList<String>> rows,
-			File f) throws Exception {
+	private void replaceOdsStrings(ObservableList<DataSource> dataSources, File input, File output) throws Exception {
 		int iEffective = 0;
+		int jEffective = 0;
 		int numCambios = 0;
 		int numCambiosRow = 0;
 		List<String> notFound = new ArrayList<>();
-		List<String> createdFiles = new ArrayList<>();
+		List<File> createdFiles = new ArrayList<>();
 
-		for (int i = 0; i < rows.size(); i++) { // iterando en las filas
-			numCambiosRow = 0;
+		for (int dim = 0; dim < dataSources.size(); dim++) {
+			ObservableList<String> columnKeyName = dataSources.get(dim).getKeyNames();
+			ObservableList<ObservableList<String>> rows = dataSources.get(dim).getRows();
 
-			List<String> cellString = rows.get(i);
+			iEffective = 0;
+			jEffective++;
+			for (int i = 0; i < rows.size(); i++) { // iterando en las filas
+				numCambiosRow = 0;
 
-			OdfGraphicsDocument odgDocument = OdfGraphicsDocument.loadDocument(f); // para reiniciar el doc a su estado
-			// inicial
-			// para poder volver a reemplazar
-			// texto
+				List<String> cellString = rows.get(i);
 
-			for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
-															// correspondiente palabra clave
-				if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
-						&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
+				OdfSpreadsheetDocument odsDocument = OdfSpreadsheetDocument.loadDocument(input);
+				// para reiniciar el doc a su estado inicial para poder volver a reemplazar
+				// texto
+				for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
+																// correspondiente palabra clave
+					if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
+							&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
 
-					numCambios = 0;
-					boolean cambios = false;
+						numCambios = 0;
+						boolean cambios = false;
 
-					// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
-					// En este caso solo se escapea las comillas dobles porque es lo que se usa para
-					// el contains"" del xpath
-					String escapedKey1 = columnKeyName.get(j);
-					escapedKey1 = escapedKey1.replaceAll("\"", "\"\"");
+						// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
+						// En este caso solo se escapea las comillas dobles porque es lo que se usa para
+						// el contains"" del xpath
+						String escapedKey1 = columnKeyName.get(j);
+						escapedKey1 = escapedKey1.replaceAll("\"", "\"\"");
 
-					// Recibiendo el nombre de la palabra clave
-					String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
-					OfficeDrawingElement odgDrawEl = odgDocument.getContentRoot();
-					NodeList odtNodes = odgDrawEl.getChildNodes();
+						// Recibiendo el nombre de la palabra clave
+						String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
+						OfficeSpreadsheetElement odtSShEl = odsDocument.getContentRoot();
+						NodeList odtNodes = odtSShEl.getChildNodes();
 
-					XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
-					NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(odtNodes,
-							XPathConstants.NODESET);
-					cambios = editStringNodeList(nodelist, cellString.get(j), columnKeyName.get(j));
-					if (cambios) {
-						numCambios++;
-					}
+						XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
+						NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(odtNodes,
+								XPathConstants.NODESET);
+						cambios = editStringNodeList(nodelist, cellString.get(j), columnKeyName.get(j));
+						if (cambios) {
+							numCambios++;
+						}
 
-					if (numCambios > 0) { // si ha habido cambios
-						numCambiosRow++;
-					}
+						if (numCambios > 0) { // si ha habido cambios
+							numCambiosRow++;
+						}
 
-					if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se
-																						// vuelve a agregar
-						notFound.add(columnKeyName.get(j));
+						if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se
+																							// vuelve a agregar
+							notFound.add(columnKeyName.get(j));
+						}
 					}
 				}
-			}
 
-			if (numCambiosRow > 0) {
-				iEffective++;
-				String fileName = "output_" + (iEffective) + ".odg";
-				odgDocument.save(new FileOutputStream(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName));
-				createdFiles.add(fileName);
+				if (numCambiosRow > 0) {
+					iEffective++;
+					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".ods";
+					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
+					FileOutputStream fOut = new FileOutputStream(file);
+					odsDocument.save(fOut);
+					fOut.close();
+					createdFiles.add(file);
 
+				}
+				odsDocument.close();
 			}
-			odgDocument.close();
 		}
 
 		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
 		// incluir los pdf
 		deleteOldFiles(createdFiles);
-
+		if (Controller.officeInstalled) {
+			convertFileListToPdfs(createdFiles, ".ods");
+		}
 		if (notFound.size() > 0) { // si hay palabras-clave que no se han encontrado en el documento
 			notFoundWords(notFound);
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
+		moveFiles(createdFiles, output);
+	}
+
+	private void replaceOdgStrings(ObservableList<DataSource> dataSources, File input, File output) throws Exception {
+		int iEffective = 0;
+		int jEffective = 0;
+		int numCambios = 0;
+		int numCambiosRow = 0;
+		List<String> notFound = new ArrayList<>();
+		List<File> createdFiles = new ArrayList<>();
+
+		for (int dim = 0; dim < dataSources.size(); dim++) {
+			ObservableList<String> columnKeyName = dataSources.get(dim).getKeyNames();
+			ObservableList<ObservableList<String>> rows = dataSources.get(dim).getRows();
+
+			iEffective = 0;
+			jEffective++;
+			for (int i = 0; i < rows.size(); i++) { // iterando en las filas
+				numCambiosRow = 0;
+
+				List<String> cellString = rows.get(i);
+
+				OdfGraphicsDocument odgDocument = OdfGraphicsDocument.loadDocument(input); // para reiniciar el doc a su
+																							// estado inicial para poder
+																							// volver a reemplazar texto
+
+				for (int j = 0; j < columnKeyName.size(); j++) {// iterando en los elementos de cada fila junto a su
+																// correspondiente palabra clave
+					if ((columnKeyName.get(j) != null && columnKeyName.get(j).trim().length() > 0)
+							&& (cellString.get(j) != null && cellString.get(j).trim().length() > 0)) {
+
+						numCambios = 0;
+						boolean cambios = false;
+
+						// Escapeando los carácteres de escapa para el XPath de Saxon (repetirlos)
+						// En este caso solo se escapea las comillas dobles porque es lo que se usa para
+						// el contains"" del xpath
+						String escapedKey1 = columnKeyName.get(j);
+						escapedKey1 = escapedKey1.replaceAll("\"", "\"\"");
+
+						// Recibiendo el nombre de la palabra clave
+						String xpathExpression = "//*[text()[contains(.,\"" + escapedKey1 + "\")]]";
+						OfficeDrawingElement odgDrawEl = odgDocument.getContentRoot();
+						NodeList odtNodes = odgDrawEl.getChildNodes();
+
+						XPath xpath = XPathFactoryUtil.getXPathFactory().newXPath();
+						NodeList nodelist = (NodeList) xpath.compile(xpathExpression).evaluate(odtNodes,
+								XPathConstants.NODESET);
+						cambios = editStringNodeList(nodelist, cellString.get(j), columnKeyName.get(j));
+						if (cambios) {
+							numCambios++;
+						}
+
+						if (numCambios > 0) { // si ha habido cambios
+							numCambiosRow++;
+						}
+
+						if (numCambios == 0 && !notFound.contains(columnKeyName.get(j))) { // si ya lo contiene no se
+																							// vuelve a agregar
+							notFound.add(columnKeyName.get(j));
+						}
+					}
+				}
+
+				if (numCambiosRow > 0) {
+					iEffective++;
+					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".odg";
+					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
+					FileOutputStream fOut = new FileOutputStream(file);
+					odgDocument.save(fOut);
+					fOut.close();
+					createdFiles.add(file);
+				}
+				odgDocument.close();
+			}
+		}
+
+		// Eliminar los ficheros que pueden haber quedado de acciones pasadas, sin
+		// incluir los pdf
+		deleteOldFiles(createdFiles);
+		if (Controller.officeInstalled) {
+			convertFileListToPdfs(createdFiles, ".odg");
+		}
+		if (notFound.size() > 0) { // si hay palabras-clave que no se han encontrado en el documento
+			notFoundWords(notFound);
+		} else { // si no las hay es que se han generado todos los documentos correspondientes
+			allWordsSuccess();
+		}
+		moveFiles(createdFiles, output);
+		Controller.previsualizaciones.setAll(createdFiles);
 	}
 
 	private boolean editDocxParagraph(XWPFParagraph p, String newKey, String key) {
@@ -923,11 +1003,11 @@ public class DocumentManager {
 				null, false);
 	}
 
-	private void deleteOldFiles(List<String> ls) {
+	private void deleteOldFiles(List<File> ls) {
 		List<File> fileList = new ArrayList<File>(
 				FileUtils.listFiles(new File(Controller.TEMPDOCSFOLDER.getPath()), null, false));
 		for (File file : fileList) {
-			if (!ls.contains(file.getName()) && !file.getName().endsWith(".pdf")) {
+			if (!ls.contains(file) && !file.getName().endsWith(".pdf")) {
 				FileUtils.deleteQuietly(file);
 			}
 		}
@@ -1027,7 +1107,6 @@ public class DocumentManager {
 
 				// eliminar las columnas que no tienen nombres clave
 				for (int i = 0; i < nombresReemplazo.size(); i++) {
-					// System.out.println(nombresReemplazo.get(i));
 					if (nombresReemplazo.get(i).trim().length() == 0) {
 						nombresReemplazo.remove(i);
 						for (int j = 0; j < filas.size(); j++) {
@@ -1103,7 +1182,7 @@ public class DocumentManager {
 					Row row = sh.getRow(i);
 
 					if (row != null) {
-						for (int cn = columnIndexStart; cn < columnIndexStart + width; cn++) { // manejandp
+						for (int cn = columnIndexStart; cn < columnIndexStart + width; cn++) { // manejando
 							// cada celda de las filas
 							Cell cell = row.getCell(cn);
 							String texto = "";
@@ -1174,5 +1253,26 @@ public class DocumentManager {
 			break;
 		}
 		return texto;
+	}
+
+	private void convertFileListToPdfs(List<File> createdFiles, String extension) {
+		ObservableList<File> files = FXCollections.observableArrayList();
+		for (int i = 0; i < createdFiles.size(); i++) {
+			String name = createdFiles.get(i).getPath();
+			int lastIndex = name.lastIndexOf(extension);
+
+			try {
+				String beginName = name.substring(0, lastIndex);
+				File f = new File(beginName + ".pdf");
+				JodConverter.convert(createdFiles.get(i))// .as(DefaultDocumentFormatRegistry.DOC)
+						.to(f)//
+						.as(DefaultDocumentFormatRegistry.PDF)//
+						.execute();
+				files.add(f);
+			} catch (OfficeException | StringIndexOutOfBoundsException e) {
+				e.printStackTrace();
+			}
+		}
+		Controller.previsualizaciones.set(files);
 	}
 }

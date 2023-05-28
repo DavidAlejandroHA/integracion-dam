@@ -3,9 +3,12 @@ package integracion.wordseedexporter.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import org.apache.commons.io.FileUtils;
 import org.jodconverter.core.office.OfficeException;
 import org.jodconverter.core.office.OfficeUtils;
 import org.jodconverter.local.office.LocalOfficeManager;
@@ -16,8 +19,6 @@ import com.jfoenix.controls.JFXDrawer;
 import integracion.wordseedexporter.WordSeedExporterApp;
 import integracion.wordseedexporter.model.DocumentManager;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -51,9 +52,6 @@ public class DrawerController implements Initializable {
 	private LocalOfficeManager officeManager;
 
 	private JFXDrawer drawerMenu;
-
-	// model
-	private ObjectProperty<File> pdfFile = new SimpleObjectProperty<>();
 
 	/**
 	 * Méodo para inicializar los diferentes elementos necesarios junto al
@@ -188,6 +186,7 @@ public class DrawerController implements Initializable {
 					"Error al procesar el documento. Es posible que el archivo tenga un formato incorrecto\n"
 							+ "o se haya eliminado.",
 					"Error: " + e.getMessage(), false);
+			e.printStackTrace();
 		}
 
 	}
@@ -263,6 +262,16 @@ public class DrawerController implements Initializable {
 				"Está apunto de salir de la aplicación.", "¿Desea salir de la aplicación?", true);
 
 		if (result.get() == siButtonType) {
+			new Thread(() -> {
+				try {
+					closeOfficeManager();
+				} catch (OfficeException es) {
+//					Controller.crearAlerta(AlertType.WARNING, "Advertencia",
+//							"No se han podido parar los servicios de LibreOffice/OpenOffice.", null, false);
+				}
+			}).start();
+			
+			deletePdfs();
 			Stage stage = (Stage) drawerView.getScene().getWindow();
 			stage.close();
 		}
@@ -321,15 +330,25 @@ public class DrawerController implements Initializable {
 	 * @throws OfficeException Si ocurre un error al cerrar los servicios de
 	 *                         LibreOffice/OpenOffice
 	 */
-	public void closeOfficeManager() throws OfficeException {
+	private void closeOfficeManager() throws OfficeException {
 		if (officeManager != null) {
 			OfficeUtils.stopQuietly(officeManager);
 		}
 		// TODO: Hilo de javafx para nueva ventana/alerta indicando que se está cerrando
 		// el programa hasta que se cierre
-//		ProgressBar bar = new ProgressBar();
-//		bar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
-//		alert.getDialogPane().setContent(bar);
+	}
+	
+	private void deletePdfs() {
+		List<File> fileList = new ArrayList<File>(FileUtils
+				.listFiles(new File(Controller.TEMPDOCSFOLDER.getPath()), new String[] { "pdf" }, false));
+		for (int i = 0; i < fileList.size(); i++) {
+			fileList.get(i).delete();
+		}
+	}
+
+	@FXML
+	void onExportarPdf(ActionEvent event) {
+
 	}
 
 	/**
@@ -357,28 +376,6 @@ public class DrawerController implements Initializable {
 	 */
 	public void setOfficeManager(LocalOfficeManager officeManager) {
 		this.officeManager = officeManager;
-	}
-
-	/**
-	 * La propiedad {@link ObjectProperty pdfFile} de este elemento
-	 */
-	public final ObjectProperty<File> pdfFileProperty() {
-		return this.pdfFile;
-	}
-
-	/**
-	 * Retorna el valor de la propiedad {@link ObjectProperty pdfFile} de este
-	 * elemento
-	 */
-	public final File getPdfFile() {
-		return this.pdfFileProperty().get();
-	}
-
-	/**
-	 * Establece un valor a la propiedad {@link ObjectProperty pdfFile}
-	 */
-	public final void setPdfFile(final File pdfFile) {
-		this.pdfFileProperty().set(pdfFile);
 	}
 
 }
