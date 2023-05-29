@@ -20,6 +20,7 @@ import integracion.wordseedexporter.WordSeedExporterApp;
 import integracion.wordseedexporter.model.DocumentManager;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -68,21 +69,16 @@ public class DrawerController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// bindings
-		exportarPdfButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-			if (Controller.previsualizaciones.size() > 0) {
-				return false;
-			} else {
-				return true;
-			}
-		}, Controller.previsualizaciones));
-
-		exportarDocumentoButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+		
+		BooleanBinding enableExport = Bindings.createBooleanBinding(() -> {
 			if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty()) {
 				return false;
 			} else {
 				return true;
 			}
-		}, Controller.ficheroImportado, Controller.dataSources));
+		}, Controller.ficheroImportado, Controller.dataSources);
+		exportarPdfButton.disableProperty().bind(enableExport);
+		exportarDocumentoButton.disableProperty().bind(enableExport);
 	}
 
 	/**

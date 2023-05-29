@@ -16,7 +16,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -99,16 +99,10 @@ public class DocumentManager {
 	public void giveDocument(File input, File output, boolean exportarAPDF) throws Exception {
 
 		if (input != null) {
-			// Nombre de las columnas del excel - serán las palabras a reemplazar
-			// ObservableList<String> palabrasClave = Controller.keyList.get();
-
-			// Registros de las filas de palabras para nuevos valores
-			// ObservableList<ObservableList<String>> filas = Controller.rowList.get();
 			ObservableList<DataSource> dataSources = Controller.dataSources;
 
 			if (dataSources != null && dataSources.size() > 0) {
 				XPathFactoryUtil.setxPathFactory(new XPathFactoryImpl());
-				// TODO Hcaer que se exporten usando el nombre que tienen
 				if (input.getName().endsWith(".docx")) {
 					replaceDocxStrings(dataSources, input, output, exportarAPDF);
 
@@ -884,10 +878,8 @@ public class DocumentManager {
 		moveFiles(createdFiles, output, pdf);
 	}
 
-	@SuppressWarnings("deprecation")
 	private boolean editDocxParagraph(XWPFParagraph p, String newKey, String key) {
 		String regexKey = stringModifyOptions(key);
-		newKey = StringEscapeUtils.escapeJava(newKey); // se converte a un string literal para no dar problemas en el replaceAll()
 		boolean cambios = false;
 		int numCambios = 0;
 		List<XWPFRun> runs = p.getRuns();
@@ -896,7 +888,7 @@ public class DocumentManager {
 				String text = r.getText(0);
 				String textAux = text;
 				if (text != null && text.contains(key)) {
-					text = text.replaceAll(regexKey, newKey);
+					text = text.replaceAll(regexKey, StringEscapeUtils.escapeJava(newKey));
 					r.setText(text, 0);
 					if (!text.equals(textAux)) { // si se cambió algo del texto entonces se hicieron cambios
 						numCambios++;
@@ -922,7 +914,7 @@ public class DocumentManager {
 				String text = r.getRawText();
 				String textAux = text;
 				if (text != null && text.contains(key)) {
-					text = text.replaceAll(regexKey, newKey);
+					text = text.replaceAll(regexKey, StringEscapeUtils.escapeJava(newKey));
 					r.setText(text);
 					if (!text.equals(textAux)) { // si se cambió algo del texto entonces se hicieron cambios
 						numCambios++;
@@ -949,7 +941,7 @@ public class DocumentManager {
 			String text = c.getStringCellValue();
 			String textAux = text;
 			if (text != null && text.contains(key)) {
-				text = text.replaceAll(regexKey, newKey);
+				text = text.replaceAll(regexKey, StringEscapeUtils.escapeJava(newKey));
 				c.setCellValue(text);
 				if (!text.equals(textAux)) { // si se cambió algo del texto entonces se hicieron cambios
 					numCambios++;
@@ -972,7 +964,7 @@ public class DocumentManager {
 					String texto = nl.item(k).getTextContent();
 					String textAux = texto;
 					String controlRegex = stringModifyOptions(key);
-					texto = texto.replaceAll(controlRegex, newKey);
+					texto = texto.replaceAll(controlRegex, StringEscapeUtils.escapeJava(newKey));
 					nl.item(k).setTextContent(texto);
 					if (!texto.equals(textAux)) { // si se cambió algo del texto entonces se hicieron cambios
 						numCambios++;
@@ -994,7 +986,7 @@ public class DocumentManager {
 								// método .replaceAll(), evitando así posible errores de sintaxis en
 								// estas expresiones
 								// Ojo: no es lo mismo que Matcher.quoteReplacement(k)
-		if (Controller.caseInsensitive.get()) {
+		if (!Controller.caseSensitive.get()) {
 			// Si la BooleanProperty replaceExactWord está a true, se le añade a k
 			// una expresión regular (?i) para que el replaceAll() acepte tanto mayúsculas
 			// como minúsculas (case insensitive)

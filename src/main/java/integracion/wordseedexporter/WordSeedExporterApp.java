@@ -10,6 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -47,8 +48,8 @@ public class WordSeedExporterApp extends Application {
 
 		primaryStage.setScene(escena);
 		primaryStage.setTitle("WordSeedExporter");
-		// primaryStage.getIcons().add(new
-		// Image(WordSeedExporterApp.class.getResourceAsStream("/images/calendar-16x16.png")));
+		primaryStage.getIcons()
+				.add(new Image(WordSeedExporterApp.class.getResourceAsStream("/images/logo-128x128.png")));
 		primaryStage.show();
 
 		/**
@@ -88,7 +89,7 @@ public class WordSeedExporterApp extends Application {
 			HBox l3Content = new HBox(l3, link, l4);
 			link.setAlignment(Pos.TOP_CENTER);
 			alertContent.getChildren().addAll(l1, l2, l3Content);
-			
+
 			nullPointExAlert.getDialogPane().setContent(alertContent);
 			nullPointExAlert.initOwner(WordSeedExporterApp.primaryStage);
 			nullPointExAlert.show();

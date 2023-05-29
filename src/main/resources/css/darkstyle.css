@@ -17,16 +17,12 @@
 	-fx-background-color: #2e2e2e;
 }
 
-.drawerContent{
-	
-}
-
 .drawerButton{
 	-fx-text-fill: black;
 }
 
 .menu {
-	-fx-background-color: linear-gradient(from 0px 0px to 0px 60px, #2e2e2e, #505050);
+	-fx-background-color: linear-gradient(from 0px 0px to 0px 80px, #2e2e2e, #505050);
 }
 
 .drawerSlideButton{
@@ -39,12 +35,8 @@
     -fx-font-size: 14px;
 }
 
-.fakeDrawer {
-	
-}
-
 .fakeDrawer:hover {
-	-fx-background-color: linear-gradient(from 0px 0px to 0px 60px, #2e2e2e, #505050);
+	
 }
 
 /* Alertas */

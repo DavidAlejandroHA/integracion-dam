@@ -43,6 +43,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextFormatter.Change;
@@ -85,6 +87,12 @@ public class Controller implements Initializable {
 	private Button reloadButton;
 
 	@FXML
+	private CheckBox distinctMayusCheckBox;
+
+	@FXML
+	private CheckBox exactWordsCheckBox;
+
+	@FXML
 	private TextField pageNumTextField;
 
 	private DrawerController drawerController;
@@ -104,7 +112,7 @@ public class Controller implements Initializable {
 	public static BooleanProperty replaceExactWord = new SimpleBooleanProperty(true); // valor por defecto a true
 																						// (wordBoundaries)
 
-	public static BooleanProperty caseInsensitive = new SimpleBooleanProperty(true); // valor por defecto a true
+	public static BooleanProperty caseSensitive = new SimpleBooleanProperty(true); // valor por defecto a true
 
 	public static ListProperty<DataSource> dataSources = new SimpleListProperty<>(FXCollections.observableArrayList());
 
@@ -173,6 +181,7 @@ public class Controller implements Initializable {
 							.to(pdfFileOut)//
 							.as(DefaultDocumentFormatRegistry.PDF)//
 							.execute();
+					previsualizaciones.setAll(pdfFileOut);
 				} catch (OfficeException e) {
 					crearAlerta(AlertType.WARNING, "Advertencia",
 							"No se ha podido crear la previsualización \n" + "del documento importado.", null, false);
@@ -193,9 +202,11 @@ public class Controller implements Initializable {
 		TextFormatter<String> textFormatter = new TextFormatter<>(filter);
 		pageNumTextField.setTextFormatter(textFormatter);
 
+		// listener de la listproperty previsualizaciones
 		previsualizaciones.addListener((o, ov, nv) -> {
-			if (nv.size() > 1) {
+			if (nv.size() > 0) {
 				pdfViewer.load(previsualizaciones.get(0));
+				documentIndex.set(1);
 				pageNumTextField.setText("1");
 			}
 		});
@@ -228,9 +239,20 @@ public class Controller implements Initializable {
 
 		// Listener para cuando se cambie el índice del documento seleccionado
 		documentIndex.addListener((o, ov, nv) -> {
-			if (nv != ov) {
-				pdfViewer.load(previsualizaciones.get(nv.intValue() - 1));
+			if (nv != ov && nv.intValue() != 0) {
+				try {
+					pdfViewer.load(previsualizaciones.get(nv.intValue() - 1));
+				} catch (Exception e) {
+				}
 			}
+		});
+
+		// CheckBoxs
+		distinctMayusCheckBox.selectedProperty().addListener((o, ov, nv) -> {
+			caseSensitive.set(nv);
+		});
+		exactWordsCheckBox.selectedProperty().addListener((o, ov, nv) -> {
+			replaceExactWord.set(nv);
 		});
 
 		// bindings
@@ -285,6 +307,7 @@ public class Controller implements Initializable {
 			e.consume(); // Si llega hasta aquí es porque el usuario ha decidido cancelar la salida de la
 							// aplicación
 		});
+		exactWordsCheckBox.requestFocus();
 	}
 
 	public Controller() {
@@ -399,7 +422,10 @@ public class Controller implements Initializable {
 	 */
 	@FXML
 	void onReloadButton(ActionEvent event) {
-		pdfViewer.load(previsualizaciones.get(documentIndex.get()));
+		try {
+			pdfViewer.load(previsualizaciones.get(documentIndex.get() - 1));
+		} catch (Exception e) {
+		}
 	}
 
 	/**
