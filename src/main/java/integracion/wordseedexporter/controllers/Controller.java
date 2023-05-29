@@ -8,8 +8,6 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -122,19 +120,21 @@ public class Controller implements Initializable {
 
 	public static boolean officeInstalled = true; // valor por defecto
 
+	/**
+	 * Inicia los objetos y métodos necesarios para cargar todos los elementos e
+	 * interfaces necesarios de la aplicación
+	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		Logger.getGlobal().setLevel(Level.OFF);
+		// Quitar advertencias del logger
+		org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.INFO);
 		// load data
 		drawerController = new DrawerController();
 		drawerMenu.setSidePane(drawerController.getView());
 		drawerMenu.setPrefWidth(280);
 		drawerController.setDrawerMenu(drawerMenu);
 		pdfViewer.setDisable(true);
-
-		// Quitar advertencias del logger
-		org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.INFO);
 
 		// crear carpeta de la app si no existe
 		if (!Controller.APPFOLDER.exists()) {
@@ -296,6 +296,13 @@ public class Controller implements Initializable {
 		}
 	}
 
+	/**
+	 * Cambia el tamaño de {@link JFXDrawer drawerMenu} a uno inferior para que se
+	 * puedan seleccionar o interactuar con los elementos que hacen debajo del
+	 * elemento
+	 * 
+	 * @param event El {@link JFXDrawerEvent} al que escucha
+	 */
 	@FXML
 	void onDrawerClosed(JFXDrawerEvent event) {
 		drawerMenu.setPrefWidth(280);
@@ -305,6 +312,16 @@ public class Controller implements Initializable {
 	void onDrawerOpened(JFXDrawerEvent event) {
 	}
 
+	/**
+	 * Cambia el documento previsualizado según el documento actual que está siendo
+	 * previsualizado: Resta 1 a la propiedad documentIndex, lo que activa su
+	 * listener el cuál cambia de documento según el valor de la propiedad.
+	 * 
+	 * También cambia el número mostrado en el cuadro de texto {@link TextArea
+	 * pageNumTextField} a uno cuyo valor es su valor actual menos uno.
+	 * 
+	 * @param event El {@link ActionEvent} al que escucha
+	 */
 	@FXML
 	void onLeftButton(ActionEvent event) {
 		if (documentIndex.get() > 1) {
@@ -313,6 +330,16 @@ public class Controller implements Initializable {
 		}
 	}
 
+	/**
+	 * Cambia el documento previsualizado según el documento actual que está siendo
+	 * previsualizado: Suma 1 a la propiedad documentIndex, lo que activa su
+	 * listener el cuál cambia de documento según el valor de la propiedad.
+	 * 
+	 * También cambia el número mostrado en el cuadro de texto {@link TextArea
+	 * pageNumTextField} a uno cuyo valor es su valor actual más uno.
+	 * 
+	 * @param event El {@link ActionEvent} al que escucha
+	 */
 	@FXML
 	void onRightButton(ActionEvent event) {
 		if (documentIndex.get() < previsualizaciones.size() + 1) {
@@ -321,23 +348,55 @@ public class Controller implements Initializable {
 		}
 	}
 
+	/**
+	 * Cambia el documento previsualizado a el primer documento de la lista de los
+	 * documentos a previsualizar: Se establece a 1 la propiedad documentIndex, lo
+	 * que activa su listener el cuál cambia de documento según el valor de la
+	 * propiedad.
+	 * 
+	 * También cambia el número mostrado en el cuadro de texto {@link TextArea
+	 * pageNumTextField} a uno cuyo valor es 1.
+	 * 
+	 * @param event El {@link ActionEvent} al que escucha
+	 */
 	@FXML
 	void onTopRightButton(ActionEvent event) {
 		documentIndex.set(previsualizaciones.size());
 		pageNumTextField.setText(documentIndex.get() + "");
 	}
 
+	/**
+	 * Cambia el documento previsualizado a el último documento de la lista de los
+	 * documentos a previsualizar: Se establece a el tamaño de esta lista la
+	 * propiedad documentIndex, lo que activa su listener el cuál cambia de
+	 * documento según el valor de la propiedad.
+	 * 
+	 * También cambia el número mostrado en el cuadro de texto {@link TextArea
+	 * pageNumTextField} a uno cuyo valor es el tamaño de la lista mencionada.
+	 * 
+	 * @param event El {@link ActionEvent} al que escucha
+	 */
 	@FXML
 	void onTopLeftButton(ActionEvent event) {
 		documentIndex.set(1);
 		pageNumTextField.setText(documentIndex.get() + "");
 	}
 
+	/**
+	 * Elimina la previsualización del documento que se está previsualizando
+	 * 
+	 * @param event El {@link ActionEvent} al que escucha
+	 */
 	@FXML
 	void onUnloadButton(ActionEvent event) {
 		pdfViewer.unload();
 	}
 
+	/**
+	 * Recarga la previsualización del documento que se está previsualizando
+	 * 
+	 * @param event El {@link ActionEvent} al que escucha
+	 */
 	@FXML
 	void onReloadButton(ActionEvent event) {
 		pdfViewer.load(previsualizaciones.get(documentIndex.get()));
@@ -352,6 +411,13 @@ public class Controller implements Initializable {
 		return view;
 	}
 
+	/**
+	 * Inicia el officeManager recibido para poder empezar posteriormente a usar los
+	 * servicios de Office para la conversión de documentos a pdf y las
+	 * previsualizaciones.
+	 * 
+	 * @param officeManager El {@link LocalOfficeManager} a recibir
+	 */
 	public void setOfficeManager(LocalOfficeManager officeManager) {
 		this.officeManager = officeManager;
 		try {
@@ -360,17 +426,14 @@ public class Controller implements Initializable {
 			// iniciarse
 			// Creando objeto documento-PDF
 			PDDocument document = new PDDocument();
-
 			// Añadiendo una página vacía
 			document.addPage(new PDPage());
-
-			// Guardado
 			try {
 				String rutaFile1 = Controller.TEMPDOCSFOLDER.getPath() + File.separator + "ini.pdf";
 				String rutaFile2 = Controller.TEMPDOCSFOLDER.getPath() + File.separator + "init.pdf";
+				// Guardado
 				document.save(rutaFile2);
 				document.close();
-
 				// Aquí se inician los servicios de Office en un nuevo hilo. No tiene utilidad
 				// convertir un fichero pdf a pdf, solo sirve para forzar el inicio de los
 				// servicios de libreoffice
@@ -386,15 +449,11 @@ public class Controller implements Initializable {
 								.execute();
 					} catch (OfficeException | NullPointerException e) {
 					}
-
-					// A veces en la primera previsualización no sale bien, por lo que se fuerza una
-					// previsualización momentánea
-					Platform.runLater(() -> {
+					Platform.runLater(() -> { // se oculta la pantalla de carga
 						loadingBackground.setViewOrder(0);
 						drawerMenu.setViewOrder(0);
-						// pdfViewer.load(f2);
-						// pdfViewer.unload();
-						try {
+						try { // se eliminan los ficheros de inicio creados
+							Files.delete(Paths.get(rutaFile1));
 							Files.delete(Paths.get(rutaFile2));
 						} catch (IOException e) {
 						}

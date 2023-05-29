@@ -1,5 +1,10 @@
 https://poi.apache.org/components/spreadsheet/quick-guide.html#TextExtraction
+// https://github.com/phip1611/docx4j-search-and-replace-util
+		// https://blog.csdn.net/u011781521/article/details/116260048
+		// https://jenkov.com/tutorials/javafx/filechooser.html
 
+		// Reemplazar texto:
+		// https://gist.github.com/aerobium/bf02e443c079c5caec7568e167849dda
 
 
 

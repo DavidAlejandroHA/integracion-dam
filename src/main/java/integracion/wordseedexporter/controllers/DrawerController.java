@@ -110,14 +110,8 @@ public class DrawerController implements Initializable {
 	 */
 	@FXML
 	void importarDocumento(ActionEvent event) {
-		// https://github.com/phip1611/docx4j-search-and-replace-util
-		// https://blog.csdn.net/u011781521/article/details/116260048
-		// https://jenkov.com/tutorials/javafx/filechooser.html
-
-		// Reemplazar texto:
-		// https://gist.github.com/aerobium/bf02e443c079c5caec7568e167849dda
 		FileChooser fileChooser = new FileChooser();
-		fileChooser.setInitialDirectory(new File("."));
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
 		fileChooser.getExtensionFilters().addAll(
 				new FileChooser.ExtensionFilter("Microsoft Word Document (2007)", "*.docx"),
 				new FileChooser.ExtensionFilter("Microsoft PowerPoint Document (2007)", "*.pptx"),
@@ -126,93 +120,11 @@ public class DrawerController implements Initializable {
 				new FileChooser.ExtensionFilter("Office Presentation Document", "*.odp"),
 				new FileChooser.ExtensionFilter("Office SpreadSheet Document", "*.ods"),
 				new FileChooser.ExtensionFilter("Office Graphics Document", "*.odg"));
-		// fileChooser.setInitialDirectory(new File(System.getProperty("user.home") +
-		// File.separator + "Desktop"));
 		File f = fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage);
 		if (f != null) {
 			Controller.ficheroImportado.set(f);
 		}
 
-	}
-
-	/**
-	 * Ejecuta el método {@link #cargarFuente() cargarFuente} para iniciar la
-	 * importación de una fuente de datos para la aplicación.
-	 * 
-	 * @param event El ActionEvent al que escucha
-	 */
-	@FXML
-	void importarFuente(ActionEvent event) {
-		cargarFuente();
-	}
-
-	/**
-	 * <p>
-	 * Este método se encarga de importar una fuente de datos para la aplicación, de
-	 * manera que<br>
-	 * solo aceptará archivos xlsx o odt con sus respectivas tablas. Para ello,
-	 * ejecuta el método<br>
-	 * {@link DocumentManager#readData() readData} junto con el documento entregado
-	 * a través de un diálogo de importacion<br>
-	 * de documentos.
-	 * </p>
-	 * <p>
-	 * Al invocarlo abrirá una nueva ventana para escoger el fichero de datos a
-	 * importar y cargará<br>
-	 * sus datos en la aplicación.
-	 * </p>
-	 * <p>
-	 * En caso de fallar a la hora de importar o leer la fuente de datos, sea por un
-	 * formato o<br>
-	 * renombramiento incorrecto del archivo o por un formato incorrecto en la
-	 * lectura de datos<br>
-	 * (p. ej. tablas de solo una casilla de altura), se avisará con una alerta del
-	 * fallo producido.
-	 * </p>
-	 */
-	public void cargarFuente() {
-		DocumentManager docManager = new DocumentManager();
-		FileChooser fileChooser = new FileChooser();
-		// fileChooser.setInitialDirectory(new File("."));
-		fileChooser.getExtensionFilters().addAll(
-				new FileChooser.ExtensionFilter("Microsoft Excel Document (2007)", "*.xlsx"),
-				new FileChooser.ExtensionFilter("Office SpreadSheet Document", "*.ods"));
-		try {
-			docManager.readData(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
-		} catch (Exception e) {
-			Controller.crearAlerta(AlertType.ERROR, "Error", "Error al cargar la fuente de datos",
-					// "La fuente de datos contiene un formato incorrecto respecto a la \n" +
-					// "gestión de la aplicación."
-					"Error: " + e.getMessage(), false);
-		}
-	}
-
-	/**
-	 * Este método se ejecuta al presionar ek botón de "Exportar documento".<br>
-	 * Si el archivo a exportar aún no ha sido exportado, no ocurrirá nada.<br>
-	 * Si el documento contiene un formato incorrecto o algún tipo de error en la
-	 * estructura interna <br>
-	 * (p. ej. renombrar el archivo a un formato distinto) se lanzará una alerta
-	 * avisando del error ocurrido.
-	 * 
-	 * @param f La ruta hacia dónde se van a guardar los ficheros generados
-	 */
-	public void reemplazarTexto(File f) {
-		DocumentManager docManager = new DocumentManager();
-		try {
-			if (Controller.ficheroImportado.get() != null) { // si no se canceló la importación del documento
-				docManager.giveDocument(Controller.ficheroImportado.get(), f, false);
-			}
-		} catch (Exception e) {
-			Alert alerta = new Alert(AlertType.ERROR);
-			TextArea textoArea = new TextArea();
-			textoArea.setText("Error: " + e.getMessage());
-			alerta.getDialogPane().setContent(textoArea);
-			Controller.crearAlerta(alerta, "Error",
-					"Error al procesar el documento. Es posible que el archivo tenga un formato incorrecto\n"
-							+ "o se haya eliminado.",
-					null, false);
-		}
 	}
 
 	/**
@@ -225,35 +137,21 @@ public class DrawerController implements Initializable {
 	@FXML
 	void onExportarDocumento(ActionEvent event) {
 		DirectoryChooser chooser = new DirectoryChooser();
+		chooser.setInitialDirectory(new File(System.getProperty("user.home")));
 		File f = chooser.showDialog(WordSeedExporterApp.primaryStage);
 		if (f != null) {
-			reemplazarTexto(f);
+			reemplazarTexto(f, false);
 		}
-//		if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty()) {
-//			DirectoryChooser chooser = new DirectoryChooser();
-//			File f = chooser.showDialog(WordSeedExporterApp.primaryStage);
-//			if (f != null) {
-//				reemplazarTexto(f);
-//			}
-//		} else {
-//			System.out.println(Controller.ficheroImportado.get() != null);
-//			if (Controller.dataSources.get().isEmpty()) {
-//				if (Controller.ficheroImportado.get() != null) {
-//					Controller.crearAlerta(AlertType.WARNING, "Advertencia",
-//							"Se necesita importar antes una fuente de datos para exportar los archivos.", null, false);
-//				} else {
-//					Controller.crearAlerta(AlertType.WARNING, "Advertencia",
-//							"Se necesita importar antes una fuente de datos y un documento \n"
-//									+ "a modificar para exportar los archivos.",
-//							null, false);
-//				}
-//
-//			} else {
-//				Controller.crearAlerta(AlertType.WARNING, "Advertencia",
-//						"Se necesita importar antes un documento a modificar para exportar los archivos.", null, false);
-//			}
-//		}
+	}
 
+	@FXML
+	void onExportarPdf(ActionEvent event) {
+		DirectoryChooser chooser = new DirectoryChooser();
+		chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+		File f = chooser.showDialog(WordSeedExporterApp.primaryStage);
+		if (f != null) {
+			reemplazarTexto(f, true);
+		}
 	}
 
 	/**
@@ -275,7 +173,6 @@ public class DrawerController implements Initializable {
 		Platform.runLater(() -> {
 			salirApp();
 		});
-		// drawerView.requestFocus();
 	}
 
 	/**
@@ -351,6 +248,90 @@ public class DrawerController implements Initializable {
 	}
 
 	/**
+	 * Ejecuta el método {@link #cargarFuente() cargarFuente} para iniciar la
+	 * importación de una fuente de datos para la aplicación.
+	 * 
+	 * @param event El ActionEvent al que escucha
+	 */
+	@FXML
+	void importarFuente(ActionEvent event) {
+		cargarFuente();
+	}
+
+	/**
+	 * <p>
+	 * Este método se encarga de importar una fuente de datos para la aplicación, de
+	 * manera que<br>
+	 * solo aceptará archivos xlsx o odt con sus respectivas tablas. Para ello,
+	 * ejecuta el método<br>
+	 * {@link DocumentManager#readData() readData} junto con el documento entregado
+	 * a través de un diálogo de importacion<br>
+	 * de documentos.
+	 * </p>
+	 * <p>
+	 * Al invocarlo abrirá una nueva ventana para escoger el fichero de datos a
+	 * importar y cargará<br>
+	 * sus datos en la aplicación.
+	 * </p>
+	 * <p>
+	 * En caso de fallar a la hora de importar o leer la fuente de datos, sea por un
+	 * formato o<br>
+	 * renombramiento incorrecto del archivo o por un formato incorrecto en la
+	 * lectura de datos<br>
+	 * (p. ej. tablas de solo una casilla de altura), se avisará con una alerta del
+	 * fallo producido.
+	 * </p>
+	 */
+	public void cargarFuente() {
+		DocumentManager docManager = new DocumentManager();
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+		fileChooser.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("Microsoft Excel Document (2007)", "*.xlsx"),
+				new FileChooser.ExtensionFilter("Office SpreadSheet Document", "*.ods"));
+		try {
+			docManager.readData(fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage));
+		} catch (Exception e) {
+			Alert alerta = new Alert(AlertType.ERROR);
+			TextArea textoArea = new TextArea();
+			textoArea.setText("Error: " + e.getMessage());
+			alerta.getDialogPane().setContent(textoArea);
+			Controller.crearAlerta(alerta, "Error", "Error al cargar la fuente de datos.",
+					// "La fuente de datos contiene un formato incorrecto respecto a la \n" +
+					// "gestión de la aplicación."
+					null, false);
+		}
+	}
+
+	/**
+	 * Este método se ejecuta al presionar ek botón de "Exportar documento".<br>
+	 * Si el archivo a exportar aún no ha sido exportado, no ocurrirá nada.<br>
+	 * Si el documento contiene un formato incorrecto o algún tipo de error en la
+	 * estructura interna <br>
+	 * (p. ej. renombrar el archivo a un formato distinto) se lanzará una alerta
+	 * avisando del error ocurrido.
+	 * 
+	 * @param f La ruta hacia dónde se van a guardar los ficheros generados
+	 */
+	public void reemplazarTexto(File f, boolean pdf) {
+		DocumentManager docManager = new DocumentManager();
+		try {
+			if (Controller.ficheroImportado.get() != null) { // si no se canceló la importación del documento
+				docManager.giveDocument(Controller.ficheroImportado.get(), f, pdf);
+			}
+		} catch (Exception e) {
+			Alert alerta = new Alert(AlertType.ERROR);
+			TextArea textoArea = new TextArea();
+			textoArea.setText("Error: " + e.getMessage());
+			alerta.getDialogPane().setContent(textoArea);
+			Controller.crearAlerta(alerta, "Error",
+					"Error al procesar el documento. Es posible que el archivo tenga un formato incorrecto\n"
+							+ "o se haya eliminado.",
+					null, false);
+		}
+	}
+
+	/**
 	 * Cierra los servicios de LibreOffice/OpenOffice con los que la aplicación
 	 * trabaja en la creación y conversión<br>
 	 * de documentos pdf
@@ -366,17 +347,16 @@ public class DrawerController implements Initializable {
 		// el programa hasta que se cierre
 	}
 
+	/**
+	 * Elimina todos los archivos pdf de la carpeta de tmpDocs de .WordSeedExporter
+	 * (esta carpeta se localiza en la carpeta de usuario)
+	 */
 	private void deletePdfs() {
 		List<File> fileList = new ArrayList<File>(
 				FileUtils.listFiles(new File(Controller.TEMPDOCSFOLDER.getPath()), new String[] { "pdf" }, false));
 		for (int i = 0; i < fileList.size(); i++) {
 			fileList.get(i).delete();
 		}
-	}
-
-	@FXML
-	void onExportarPdf(ActionEvent event) {
-
 	}
 
 	/**

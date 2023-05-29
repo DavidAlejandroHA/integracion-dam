@@ -16,6 +16,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -883,9 +884,10 @@ public class DocumentManager {
 		moveFiles(createdFiles, output, pdf);
 	}
 
+	@SuppressWarnings("deprecation")
 	private boolean editDocxParagraph(XWPFParagraph p, String newKey, String key) {
 		String regexKey = stringModifyOptions(key);
-
+		newKey = StringEscapeUtils.escapeJava(newKey); // se converte a un string literal para no dar problemas en el replaceAll()
 		boolean cambios = false;
 		int numCambios = 0;
 		List<XWPFRun> runs = p.getRuns();
@@ -1110,7 +1112,7 @@ public class DocumentManager {
 				}
 
 				if (height <= 1) {
-					throw new Exception("La tabla debe de tener más de una fila");
+					throw new Exception("Las tablas deben de tener más de una fila.");
 				}
 
 				String texto = null;
@@ -1204,7 +1206,7 @@ public class DocumentManager {
 					}
 				}
 				if (height <= 1) {
-					throw new Exception("La tabla debe de tener más de una fila");
+					throw new Exception("Las tablas deben de tener más de una fila.");
 				}
 
 				for (int i = rowIndexStart; i < rowIndexStart + height; i++) { // manejando cada fila
