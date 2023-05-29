@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -25,6 +27,7 @@ import integracion.wordseedexporter.components.PDFViewSkinES;
 import integracion.wordseedexporter.model.DataSource;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
@@ -72,6 +75,18 @@ public class Controller implements Initializable {
 	private Button rightButton;
 
 	@FXML
+	private Button topLeftButton;
+
+	@FXML
+	private Button topRightButton;
+
+	@FXML
+	private Button unloadButton;
+
+	@FXML
+	private Button reloadButton;
+
+	@FXML
 	private TextField pageNumTextField;
 
 	private DrawerController drawerController;
@@ -106,6 +121,8 @@ public class Controller implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+
+		Logger.getGlobal().setLevel(Level.OFF);
 		// load data
 		drawerController = new DrawerController();
 		drawerMenu.setSidePane(drawerController.getView());
@@ -113,10 +130,8 @@ public class Controller implements Initializable {
 		drawerController.setDrawerMenu(drawerMenu);
 		pdfViewer.setDisable(true);
 
-		rightButton.setDisable(true);
-		leftButton.setDisable(true);
-		pageNumTextField.setDisable(true);
-		pageNumTextField.setText("1");
+		// Quitar advertencias del logger
+		org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.INFO);
 
 		// crear carpeta de la app si no existe
 		if (!Controller.APPFOLDER.exists()) {
@@ -205,6 +220,7 @@ public class Controller implements Initializable {
 		previsualizaciones.addListener((o, ov, nv) -> {
 			if (nv.size() > 1) {
 				pdfViewer.load(previsualizaciones.get(0));
+				pageNumTextField.setText("1");
 			}
 		});
 
@@ -242,22 +258,35 @@ public class Controller implements Initializable {
 		});
 
 		// bindings
-		rightButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+		BooleanBinding rightButtonsBinding = Bindings.createBooleanBinding(() -> {
 			boolean limitReached = false;
 			if (documentIndex.get() >= previsualizaciones.size() || previsualizaciones.size() == 0) {
 				limitReached = true;
 			}
 			return limitReached;
-		}, documentIndex, previsualizaciones));
+		}, documentIndex, previsualizaciones);
 
-		leftButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+		BooleanBinding leftButtonsBinding = Bindings.createBooleanBinding(() -> {
 			boolean limitReached = false;
-			if (documentIndex.get() == 1 || documentIndex.get() > previsualizaciones.size()
+			if (documentIndex.get() == 1 // || documentIndex.get() > previsualizaciones.size()
 					|| previsualizaciones.size() == 0) {
 				limitReached = true;
 			}
 			return limitReached;
-		}, documentIndex, previsualizaciones));
+		}, documentIndex, previsualizaciones);
+
+		BooleanBinding previewButtonsBinding = Bindings.createBooleanBinding(() -> {
+			if (previsualizaciones.size() == 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}, previsualizaciones);
+
+		rightButton.disableProperty().bind(rightButtonsBinding);
+		topRightButton.disableProperty().bind(rightButtonsBinding);
+		leftButton.disableProperty().bind(leftButtonsBinding);
+		topLeftButton.disableProperty().bind(leftButtonsBinding);
 
 		pageNumTextField.disableProperty().bind(Bindings.createBooleanBinding(() -> {
 			boolean limitReached = false;
@@ -266,6 +295,9 @@ public class Controller implements Initializable {
 			}
 			return limitReached;
 		}, documentIndex, previsualizaciones, ficheroImportado));
+
+		unloadButton.disableProperty().bind(previewButtonsBinding);
+		reloadButton.disableProperty().bind(previewButtonsBinding);
 
 		// Añadir la interfaz personalizada en Español al pdfViewer
 		pdfViewer.setSkin(new PDFViewSkinES(pdfViewer));
@@ -301,7 +333,7 @@ public class Controller implements Initializable {
 	@FXML
 	void onLeftButton(ActionEvent event) {
 		if (documentIndex.get() > 1) {
-			documentIndex.set(documentIndex.get()-1);
+			documentIndex.set(documentIndex.get() - 1);
 			pageNumTextField.setText(documentIndex.get() + "");
 		}
 	}
@@ -309,9 +341,31 @@ public class Controller implements Initializable {
 	@FXML
 	void onRightButton(ActionEvent event) {
 		if (documentIndex.get() < previsualizaciones.size() + 1) {
-			documentIndex.set(documentIndex.get()+1);;
+			documentIndex.set(documentIndex.get() + 1);
 			pageNumTextField.setText(documentIndex.get() + "");
 		}
+	}
+
+	@FXML
+	void onTopRightButton(ActionEvent event) {
+		documentIndex.set(previsualizaciones.size());
+		pageNumTextField.setText(documentIndex.get() + "");
+	}
+
+	@FXML
+	void onTopLeftButton(ActionEvent event) {
+		documentIndex.set(1);
+		pageNumTextField.setText(documentIndex.get() + "");
+	}
+
+	@FXML
+	void onUnloadButton(ActionEvent event) {
+		pdfViewer.unload();
+	}
+
+	@FXML
+	void onReloadButton(ActionEvent event) {
+		pdfViewer.load(previsualizaciones.get(documentIndex.get()));
 	}
 
 	/**
@@ -327,9 +381,6 @@ public class Controller implements Initializable {
 		this.officeManager = officeManager;
 		try {
 			this.officeManager.start();
-//			crearAlerta(AlertType.INFORMATION, "Iniciando servicios de Office",
-//					"Se están iniciando los servicios de Office",
-//					"Una vez iniciados, se podrán previsualizar documentos\n" + "y exportar en formato pdf.", false);
 			// Se crea un pdf vacío para luego usarlo y forzar a los servicios de Office a
 			// iniciarse
 			// Creando objeto documento-PDF
@@ -376,13 +427,6 @@ public class Controller implements Initializable {
 					});
 				}).start();
 			} catch (IOException e) {
-//				Platform.runLater(() -> {
-//					crearAlerta(AlertType.ERROR, "Error", "No se han podido cargar los servicios de Office.",
-//							"Es posible que al importar un documento la próxima previsualización\n"
-//									+ "no funcione correctamente y/o tarde en efectuarse\n"
-//									+ "el inicio de los servicios.",
-//							false);
-//				});
 			}
 			drawerController.setOfficeManager(this.officeManager);
 		} catch (OfficeException e) {

@@ -72,27 +72,24 @@ public class WordSeedExporterApp extends Application {
 		} catch (NullPointerException e) {
 			Controller.officeInstalled = false;
 			Alert nullPointExAlert = new Alert(AlertType.WARNING);
-			nullPointExAlert.setTitle("LibreOffice no está instalado");
-			nullPointExAlert.setHeaderText("LibreOffice no está instalado en este equipo.");
+			nullPointExAlert.setTitle("Office no está instalado");
+			nullPointExAlert.setHeaderText("LibreOffice/Openoffice no está instalado en este equipo.");
 			VBox alertContent = new VBox();
 
 			Hyperlink link = new Hyperlink("aquí");
-			// link.lineSpacingProperty().set(10.0);
-			// link.setPrefHeight(10.0);
-			// link.setMaxHeight(10.0);
 			link.setOnAction(t -> {
 				this.getHostServices().showDocument("https://www.libreoffice.org/download/download-libreoffice/");
 			});
-			Label l1 = new Label("Instale LibreOffice u OpenOffice en su equipo para poder");
-			Label l2 = new Label("ejecutar la aplicación. Haga click ");
+			Label l1 = new Label("Instale LibreOffice u OpenOffice en su equipo para poder efectuar");
+			Label l2 = new Label("la previsualización y exportación de documentos a pdf.");
+			Label l3 = new Label("Haga click");
 			link.setText("aquí");
-			Label l3 = new Label(" si desea instalar");
-			Label l4 = new Label("LibreOffice en su equipo.");
-			HBox l2Content = new HBox(l2, link, l3);
+			Label l4 = new Label(" si desea instalar LibreOffice en su equipo.");
+			HBox l3Content = new HBox(l3, link, l4);
 			link.setAlignment(Pos.TOP_CENTER);
-			alertContent.getChildren().addAll(l1, l2Content, l4);
+			alertContent.getChildren().addAll(l1, l2, l3Content);
 			
-			nullPointExAlert.getDialogPane().contentProperty().set(alertContent);
+			nullPointExAlert.getDialogPane().setContent(alertContent);
 			nullPointExAlert.initOwner(WordSeedExporterApp.primaryStage);
 			nullPointExAlert.show();
 		}

@@ -19,6 +19,7 @@ import com.jfoenix.controls.JFXDrawer;
 import integracion.wordseedexporter.WordSeedExporterApp;
 import integracion.wordseedexporter.model.DocumentManager;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -47,6 +48,12 @@ public class DrawerController implements Initializable {
 	private JFXButton importarFuenteButton;
 
 	@FXML
+	private JFXButton exportarPdfButton;
+
+	@FXML
+	private JFXButton exportarDocumentoButton;
+
+	@FXML
 	private JFXButton salirButton;
 
 	private LocalOfficeManager officeManager;
@@ -59,7 +66,22 @@ public class DrawerController implements Initializable {
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		// bindings
+		exportarPdfButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+			if (Controller.previsualizaciones.size() > 0) {
+				return false;
+			} else {
+				return true;
+			}
+		}, Controller.previsualizaciones));
 
+		exportarDocumentoButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+			if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty()) {
+				return false;
+			} else {
+				return true;
+			}
+		}, Controller.ficheroImportado, Controller.dataSources));
 	}
 
 	/**
@@ -200,31 +222,35 @@ public class DrawerController implements Initializable {
 	 */
 	@FXML
 	void onExportarDocumento(ActionEvent event) {
-		if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty()) {
-			DirectoryChooser chooser = new DirectoryChooser();
-			// chooser.setTitle("Guardar documentos");
-			File f = chooser.showDialog(WordSeedExporterApp.primaryStage);
-			if (f != null) {
-				reemplazarTexto(f);
-			}
-		} else {
-			System.out.println(Controller.ficheroImportado.get() != null);
-			if (Controller.dataSources.get().isEmpty()) {
-				if (Controller.ficheroImportado.get() != null) {
-					Controller.crearAlerta(AlertType.WARNING, "Advertencia",
-							"Se necesita importar antes una fuente de datos para exportar los archivos.", null, false);
-				} else {
-					Controller.crearAlerta(AlertType.WARNING, "Advertencia",
-							"Se necesita importar antes una fuente de datos y un documento \n"
-									+ "a modificar para exportar los archivos.",
-							null, false);
-				}
-
-			} else {
-				Controller.crearAlerta(AlertType.WARNING, "Advertencia",
-						"Se necesita importar antes un documento a modificar para exportar los archivos.", null, false);
-			}
+		DirectoryChooser chooser = new DirectoryChooser();
+		File f = chooser.showDialog(WordSeedExporterApp.primaryStage);
+		if (f != null) {
+			reemplazarTexto(f);
 		}
+//		if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty()) {
+//			DirectoryChooser chooser = new DirectoryChooser();
+//			File f = chooser.showDialog(WordSeedExporterApp.primaryStage);
+//			if (f != null) {
+//				reemplazarTexto(f);
+//			}
+//		} else {
+//			System.out.println(Controller.ficheroImportado.get() != null);
+//			if (Controller.dataSources.get().isEmpty()) {
+//				if (Controller.ficheroImportado.get() != null) {
+//					Controller.crearAlerta(AlertType.WARNING, "Advertencia",
+//							"Se necesita importar antes una fuente de datos para exportar los archivos.", null, false);
+//				} else {
+//					Controller.crearAlerta(AlertType.WARNING, "Advertencia",
+//							"Se necesita importar antes una fuente de datos y un documento \n"
+//									+ "a modificar para exportar los archivos.",
+//							null, false);
+//				}
+//
+//			} else {
+//				Controller.crearAlerta(AlertType.WARNING, "Advertencia",
+//						"Se necesita importar antes un documento a modificar para exportar los archivos.", null, false);
+//			}
+//		}
 
 	}
 
@@ -270,7 +296,7 @@ public class DrawerController implements Initializable {
 //							"No se han podido parar los servicios de LibreOffice/OpenOffice.", null, false);
 				}
 			}).start();
-			
+
 			deletePdfs();
 			Stage stage = (Stage) drawerView.getScene().getWindow();
 			stage.close();
@@ -337,10 +363,10 @@ public class DrawerController implements Initializable {
 		// TODO: Hilo de javafx para nueva ventana/alerta indicando que se está cerrando
 		// el programa hasta que se cierre
 	}
-	
+
 	private void deletePdfs() {
-		List<File> fileList = new ArrayList<File>(FileUtils
-				.listFiles(new File(Controller.TEMPDOCSFOLDER.getPath()), new String[] { "pdf" }, false));
+		List<File> fileList = new ArrayList<File>(
+				FileUtils.listFiles(new File(Controller.TEMPDOCSFOLDER.getPath()), new String[] { "pdf" }, false));
 		for (int i = 0; i < fileList.size(); i++) {
 			fileList.get(i).delete();
 		}
@@ -376,6 +402,16 @@ public class DrawerController implements Initializable {
 	 */
 	public void setOfficeManager(LocalOfficeManager officeManager) {
 		this.officeManager = officeManager;
+	}
+
+	/**
+	 * Retorna el objeto {@link JFXButton exportarPdfButton} del elemento
+	 * DrawerController
+	 * 
+	 * @return exportarPdfButton
+	 */
+	public JFXButton getExportarPdfButton() {
+		return exportarPdfButton;
 	}
 
 }
