@@ -95,7 +95,7 @@ public class DocumentManager {
 	 * @param output La ruta en la que los documentos generados se almacenarán
 	 * @throws Exception
 	 */
-	public void giveDocument(File input, File output) throws Exception {
+	public void giveDocument(File input, File output, boolean exportarAPDF) throws Exception {
 
 		if (input != null) {
 			// Nombre de las columnas del excel - serán las palabras a reemplazar
@@ -109,27 +109,27 @@ public class DocumentManager {
 				XPathFactoryUtil.setxPathFactory(new XPathFactoryImpl());
 				// TODO Hcaer que se exporten usando el nombre que tienen
 				if (input.getName().endsWith(".docx")) {
-					replaceDocxStrings(dataSources, input, output);
+					replaceDocxStrings(dataSources, input, output, exportarAPDF);
 
 				} else if (input.getName().endsWith(".pptx")) {
-					replacePptxStrings(dataSources, input, output);
+					replacePptxStrings(dataSources, input, output, exportarAPDF);
 
 				} else if (input.getName().endsWith(".xlsx")) {
-					replaceXlsxStrings(dataSources, input, output);
+					replaceXlsxStrings(dataSources, input, output, exportarAPDF);
 
 				} else {
 
 					if (input.getName().endsWith(".odt")) {
-						replaceOdtStrings(dataSources, input, output);
+						replaceOdtStrings(dataSources, input, output, exportarAPDF);
 
 					} else if (input.getName().endsWith(".odp")) {
-						replaceOdpStrings(dataSources, input, output);
+						replaceOdpStrings(dataSources, input, output, exportarAPDF);
 
 					} else if (input.getName().endsWith(".ods")) {
-						replaceOdsStrings(dataSources, input, output);
+						replaceOdsStrings(dataSources, input, output, exportarAPDF);
 
 					} else if (input.getName().endsWith(".odg")) {
-						replaceOdgStrings(dataSources, input, output);
+						replaceOdgStrings(dataSources, input, output, exportarAPDF);
 
 					}
 				}
@@ -162,7 +162,7 @@ public class DocumentManager {
 	 * @throws InvalidFormatException
 	 * @throws IOException
 	 */
-	public void replaceDocxStrings(ObservableList<DataSource> dataSources, File input, File output)
+	public void replaceDocxStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
 			throws InvalidFormatException, IOException {
 		int iEffective = 0;
 		int jEffective = 0;
@@ -314,8 +314,7 @@ public class DocumentManager {
 		}
 
 		// Eliminar los posibles ficheros que pueden haber quedado de acciones pasadas,
-		// sin
-		// incluir los pdf
+		// sin incluir los pdf
 		deleteOldFiles(createdFiles);
 		if (Controller.officeInstalled) {
 			convertFileListToPdfs(createdFiles, ".docx");
@@ -325,10 +324,10 @@ public class DocumentManager {
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
-		moveFiles(createdFiles, output);
+		moveFiles(createdFiles, output, pdf);
 	}
 
-	private void replacePptxStrings(ObservableList<DataSource> dataSources, File input, File output)
+	private void replacePptxStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
 			throws InvalidFormatException, IOException {
 		int iEffective = 0;
 		int jEffective = 0;
@@ -413,10 +412,10 @@ public class DocumentManager {
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
-		moveFiles(createdFiles, output);
+		moveFiles(createdFiles, output, pdf);
 	}
 
-	private void replaceXlsxStrings(ObservableList<DataSource> dataSources, File input, File output)
+	private void replaceXlsxStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
 			throws InvalidFormatException, IOException {
 		int iEffective = 0;
 		int jEffective = 0;
@@ -495,18 +494,41 @@ public class DocumentManager {
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
-		moveFiles(createdFiles, output);
+		moveFiles(createdFiles, output, pdf);
 	}
 
-	private void moveFiles(List<File> createdFiles, File output) throws IOException {
-		for (int i = 0; i < createdFiles.size(); i++) {
-			Files.move(Paths.get(createdFiles.get(i).getPath()),
-					Paths.get(output.getPath() + File.separator + createdFiles.get(i).getName()),
-					StandardCopyOption.REPLACE_EXISTING);
+	private void moveFiles(List<File> createdFiles, File output, boolean pdf) throws IOException {
+		if (!pdf) {
+			for (int i = 0; i < createdFiles.size(); i++) {
+				try {
+					Files.move(Paths.get(createdFiles.get(i).getPath()),
+							Paths.get(output.getPath() + File.separator + createdFiles.get(i).getName()),
+							StandardCopyOption.REPLACE_EXISTING);
+				} catch (Exception e) {
+				}
+			}
+		} else {
+			for (File f : Controller.previsualizaciones) {
+				try { // Copiando las previsualizaciones pdf a la ruta de exportación
+					Files.copy(Paths.get(f.getPath()), Paths.get(output.getPath() + File.separator + f.getName()),
+							StandardCopyOption.REPLACE_EXISTING);
+				} catch (Exception e) {
+
+				}
+			}
+
+			// borrando los documentos generados que servían para pasarlos a pdf
+			for (int i = 0; i < createdFiles.size(); i++) {
+				try {
+					Files.delete(Paths.get(createdFiles.get(i).getPath()));
+				} catch (Exception e) {
+				}
+			}
 		}
 	}
 
-	private void replaceOdtStrings(ObservableList<DataSource> dataSources, File input, File output) throws Exception {
+	private void replaceOdtStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
+			throws Exception {
 		int iEffective = 0;
 		int jEffective = 0;
 		int numCambios = 0;
@@ -589,10 +611,11 @@ public class DocumentManager {
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
-		moveFiles(createdFiles, output);
+		moveFiles(createdFiles, output, pdf);
 	}
 
-	private void replaceOdpStrings(ObservableList<DataSource> dataSources, File input, File output) throws Exception {
+	private void replaceOdpStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
+			throws Exception {
 		int iEffective = 0;
 		int jEffective = 0;
 		int numCambios = 0;
@@ -679,10 +702,11 @@ public class DocumentManager {
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
-		moveFiles(createdFiles, output);
+		moveFiles(createdFiles, output, pdf);
 	}
 
-	private void replaceOdsStrings(ObservableList<DataSource> dataSources, File input, File output) throws Exception {
+	private void replaceOdsStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
+			throws Exception {
 		int iEffective = 0;
 		int jEffective = 0;
 		int numCambios = 0;
@@ -767,10 +791,11 @@ public class DocumentManager {
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
-		moveFiles(createdFiles, output);
+		moveFiles(createdFiles, output, pdf);
 	}
 
-	private void replaceOdgStrings(ObservableList<DataSource> dataSources, File input, File output) throws Exception {
+	private void replaceOdgStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
+			throws Exception {
 		int iEffective = 0;
 		int jEffective = 0;
 		int numCambios = 0;
@@ -855,8 +880,7 @@ public class DocumentManager {
 		} else { // si no las hay es que se han generado todos los documentos correspondientes
 			allWordsSuccess();
 		}
-		moveFiles(createdFiles, output);
-		Controller.previsualizaciones.setAll(createdFiles);
+		moveFiles(createdFiles, output, pdf);
 	}
 
 	private boolean editDocxParagraph(XWPFParagraph p, String newKey, String key) {
@@ -964,10 +988,16 @@ public class DocumentManager {
 	private String stringModifyOptions(String k) {
 		k = Pattern.quote(k); // con este método se obtiene un patrón "literal" del string, deforma que los
 								// caracteres especiales que puedatener el string quedan "asegurados" en lo que
-								// se refiere a lasintaxis de las expresiones regulares que utiliza el
-								// método.replaceAll(), evitando así posible errores de sintaxis en
+								// se refiere a la sintaxis de las expresiones regulares que utiliza el
+								// método .replaceAll(), evitando así posible errores de sintaxis en
 								// estas expresiones
 								// Ojo: no es lo mismo que Matcher.quoteReplacement(k)
+		if (Controller.caseInsensitive.get()) {
+			// Si la BooleanProperty replaceExactWord está a true, se le añade a k
+			// una expresión regular (?i) para que el replaceAll() acepte tanto mayúsculas
+			// como minúsculas (case insensitive)
+			k = "(?i)" + k;
+		}
 		if (Controller.replaceExactWord.get()) {
 			// Si la BooleanProperty replaceExactWord está a true, se le añaden a k un
 			// "limitador" de palabras para seleccionar solo esas mismas palabras (\\b + k +
@@ -1270,7 +1300,6 @@ public class DocumentManager {
 						.execute();
 				files.add(f);
 			} catch (OfficeException | StringIndexOutOfBoundsException e) {
-				e.printStackTrace();
 			}
 		}
 		Controller.previsualizaciones.set(files);

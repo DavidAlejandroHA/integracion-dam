@@ -28,6 +28,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
@@ -183,7 +184,6 @@ public class DrawerController implements Initializable {
 					// "La fuente de datos contiene un formato incorrecto respecto a la \n" +
 					// "gestión de la aplicación."
 					"Error: " + e.getMessage(), false);
-			e.printStackTrace();
 		}
 	}
 
@@ -201,16 +201,18 @@ public class DrawerController implements Initializable {
 		DocumentManager docManager = new DocumentManager();
 		try {
 			if (Controller.ficheroImportado.get() != null) { // si no se canceló la importación del documento
-				docManager.giveDocument(Controller.ficheroImportado.get(), f);
+				docManager.giveDocument(Controller.ficheroImportado.get(), f, false);
 			}
 		} catch (Exception e) {
-			Controller.crearAlerta(AlertType.ERROR, "Error",
+			Alert alerta = new Alert(AlertType.ERROR);
+			TextArea textoArea = new TextArea();
+			textoArea.setText("Error: " + e.getMessage());
+			alerta.getDialogPane().setContent(textoArea);
+			Controller.crearAlerta(alerta, "Error",
 					"Error al procesar el documento. Es posible que el archivo tenga un formato incorrecto\n"
 							+ "o se haya eliminado.",
-					"Error: " + e.getMessage(), false);
-			e.printStackTrace();
+					null, false);
 		}
-
 	}
 
 	/**

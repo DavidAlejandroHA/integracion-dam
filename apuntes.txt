@@ -57,3 +57,24 @@ private <T> ObservableList<ObservableList<T>> transpose(ObservableList<Observabl
 //		return filas;
 //	}
 
+Dialog<Boolean> waitingDialog = new Dialog<>();
+//				ProgressBar progressBar = new ProgressBar();
+//				progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+//				waitingDialog.getDialogPane().setContent(progressBar);
+//				waitingDialog.getDialogPane().setPrefWidth(300);
+//				waitingDialog.getDialogPane().setCenterShape(true);
+//				waitingDialog.getDialogPane().getStylesheets()
+//						.add(getClass().getResource("/css/darkstyle.css").toExternalForm());
+//				waitingDialog.setTitle("Cargando...");
+//				waitingDialog.setHeaderText("Iniciando servicios de Office");
+//				waitingDialog.show();
+//				try {
+//					Files.delete(Paths.get(Controller.TEMPDOCSFOLDER + File.separator + "preview.pdf"));
+//				} catch (IOException e1) {
+//					e1.printStackTrace();
+//				}
+
+// waitingDialog.setResult(true);
+				// waitingDialog.close();
+				// });
+

@@ -104,6 +104,9 @@ public class Controller implements Initializable {
 
 	// model
 	public static BooleanProperty replaceExactWord = new SimpleBooleanProperty(true); // valor por defecto a true
+																						// (wordBoundaries)
+
+	public static BooleanProperty caseInsensitive = new SimpleBooleanProperty(true); // valor por defecto a true
 
 	public static ListProperty<DataSource> dataSources = new SimpleListProperty<>(FXCollections.observableArrayList());
 
@@ -141,26 +144,20 @@ public class Controller implements Initializable {
 
 		// listeners
 		pdfCreado.addListener((o, ov, nv) -> {
-			// El if y el else es para forzar al pdfViewer que cambie de pdf
-			if (nv != null) {
-				// En ciertas ocasiones, al volver a cargar un nuevo documento el visor de pdfs
-				// lanza una exepción desde uno de sus hilos (al cargar documentos con páginas
-				// en horizontal) que no afecta a la aplicación en sí, pero para evitarlo se
-				// inicia un nuedo visor de pdfs
-				pdfViewer = new PDFView();
-				pdfViewer.setSkin(new PDFViewSkinES(pdfViewer));
-				pdfViewer.setMinWidth(Region.USE_COMPUTED_SIZE);
-				pdfViewer.setPrefWidth(Region.USE_COMPUTED_SIZE);
-				pdfViewer.setMaxWidth(Region.USE_COMPUTED_SIZE);
-				pdfViewer.setMinHeight(Region.USE_COMPUTED_SIZE);
-				pdfViewer.setMaxHeight(Region.USE_COMPUTED_SIZE);
-				pdfViewer.setPrefHeight(Region.USE_COMPUTED_SIZE);
-				HBox.setHgrow(pdfViewer, Priority.ALWAYS);
-				pdfViewer.load(nv);
-			} else {
-				pdfViewer.unload();
-				pdfViewer.setDisable(true);
-			}
+			// En ciertas ocasiones, al volver a cargar un nuevo documento el visor de pdfs
+			// lanza una exepción desde uno de sus hilos (al cargar documentos con páginas
+			// en horizontal) que no afecta a la aplicación en sí, pero para evitarlo se
+			// inicia un nuedo visor de pdfs
+			pdfViewer = new PDFView();
+			pdfViewer.setSkin(new PDFViewSkinES(pdfViewer));
+			pdfViewer.setMinWidth(Region.USE_COMPUTED_SIZE);
+			pdfViewer.setPrefWidth(Region.USE_COMPUTED_SIZE);
+			pdfViewer.setMaxWidth(Region.USE_COMPUTED_SIZE);
+			pdfViewer.setMinHeight(Region.USE_COMPUTED_SIZE);
+			pdfViewer.setMaxHeight(Region.USE_COMPUTED_SIZE);
+			pdfViewer.setPrefHeight(Region.USE_COMPUTED_SIZE);
+			HBox.setHgrow(pdfViewer, Priority.ALWAYS);
+			pdfViewer.load(nv);
 			HBox hb = (HBox) view.lookup("#pdfHBox");
 			hb.getChildren().set(1, pdfViewer);
 		});
@@ -170,22 +167,6 @@ public class Controller implements Initializable {
 		// de pdfs
 		ficheroImportado.addListener((o, ov, nv) -> {
 			if (nv != null && previewReady.get()) {
-//				Dialog<Boolean> waitingDialog = new Dialog<>();
-//				ProgressBar progressBar = new ProgressBar();
-//				progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
-//				waitingDialog.getDialogPane().setContent(progressBar);
-//				waitingDialog.getDialogPane().setPrefWidth(300);
-//				waitingDialog.getDialogPane().setCenterShape(true);
-//				waitingDialog.getDialogPane().getStylesheets()
-//						.add(getClass().getResource("/css/darkstyle.css").toExternalForm());
-//				waitingDialog.setTitle("Cargando...");
-//				waitingDialog.setHeaderText("Iniciando servicios de Office");
-//				waitingDialog.show();
-//				try {
-//					Files.delete(Paths.get(Controller.TEMPDOCSFOLDER + File.separator + "preview.pdf"));
-//				} catch (IOException e1) {
-//					e1.printStackTrace();
-//				}
 				File pdfFileOut = new File(Controller.TEMPDOCSFOLDER + File.separator + "preview.pdf");
 				try {
 					JodConverter.convert(nv)// .as(DefaultDocumentFormatRegistry.DOC)
@@ -196,12 +177,7 @@ public class Controller implements Initializable {
 					crearAlerta(AlertType.WARNING, "Advertencia",
 							"No se ha podido crear la previsualización \n" + "del documento importado.", null, false);
 				}
-				// El null es para forzar al pdfViewer que cambie de pdf
-				pdfCreado.set(null);
 				pdfCreado.set(pdfFileOut);
-				// waitingDialog.setResult(true);
-				// waitingDialog.close();
-				// });
 			}
 		});
 
@@ -327,7 +303,6 @@ public class Controller implements Initializable {
 
 	@FXML
 	void onDrawerOpened(JFXDrawerEvent event) {
-		// drawerMenu.setPrefWidth(600);
 	}
 
 	@FXML
