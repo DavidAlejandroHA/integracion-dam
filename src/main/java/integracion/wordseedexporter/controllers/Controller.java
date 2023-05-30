@@ -122,7 +122,7 @@ public class Controller implements Initializable {
 
 	private static ObjectProperty<File> pdfCreado = new SimpleObjectProperty<>();
 
-	private static BooleanProperty previewReady = new SimpleBooleanProperty(false);
+	public static BooleanProperty converterReady = new SimpleBooleanProperty(false);
 
 	private static IntegerProperty documentIndex = new SimpleIntegerProperty(1);
 
@@ -174,7 +174,7 @@ public class Controller implements Initializable {
 		// en este caso se intenta hacer una previsualización del documento en el visor
 		// de pdfs
 		ficheroImportado.addListener((o, ov, nv) -> {
-			if (nv != null && previewReady.get()) {
+			if (nv != null && converterReady.get()) {
 				File pdfFileOut = new File(Controller.TEMPDOCSFOLDER + File.separator + "preview.pdf");
 				try {
 					JodConverter.convert(nv)// .as(DefaultDocumentFormatRegistry.DOC)
@@ -483,7 +483,7 @@ public class Controller implements Initializable {
 							Files.delete(Paths.get(rutaFile2));
 						} catch (IOException e) {
 						}
-						previewReady.set(true);
+						converterReady.set(true);
 					});
 				}).start();
 			} catch (IOException e) {

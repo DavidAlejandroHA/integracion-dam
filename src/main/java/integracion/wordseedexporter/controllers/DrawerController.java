@@ -74,7 +74,7 @@ public class DrawerController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		// bindings
 		exportarPdfButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-			if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty() && Controller.previsualizaciones.size() > 0) {
+			if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty() && Controller.converterReady.get()) {
 				return false;
 			} else {
 				return true;

@@ -52,7 +52,7 @@ public class WordSeedExporterApp extends Application {
 		escena = new Scene(controller.getView());
 
 		primaryStage.setScene(escena);
-		primaryStage.setTitle("WordSeedExporter");
+		primaryStage.setTitle("WordSeed Exporter");
 		primaryStage.getIcons()
 				.add(new Image(WordSeedExporterApp.class.getResourceAsStream("/images/logo-128x128.png")));
 		primaryStage.show();
