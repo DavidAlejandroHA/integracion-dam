@@ -35,10 +35,6 @@
     -fx-font-size: 14px;
 }
 
-.fakeDrawer:hover {
-	
-}
-
 /* Alertas */
 .dialog-pane:header .header-panel .label {
     -fx-alignment: center;

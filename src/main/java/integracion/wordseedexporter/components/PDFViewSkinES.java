@@ -91,8 +91,6 @@ import javafx.util.Duration;
  * que no hay forma de modificar ningún campo en otra clase que no sea donde se
  * declaran estos métodos y objetos privados.
  * 
- * @author a
- * 
  */
 public class PDFViewSkinES extends PDFViewSkin {
 

@@ -15,6 +15,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Clase que inicializa los principales elementos de la aplicación para poder ponerla en marcha.
+ * @author Usuario
+ *
+ */
 public class WordSeedExporterApp extends Application {
 
 	public static Stage primaryStage;

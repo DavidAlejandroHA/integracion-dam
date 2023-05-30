@@ -68,14 +68,16 @@ import net.sf.saxon.xpath.XPathFactoryImpl;
  * <p>
  * Esta clase se encarga de, dado un documento entregado, generar distintos<br>
  * documentos, cada uno con los cambios de palabras correspondientes<br>
- * respecto a la fuente de datos previamente importada en la aplicación<br>
- * una palabra o una serie de palabras en el documento entregado.
+ * respecto a la fuente de datos previamente importada en la aplicación.
  * </p>
  * <p>
  * Las palabras reemplazadas en el documento dependen además de la<br>
- * BooleanProperty de la clase Controller (Controller.replaceExactWord), <br>
- * ya que según su valor llegará a reemplazar solo las palabras <br>
- * exactas que el usuario haya especificado (true) o cualquier coincidencia<br>
+ * BooleanProperty {@link BooleanProperty replaceExactWord} de la clase
+ * Controller<br>
+ * (Controller.replaceExactWord), y de {@link BooleanProperty caseSensitive}
+ * (Controller.caseSensitive) <br>
+ * ya que según su valor llegará a reemplazar solo las palabras exactas <br>
+ * que el usuario haya especificado (true) o cualquier coincidencia<br>
  * que incluyan las que estén dentro de otra palabra que se encuentre en el<br>
  * documento (false). <br>
  * </p>
@@ -133,6 +135,14 @@ public class DocumentManager {
 
 	}
 
+	/**
+	 * Dependiendo de la extensión del fichero ofrecido que contiene la fuente de
+	 * datos necesaria para el programa, se ejecuta el método adecuado para su
+	 * correcta lectura de datos
+	 * 
+	 * @param f El fichero / fuente de datos a importar en la aplicación
+	 * @throws Exception
+	 */
 	public void readData(File f) throws Exception {
 		if (f != null) {
 			if (f.getName().endsWith(".ods")) {
@@ -146,14 +156,17 @@ public class DocumentManager {
 
 	// La lista de listas de string vendrá de la próxima interfaz a crear
 	/**
-	 * Edita el fichero (documento) entregado previamente por la función
+	 * Edita el fichero documento entregado previamente por el método
 	 * {@link #giveDocument(File)} junto a la lista de palabras clave y la lista de
 	 * palabras a reemplazar que contendrán en sus índices correspondientes los
 	 * Strings almacenados a través del menú de importación de la fuente de datos.
 	 * 
-	 * @param rows
-	 * @param columnKeyName
-	 * @param input
+	 * @param dataSources Las fuentes de datos a procesar para reemplazar las
+	 *                    palabras en documentos
+	 * @param input       El documento importado
+	 * @param output      La ruta del directorio donde se generarán los
+	 *                    documentos/pdf
+	 * @param pdf         Si se exportarán los archivos en ".docx" o en ".pdf"
 	 * @throws InvalidFormatException
 	 * @throws IOException
 	 */
@@ -322,6 +335,21 @@ public class DocumentManager {
 		moveFiles(createdFiles, output, pdf);
 	}
 
+	/**
+	 * Edita el fichero documento entregado previamente por el método
+	 * {@link #giveDocument(File)} junto a la lista de palabras clave y la lista de
+	 * palabras a reemplazar que contendrán en sus índices correspondientes los
+	 * Strings almacenados a través del menú de importación de la fuente de datos.
+	 * 
+	 * @param dataSources Las fuentes de datos a procesar para reemplazar las
+	 *                    palabras en documentos
+	 * @param input       El documento importado
+	 * @param output      La ruta del directorio donde se generarán los
+	 *                    documentos/pdf
+	 * @param pdf         Si se exportarán los archivos en ".pptx" o en ".pdf"
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 */
 	private void replacePptxStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
 			throws InvalidFormatException, IOException {
 		int iEffective = 0;
@@ -410,6 +438,21 @@ public class DocumentManager {
 		moveFiles(createdFiles, output, pdf);
 	}
 
+	/**
+	 * Edita el fichero documento entregado previamente por el método
+	 * {@link #giveDocument(File)} junto a la lista de palabras clave y la lista de
+	 * palabras a reemplazar que contendrán en sus índices correspondientes los
+	 * Strings almacenados a través del menú de importación de la fuente de datos.
+	 * 
+	 * @param dataSources Las fuentes de datos a procesar para reemplazar las
+	 *                    palabras en documentos
+	 * @param input       El documento importado
+	 * @param output      La ruta del directorio donde se generarán los
+	 *                    documentos/pdf
+	 * @param pdf         Si se exportarán los archivos en ".xlsx" o en ".pdf"
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 */
 	private void replaceXlsxStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
 			throws InvalidFormatException, IOException {
 		int iEffective = 0;
@@ -492,36 +535,21 @@ public class DocumentManager {
 		moveFiles(createdFiles, output, pdf);
 	}
 
-	private void moveFiles(List<File> createdFiles, File output, boolean pdf) throws IOException {
-		if (!pdf) {
-			for (int i = 0; i < createdFiles.size(); i++) {
-				try {
-					Files.move(Paths.get(createdFiles.get(i).getPath()),
-							Paths.get(output.getPath() + File.separator + createdFiles.get(i).getName()),
-							StandardCopyOption.REPLACE_EXISTING);
-				} catch (Exception e) {
-				}
-			}
-		} else {
-			for (File f : Controller.previsualizaciones) {
-				try { // Copiando las previsualizaciones pdf a la ruta de exportación
-					Files.copy(Paths.get(f.getPath()), Paths.get(output.getPath() + File.separator + f.getName()),
-							StandardCopyOption.REPLACE_EXISTING);
-				} catch (Exception e) {
-
-				}
-			}
-
-			// borrando los documentos generados que servían para pasarlos a pdf
-			for (int i = 0; i < createdFiles.size(); i++) {
-				try {
-					Files.delete(Paths.get(createdFiles.get(i).getPath()));
-				} catch (Exception e) {
-				}
-			}
-		}
-	}
-
+	/**
+	 * Edita el fichero documento entregado previamente por el método
+	 * {@link #giveDocument(File)} junto a la lista de palabras clave y la lista de
+	 * palabras a reemplazar que contendrán en sus índices correspondientes los
+	 * Strings almacenados a través del menú de importación de la fuente de datos.
+	 * 
+	 * @param dataSources Las fuentes de datos a procesar para reemplazar las
+	 *                    palabras en documentos
+	 * @param input       El documento importado
+	 * @param output      La ruta del directorio donde se generarán los
+	 *                    documentos/pdf
+	 * @param pdf         Si se exportarán los archivos en ".odt" o en ".pdf"
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 */
 	private void replaceOdtStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
 			throws Exception {
 		int iEffective = 0;
@@ -609,6 +637,21 @@ public class DocumentManager {
 		moveFiles(createdFiles, output, pdf);
 	}
 
+	/**
+	 * Edita el fichero documento entregado previamente por el método
+	 * {@link #giveDocument(File)} junto a la lista de palabras clave y la lista de
+	 * palabras a reemplazar que contendrán en sus índices correspondientes los
+	 * Strings almacenados a través del menú de importación de la fuente de datos.
+	 * 
+	 * @param dataSources Las fuentes de datos a procesar para reemplazar las
+	 *                    palabras en documentos
+	 * @param input       El documento importado
+	 * @param output      La ruta del directorio donde se generarán los
+	 *                    documentos/pdf
+	 * @param pdf         Si se exportarán los archivos en ".odp" o en ".pdf"
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 */
 	private void replaceOdpStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
 			throws Exception {
 		int iEffective = 0;
@@ -700,6 +743,21 @@ public class DocumentManager {
 		moveFiles(createdFiles, output, pdf);
 	}
 
+	/**
+	 * Edita el fichero documento entregado previamente por el método
+	 * {@link #giveDocument(File)} junto a la lista de palabras clave y la lista de
+	 * palabras a reemplazar que contendrán en sus índices correspondientes los
+	 * Strings almacenados a través del menú de importación de la fuente de datos.
+	 * 
+	 * @param dataSources Las fuentes de datos a procesar para reemplazar las
+	 *                    palabras en documentos
+	 * @param input       El documento importado
+	 * @param output      La ruta del directorio donde se generarán los
+	 *                    documentos/pdf
+	 * @param pdf         Si se exportarán los archivos en ".ods" o en ".pdf"
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 */
 	private void replaceOdsStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
 			throws Exception {
 		int iEffective = 0;
@@ -789,6 +847,21 @@ public class DocumentManager {
 		moveFiles(createdFiles, output, pdf);
 	}
 
+	/**
+	 * Edita el fichero documento entregado previamente por el método
+	 * {@link #giveDocument(File)} junto a la lista de palabras clave y la lista de
+	 * palabras a reemplazar que contendrán en sus índices correspondientes los
+	 * Strings almacenados a través del menú de importación de la fuente de datos.
+	 * 
+	 * @param dataSources Las fuentes de datos a procesar para reemplazar las
+	 *                    palabras en documentos
+	 * @param input       El documento importado
+	 * @param output      La ruta del directorio donde se generarán los
+	 *                    documentos/pdf
+	 * @param pdf         Si se exportarán los archivos en ".odg" o en ".pdf"
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 */
 	private void replaceOdgStrings(ObservableList<DataSource> dataSources, File input, File output, boolean pdf)
 			throws Exception {
 		int iEffective = 0;
@@ -878,6 +951,55 @@ public class DocumentManager {
 		moveFiles(createdFiles, output, pdf);
 	}
 
+	/**
+	 * Mueve ficheros de la carpeta tmpDocs de la aplicación hacia la ruta
+	 * especificada.
+	 * 
+	 * @param createdFiles La lista de ficheros a mover a otro destino
+	 * @param output       La carpeta/dirección a la que se moverán los ficheros
+	 * @param pdf          Si se moverán solo los documentos generados o se copiarán
+	 *                     las previsualizaciones pdf a la carpeta de destino
+	 * @throws IOException
+	 */
+	private void moveFiles(List<File> createdFiles, File output, boolean pdf) throws IOException {
+		if (!pdf) {
+			for (int i = 0; i < createdFiles.size(); i++) {
+				try {
+					Files.move(Paths.get(createdFiles.get(i).getPath()),
+							Paths.get(output.getPath() + File.separator + createdFiles.get(i).getName()),
+							StandardCopyOption.REPLACE_EXISTING);
+				} catch (Exception e) {
+				}
+			}
+		} else {
+			for (File f : Controller.previsualizaciones) {
+				try { // Copiando las previsualizaciones pdf a la ruta de exportación
+					Files.copy(Paths.get(f.getPath()), Paths.get(output.getPath() + File.separator + f.getName()),
+							StandardCopyOption.REPLACE_EXISTING);
+				} catch (Exception e) {
+				}
+			}
+
+			// borrando los documentos generados que servían para pasarlos a pdf
+			for (int i = 0; i < createdFiles.size(); i++) {
+				try {
+					Files.delete(Paths.get(createdFiles.get(i).getPath()));
+				} catch (Exception e) {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Edita el párrafo de un archivo docx proporcionado al método de forma que si
+	 * encuentra la palabra a reemplazar que se le ha dado al método, la reemplazará
+	 * en ese párrafo al nuevo valor adjuntado en este mismo método
+	 * 
+	 * @param p      El párrafo a editar
+	 * @param newKey El nuevo valor que tendrá la palabra clave a reemplazar
+	 * @param key    La palabra clave a reemplazar
+	 * @return true Si se han hecho cambios en el párrafo, false si no ha sido así
+	 */
 	private boolean editDocxParagraph(XWPFParagraph p, String newKey, String key) {
 		String regexKey = stringModifyOptions(key);
 		boolean cambios = false;
@@ -903,6 +1025,16 @@ public class DocumentManager {
 		return cambios;
 	}
 
+	/**
+	 * Edita el párrafo de un archivo pptx proporcionado al método de forma que si
+	 * encuentra la palabra a reemplazar que se le ha dado al método, la reemplazará
+	 * en ese párrafo al nuevo valor adjuntado a este método
+	 * 
+	 * @param p      El párrafo a editar
+	 * @param newKey El nuevo valor que tendrá la palabra clave a reemplazar
+	 * @param key    La palabra clave a reemplazar
+	 * @return true Si se han hecho cambios en el párrafo, false si no ha sido así
+	 */
 	private boolean editPptxParagraph(XSLFTextParagraph p, String newKey, String key) {
 		String regexKey = stringModifyOptions(key);
 
@@ -929,6 +1061,16 @@ public class DocumentManager {
 		return cambios;
 	}
 
+	/**
+	 * Edita la celda proporcionada a este método de un archivo .xlxs de forma que
+	 * si encuentra la palabra a reemplazar que se le ha dado a este método, la
+	 * reemplazará en esa celda al nuevo valor adjuntado a este método
+	 * 
+	 * @param c
+	 * @param newKey
+	 * @param key
+	 * @return true Si se han hecho cambios en la celda, false si no ha sido así
+	 */
 	private boolean editXlxsCells(Cell c, String newKey, String key) {
 		String regexKey = stringModifyOptions(key);
 
@@ -955,6 +1097,18 @@ public class DocumentManager {
 		return cambios;
 	}
 
+	/**
+	 * Edita el texto de los distintos nodos ubicados en la lista de nodos
+	 * proporcionada a este método, de forma que si encuentra la palabra a
+	 * reemplazar que se le ha dado a este método, la reemplazará en ese texto al
+	 * nuevo valor adjuntado al método
+	 * 
+	 * @param c
+	 * @param newKey
+	 * @param key
+	 * @return true Si se han hecho cambios de texto dentro del nodo, false si no ha
+	 *         sido así
+	 */
 	private boolean editStringNodeList(NodeList nl, String newKey, String key) {
 		boolean cambios = false;
 		int numCambios = 0;
@@ -979,6 +1133,16 @@ public class DocumentManager {
 		return cambios;
 	}
 
+	/**
+	 * Este método se encarga de añadirle los carácteres necesarios para que
+	 * posteriormente pueda ser utilizada en los métodos .replaceAll() del remplazo
+	 * de texto en los distintos párrafos y nodos de los documentos de la manera
+	 * especificada por el usuario a través de las opciones de exportación de la
+	 * aplicación.
+	 * 
+	 * @param k
+	 * @return
+	 */
 	private String stringModifyOptions(String k) {
 		k = Pattern.quote(k); // con este método se obtiene un patrón "literal" del string, deforma que los
 								// caracteres especiales que puedatener el string quedan "asegurados" en lo que
@@ -1005,6 +1169,13 @@ public class DocumentManager {
 		return k;
 	}
 
+	/**
+	 * Crea una alerta advirtiendo de que varias palabras especificadas en la fuente
+	 * de datos no se han encontrado en el documento importado, por lo que varios
+	 * ficheros no contienen todos los cambios de la fuente de datos
+	 * 
+	 * @param ls La lista de palabras sin encontrar que saldrán en la alerta
+	 */
 	private void notFoundWords(List<String> ls) {
 		Alert alerta = new Alert(AlertType.WARNING);
 		alerta.setTitle("No se han encontrado algunas palabras");
@@ -1020,6 +1191,11 @@ public class DocumentManager {
 				false);
 	}
 
+	/**
+	 * Crea una alerta informado de que todas las palabras de la fuente de datos se
+	 * encontraron en el documento importado, por lo que se realiza el reemplazo de
+	 * las palabras de la fuente de datos.
+	 */
 	private void allWordsSuccess() {
 		Controller.crearAlerta(AlertType.INFORMATION, "Operación exitosa",
 				"Se han reemplazado todas las palabras de la fuente de datos\n"
@@ -1027,6 +1203,12 @@ public class DocumentManager {
 				null, false);
 	}
 
+	/**
+	 * Elimina los posibles ficheros viejos (documentos) que queden almacenados en
+	 * la carpeta tmpDocs de la aplicación.
+	 * 
+	 * @param ls
+	 */
 	private void deleteOldFiles(List<File> ls) {
 		List<File> fileList = new ArrayList<File>(
 				FileUtils.listFiles(new File(Controller.TEMPDOCSFOLDER.getPath()), null, false));
@@ -1037,6 +1219,13 @@ public class DocumentManager {
 		}
 	}
 
+	/**
+	 * El método se encarga de leer los archivos ".ods" y transformar sus datos en
+	 * una fuente de datos para el programa
+	 * 
+	 * @param f El fichero a leer los datos
+	 * @throws Exception
+	 */
 	private void readOds(File f) throws Exception {
 		OdfSpreadsheetDocument odsDocument = OdfSpreadsheetDocument.loadDocument(f);
 		List<OdfTable> tablas = odsDocument.getTableList(false);
@@ -1147,6 +1336,13 @@ public class DocumentManager {
 		}
 	}
 
+	/**
+	 * El método se encarga de leer los archivos ".xlsx" y transformar sus datos en
+	 * una fuente de datos para el programa
+	 * 
+	 * @param f El fichero a leer los datos
+	 * @throws Exception
+	 */
 	private void readXlsx(File f) throws Exception {
 		XSSFWorkbook spreadSheet = new XSSFWorkbook(new FileInputStream(f));
 
@@ -1259,6 +1455,12 @@ public class DocumentManager {
 		spreadSheet.close();
 	}
 
+	/**
+	 * Lee el texto de una celda ofrecida en el método
+	 * 
+	 * @param c
+	 * @return
+	 */
 	private String readCell(Cell c) {
 		String texto = "";
 		switch (c.getCellType()) {
@@ -1279,6 +1481,12 @@ public class DocumentManager {
 		return texto;
 	}
 
+	/**
+	 * Convierte una lista de documentos en ficheros pdf
+	 * 
+	 * @param createdFiles Los documentos a convertir en pdf
+	 * @param extension    La extensión del archivo que se quiere convertir a pdf
+	 */
 	private void convertFileListToPdfs(List<File> createdFiles, String extension) {
 		ObservableList<File> files = FXCollections.observableArrayList();
 		for (int i = 0; i < createdFiles.size(); i++) {

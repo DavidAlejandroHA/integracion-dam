@@ -20,7 +20,6 @@ import integracion.wordseedexporter.WordSeedExporterApp;
 import integracion.wordseedexporter.model.DocumentManager;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -36,6 +35,11 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+/**
+ * Esta clase representa el controlador de la vista del {@link JFXDrawer} que utiliza la aplicación.
+ * @author David Alejandro Hernández Alonso
+ *
+ */
 public class DrawerController implements Initializable {
 
 	// view
@@ -69,16 +73,20 @@ public class DrawerController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		// bindings
-		
-		BooleanBinding enableExport = Bindings.createBooleanBinding(() -> {
+		exportarPdfButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
+			if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty() && Controller.previsualizaciones.size() > 0) {
+				return false;
+			} else {
+				return true;
+			}
+		}, Controller.ficheroImportado, Controller.dataSources));
+		exportarDocumentoButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
 			if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty()) {
 				return false;
 			} else {
 				return true;
 			}
-		}, Controller.ficheroImportado, Controller.dataSources);
-		exportarPdfButton.disableProperty().bind(enableExport);
-		exportarDocumentoButton.disableProperty().bind(enableExport);
+		}, Controller.ficheroImportado, Controller.dataSources));
 	}
 
 	/**
