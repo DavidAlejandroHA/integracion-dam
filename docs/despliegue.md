@@ -1,8 +1,5 @@
 # Instalación/Despliegue
 
-Puesta en producción del software. En caso de una aplicación de usuario final, deberá contar con un instalador o paquete de instalación (exe, msi, deb, deb, rpm, apk).
+Para instalar la aplicación, el único requisito necesario es descargarse el instalador (WordSeedExporter-1.0.0.exe) mediante la página de github del proyecto, en el apartado de "Releases".
 
-Opcionalmente, se propone hacer uso de herramientas de tipo CI/CD (integración continua/despliegue continuo) que faciliten la distribución/despliegue. 
-
-
-> NOTA: La CI/CD es un método para distribuir las aplicaciones a los clientes con frecuencia mediante el uso de la automatización en las etapas del distribución y la implementación continuas.
+Una vez descargado, se completan los pasos del instalador hasta finalizar.

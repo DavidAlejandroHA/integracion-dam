@@ -1,14 +1,16 @@
+David Alejandro Hernández Alonso 2º DAM A
+
 # Anteproyecto
 
 ## OBJETIVOS
 
-La Aplicación a desarrollar permitirá al usuario cargar una fuente de datos (.exel, csv,...) para manejar los diferentes registros y usarlos como parámetros en distintos tipos de documentos e informes (.odt, .docx, ...) cargados previamente, con el objetivo de automatizar la generación de informes pdf por cada registro.
+La Aplicación a desarrollar permitirá al usuario cargar una fuente de datos (.xlsx y .odt) para manejar los diferentes registros y usarlos como parámetros en distintos tipos de documentos e informes (.odt, .docx, ...) cargados previamente, con el objetivo de automatizar la generación de informes pdf por cada registro.
 
 El proyecto será utilizado en el ámbito de la automatización de informes.
 
 ## PREANALISIS DE LO EXISTENTE (Opcional)
 
-*[TODO] Si procede, se informará brevemente sobre el funcionamiento del sistema actual. El que vamos a reemplazar o a mejorar. Este sistema no tiene por qué estar necesariamente automatizado pudiendo realizarse actualmente de forma manual por personas.*
+La aplicación actualmente parece sr estable y sin ningún tipo de errores que comprometan funcionamiento de laaplicación.
 
 ## ANÁLISIS DEL SOFTWARE
 
@@ -28,28 +30,79 @@ Dichas pautas y requisitos a implementar en la aplicación son los siguientes:
 A continuación se desarrollarán los casos de uso del sistema que capturarán sus requisitos funcionales para expresarlos desde el punto de vista del usuario, los cuales guiarán todo el proceso de desarrollo del sistema.<br>
 Estos casos de uso proporcionarán, por tanto, un modo claro y preciso de comunicación entre usuario y desarrollador.<br>
 El sistema que se describe en este caso de uso es el siguiente: Un usuario interactúa con el programa y selecciona una fuente de datos y un documento con parámetros introducidos manualmente. Una vez generados los informes, los parámetros serán reemplazados por las variables de la fuente de datos.<br>
-Entre las acciones más sencillas y directas que puede realizar están:
+Entre las acciones que se pueden realizar en la aplicación están:
 
 <ul>
   <li>Importar documento: Importa un documento cuyos parámetros
 introducidos por el usuario serán sustituidos por los valores
 que tengan según la fuente de datos.</li>
+<br>
   <li>Importar fuente de datos: Selecciona un archivo que sirva como
-fuente de datos (p. ej. .exel o .csv) para que la aplicación gestione
+fuente de datos (p. ej. .xlsx o .odt) para que la aplicación gestione
 el valor de los parámetros que se encuentran en el documento actual.</li>
+<br>
   <li>Generar informes: Selecciona el destino en donde se crearán los
-informes pdf acordes con el documento y la fuente de datos proporcionados.
-Una vez seleccionado se crearán distintos informes.
-  <li>Exportar documentos: </li> Tiene la misma funcionalidad que
+informes pdf acordes con el documento y la fuente de datos proporcionada.
+Una vez seleccionado se crearán distintos informes pdf.</li>
+<br>
+  <li>Exportar documentos: Tiene la misma funcionalidad que
 <b>generar informes</b>, salvo que el formato de exportación viene a
-ser el mismo que el del documento provisto.
+ser el mismo que el del documento provisto.</li>
+<br>
+<li>Quitar previsualización: Elimina la previsualización del
+documento importado o de los informes generados.</li>
+<br>
+<li>Recargar previsualización: Recarga la previsualización
+actualmente seleccionada, útil en caso de que haya habido fallos
+al cargar la previsualización.</li>
+<br>
+<li>Recargar previsualización:  Recarga la previsualización
+actualmente seleccionada, útil en caso de que haya habido fallos
+al cargar la previsualización.</li>
+<br>
+<li>Opciones de exportación:  Existen dos opciones para modificar el
+comportamiento del reemplazo de palabras a la hora de generar los
+documentos o informes:
+<ul>
+<li>Distinguir mayúsculas y minúsculas: Reemplazar las palabras
+especificadas de la fuente de datos que contengan los mismos tipos de
+caracteres aunque no tengan el mismo tipo de formato en mayúsculas
+o minúsculas. En caso de no estar activada esta opción, solo
+se reemplazarán aquellas palabras que contengan las mismas mayúsculas
+y minúsculas.</li>
+<br>
+<li>Reemplazar solo palabras exactas: Reemplazar únicamente las palabras
+especificadas de la fuente de datos de manera exacta, de manera que si
+existe esa misma palabra contenida dentro de una cadena de caracteres
+diferente, se reemplazará o no dependiendo de su activación.</li>
+</ul>
+</li>
+<br>
 </ul>
 
-![Caso de uso de la aplicación](/docs/Caso_de_uso_aplicacion.png)
+<img title="" src="Caso_de_uso_aplicacion.png" alt="Caso de uso de la aplicación" width="838">
 
 ## DISEÑO DEL SOFTWARE
 
-Las principales librerías que utilizará el software serán las librerías de javafx y Apache POI, la cuál permite gestionar y manejar diferentes tipos de documentos desarrollados por microsoft.
+Las principales librerías que utilizará el software son las siguientes:
+
+<div>
+<ul>
+<li>javafx-fxml</li>
+<li>apache pdfbox</li>
+<li>apache commons-text</li>
+<li>jfoenix</li>
+<li>ikonli-javafx (junto a otras librerías de iconos)</li>
+<li>Apache POI (y otras dependencias de Apache POI)</li>
+<li>jodconverter</li>
+<li>pdfviewfx</li>
+<li>docx4j</li>
+<li>Saxon-HE</li>
+<li>odfdom-java</li>
+</ul>
+</div>
+
+Las principales librerías del proyecto son las de javafx , Apache POI y LibreOffice. Estas dos últimas son las que se encargan de gestionar y manejar los diferentes tipos de documentos importados en la aplicación.
 
 ### Ciclo de Vida
 
@@ -84,9 +137,9 @@ A continuación se desarrollará los diagramas de flujos de datos de los diferen
 El diagrama de flujo de datos de este proyecto no solo corresponde a la
 aplicación, sino a cómo se gestiona en parte el el documento y la fuente de datos que maneja, ya que ambos aspectos están relacionados directamente. Los diagramas de flujos de datos entonces quedarían de esta manera:
 
-![Diagrama de contexto](/docs/Diagrama1.png)
+![Diagrama de contexto](Diagrama1.png)
 
-![Diagrama nivel 1](/docs/Diagrama2.png)
+![Diagrama nivel 1](Diagrama2.png)
 
 ## ESTIMACIÓN DE COSTES
 

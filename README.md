@@ -1,29 +1,27 @@
 # Proyecto de integración (DAM)
 
-El proyecto de integración consiste en la implementación de un producto de software siguiendo todas las fases del ciclo de vida de su desarrollo:
+El proyecto de integración consiste en la implementación de un producto de software siguiendo todas las fases del ciclo de vida de su desarrollo. En este caso el proyecto de Integración trata sobre una aplicación cuyo objetivo es la automatización y generación de informes, llamada "***WordSeed Exporter***".
 
 ### 1. Anteproyecto
 
-Se deberá **cumplimentar este [documento](docs/anteproyecto.md) y remitirlo al profesorado** a través del aula virtual para dar su visto bueno antes de comenzar el desarrollo.
+En este [documento](docs/anteproyecto.md) se describen diferentes aspectos técnicos del proyecto, como los casos de uso que contempla la aplicación, los diagramas de contexto, etc...
 
 ### 2. Desarrollo o implementación
 
-Implementación del software. Programar las distintas partes que componen el software, utilizando los lenguajes y herramientas adecuados.
+En el siguiente [documento](docs/desarrollo.md) se explica la implementación del software junto a las distintas partes que componen el software, que utilizan los lenguajes y herramientas adecuados para abarcar las necesidades de la aplicación. Principalmente se indican todas las tecnologías (herramientas, lenguajes, ... ) utilizadas para el desarrollo. 
 
-Se deberá **cumplimentar el siguiente [documento](docs/desarrollo.md)** indicando todas las tecnologías (herramientas, lenguajes, ... ) que utilices para el desarrollo, así como incluir **el código fuente en un directorio con el nombre del proyecto en la raíz del repositorio**.
+**El código fuente del proyecto se encuentra en el directorio con el nombre del proyecto en la raíz del repositorio (WordSeedExporter)**.
 
-El código fuente deberá encontrarse debidamente documentado.
-
-> TENER EN CUENTA QUE EL SOFTWARE SE DEBERÁ IMPLEMENTAR USANDO LAS MISMAS TECNOLOGÍAS UTILIZADAS EN LA EMPRESA, EN LA MEDIDA DE LO POSIBLE, SI ÉSTAS PERMITEN ABARCAR LOS REQUISITOS DEL PROYECTO.
+El código fuente se encuentra documentado en formato Javadoc en este **[documento](WordSeedExporter/doc/index.html)**.
 
 ### 3. Pruebas
 
-Se deberá **cumplimentar este [documento](docs/pruebas.md)**, explicando todos los tipos de pruebas realizadas al software desarrollado para la detección y corrección de errores en el proyecto.
+En este **[documento](docs/pruebas.md)** explica todos los tipos de pruebas realizadas al software desarrollado para la detección y corrección de errores en el proyecto.
 
-### 3. Despliegue
+### 4. Despliegue
 
-Se deberá **cumplimentar este [documento](docs/despliegue.md)** para explicar como se construye el proyecto, y como se despliega en un servidor o se genera un instalador para el usuario final, incluyendo instrucciones detalladas sobre cómo se distribuye el software.
+Este [documento](docs/despliegue.md) explica cómo se construye e instala la aplicación para el usuario final mediante un instalador.
 
-## Formato de la documentación
 
-Todos los documentos requeridos se deberán redactar en formato Markdown y encontrarse en el directorio `docs` del repositorio.
+
+Proyecto realizado por David Alejandro Hernández Alonso, 2º DAM A
