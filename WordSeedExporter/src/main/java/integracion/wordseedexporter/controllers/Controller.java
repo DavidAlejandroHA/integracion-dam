@@ -307,7 +307,11 @@ public class Controller implements Initializable {
 			e.consume(); // Si llega hasta aquí es porque el usuario ha decidido cancelar la salida de la
 							// aplicación
 		});
-		exactWordsCheckBox.requestFocus();
+
+		// Cambiar el focus que por defecto se va al checkbox a la view
+		Platform.runLater(() -> {
+			view.requestFocus();
+		});
 	}
 
 	public Controller() {

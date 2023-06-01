@@ -49,7 +49,7 @@ public class DataSource {
 	public void setKeyNames(ObservableList<String> keyNameList) {
 		keyNames.setAll(keyNameList);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Filas: " + rows.toString() + "\nNombres clave: " + keyNames.toString();

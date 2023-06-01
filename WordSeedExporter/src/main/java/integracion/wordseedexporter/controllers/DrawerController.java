@@ -36,7 +36,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
- * Esta clase representa el controlador de la vista del {@link JFXDrawer} que utiliza la aplicación.
+ * Esta clase representa el controlador de la vista del {@link JFXDrawer} que
+ * utiliza la aplicación.
+ * 
  * @author David Alejandro Hernández Alonso
  *
  */
@@ -74,12 +76,13 @@ public class DrawerController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		// bindings
 		exportarPdfButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
-			if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty() && Controller.converterReady.get()) {
+			if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty()
+					&& Controller.converterReady.get()) {
 				return false;
 			} else {
 				return true;
 			}
-		}, Controller.ficheroImportado, Controller.dataSources));
+		}, Controller.ficheroImportado, Controller.dataSources, Controller.converterReady));
 		exportarDocumentoButton.disableProperty().bind(Bindings.createBooleanBinding(() -> {
 			if (Controller.ficheroImportado.get() != null && !Controller.dataSources.get().isEmpty()) {
 				return false;
@@ -304,7 +307,6 @@ public class DrawerController implements Initializable {
 					// "La fuente de datos contiene un formato incorrecto respecto a la \n" +
 					// "gestión de la aplicación."
 					null, false);
-			e.printStackTrace();
 		}
 	}
 

@@ -16,6 +16,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -58,6 +59,7 @@ import org.odftoolkit.odfdom.dom.element.office.OfficeTextElement;
 import org.w3c.dom.NodeList;
 
 import integracion.wordseedexporter.controllers.Controller;
+import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -132,7 +134,6 @@ public class DocumentManager {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -310,7 +311,8 @@ public class DocumentManager {
 				}
 				if (numCambiosRow > 0) {
 					iEffective++;
-					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".docx";
+					String fileName = FilenameUtils.removeExtension(input.getName()) + "_" + (jEffective) + "_"
+							+ (iEffective) + ".docx";
 					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
 					FileOutputStream fOut = new FileOutputStream(file);
 					doc.write(fOut);
@@ -413,7 +415,8 @@ public class DocumentManager {
 
 				if (numCambiosRow > 0) {
 					iEffective++;
-					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".pptx";
+					String fileName = FilenameUtils.removeExtension(input.getName()) + "_" + (jEffective) + "_"
+							+ (iEffective) + ".pptx";
 					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
 					FileOutputStream fOut = new FileOutputStream(file);
 					slideShow.write(fOut);
@@ -510,7 +513,8 @@ public class DocumentManager {
 
 				if (numCambiosRow > 0) {
 					iEffective++;
-					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".xlsx";
+					String fileName = FilenameUtils.removeExtension(input.getName()) + "_" + (jEffective) + "_"
+							+ (iEffective) + ".xlsx";
 					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
 					FileOutputStream fOut = new FileOutputStream(file);
 					spreadSheet.write(fOut);
@@ -612,7 +616,8 @@ public class DocumentManager {
 
 				if (numCambiosRow > 0) {
 					iEffective++;
-					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".odt";
+					String fileName = FilenameUtils.removeExtension(input.getName()) + "_" + (jEffective) + "_"
+							+ (iEffective) + ".odt";
 					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
 					FileOutputStream fOut = new FileOutputStream(file);
 					odtDocument.save(fOut);
@@ -717,7 +722,8 @@ public class DocumentManager {
 
 				if (numCambiosRow > 0) {
 					iEffective++;
-					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".odp";
+					String fileName = FilenameUtils.removeExtension(input.getName()) + "_" + (jEffective) + "_"
+							+ (iEffective) + ".odp";
 					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
 					FileOutputStream fOut = new FileOutputStream(file);
 					odpDocument.save(fOut);
@@ -821,7 +827,8 @@ public class DocumentManager {
 
 				if (numCambiosRow > 0) {
 					iEffective++;
-					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".ods";
+					String fileName = FilenameUtils.removeExtension(input.getName()) + "_" + (jEffective) + "_"
+							+ (iEffective) + ".ods";
 					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
 					FileOutputStream fOut = new FileOutputStream(file);
 					odsDocument.save(fOut);
@@ -926,7 +933,8 @@ public class DocumentManager {
 
 				if (numCambiosRow > 0) {
 					iEffective++;
-					String fileName = "output_" + (jEffective) + "_" + (iEffective) + ".odg";
+					String fileName = FilenameUtils.removeExtension(input.getName()) + "_" + (jEffective) + "_"
+							+ (iEffective) + ".odg";
 					File file = new File(Controller.TEMPDOCSFOLDER.getPath() + File.separator + fileName);
 					FileOutputStream fOut = new FileOutputStream(file);
 					odgDocument.save(fOut);
@@ -1002,6 +1010,10 @@ public class DocumentManager {
 	 */
 	private boolean editDocxParagraph(XWPFParagraph p, String newKey, String key) {
 		String regexKey = stringModifyOptions(key);
+
+		// Se define un patrón que utiliza las expresiones regulares aplicadas según las
+		// opciones de exportación
+		Pattern pattern = Pattern.compile(regexKey);
 		boolean cambios = false;
 		int numCambios = 0;
 		List<XWPFRun> runs = p.getRuns();
@@ -1009,7 +1021,9 @@ public class DocumentManager {
 			for (XWPFRun r : runs) {
 				String text = r.getText(0);
 				String textAux = text;
-				if (text != null && text.contains(key)) {
+
+				// Luego se usa un matcher que compara el texto actual con el patrón
+				if (text != null && text.length() > 0 && pattern.matcher(text).find()) {
 					text = text.replaceAll(regexKey, StringEscapeUtils.escapeJava(newKey));
 					r.setText(text, 0);
 					if (!text.equals(textAux)) { // si se cambió algo del texto entonces se hicieron cambios
@@ -1037,7 +1051,7 @@ public class DocumentManager {
 	 */
 	private boolean editPptxParagraph(XSLFTextParagraph p, String newKey, String key) {
 		String regexKey = stringModifyOptions(key);
-
+		Pattern pattern = Pattern.compile(regexKey);
 		boolean cambios = false;
 		int numCambios = 0;
 		List<XSLFTextRun> runs = p.getTextRuns();
@@ -1045,7 +1059,7 @@ public class DocumentManager {
 			for (XSLFTextRun r : runs) {
 				String text = r.getRawText();
 				String textAux = text;
-				if (text != null && text.contains(key)) {
+				if (text != null && text.length() > 0 && pattern.matcher(text).find()) {
 					text = text.replaceAll(regexKey, StringEscapeUtils.escapeJava(newKey));
 					r.setText(text);
 					if (!text.equals(textAux)) { // si se cambió algo del texto entonces se hicieron cambios
@@ -1073,7 +1087,7 @@ public class DocumentManager {
 	 */
 	private boolean editXlxsCells(Cell c, String newKey, String key) {
 		String regexKey = stringModifyOptions(key);
-
+		Pattern pattern = Pattern.compile(regexKey);
 		boolean cambios = false;
 		int numCambios = 0;
 		// Solo modificar las celdas que contengan contenido de texto
@@ -1082,7 +1096,7 @@ public class DocumentManager {
 		if (c.getCellType().equals(CellType.STRING)) {
 			String text = c.getStringCellValue();
 			String textAux = text;
-			if (text != null && text.contains(key)) {
+			if (text != null && text.length() > 0 && pattern.matcher(text).find()) {
 				text = text.replaceAll(regexKey, StringEscapeUtils.escapeJava(newKey));
 				c.setCellValue(text);
 				if (!text.equals(textAux)) { // si se cambió algo del texto entonces se hicieron cambios
@@ -1110,17 +1124,19 @@ public class DocumentManager {
 	 *         sido así
 	 */
 	private boolean editStringNodeList(NodeList nl, String newKey, String key) {
+		String regexKey = stringModifyOptions(key);
+		Pattern pattern = Pattern.compile(regexKey);
 		boolean cambios = false;
 		int numCambios = 0;
 		if (nl != null) {
 			for (int k = 0; k < nl.getLength(); k++) {
-				if (nl.item(k).getTextContent().contains(key)) {
-					String texto = nl.item(k).getTextContent();
-					String textAux = texto;
-					String controlRegex = stringModifyOptions(key);
-					texto = texto.replaceAll(controlRegex, StringEscapeUtils.escapeJava(newKey));
-					nl.item(k).setTextContent(texto);
-					if (!texto.equals(textAux)) { // si se cambió algo del texto entonces se hicieron cambios
+				String text = nl.item(k).getTextContent();
+				if (text.length() > 0 && pattern.matcher(text).find()) {
+					String textAux = text;
+
+					text = text.replaceAll(regexKey, StringEscapeUtils.escapeJava(newKey));
+					nl.item(k).setTextContent(text);
+					if (!text.equals(textAux)) { // si se cambió algo del texto entonces se hicieron cambios
 						numCambios++;
 					}
 				}
@@ -1268,7 +1284,7 @@ public class DocumentManager {
 					boolean contains = false;
 
 					celdas = FXCollections.observableArrayList(); // reset de filas
-					for (int j = 0; j < searchWidth-1; j++) {
+					for (int j = 0; j < searchWidth - 1; j++) {
 						OdfTableCell cell = t.getCellByPosition(j, i);
 //						if (emptyCellsCount > 100) {
 //							throw new Exception("La tabla contiene demasiados registros vacíos. Es posible que\n"
@@ -1331,7 +1347,7 @@ public class DocumentManager {
 				ds.setKeyNames(nombresReemplazo);
 				ds.setRows(filas);
 				dsList.add(ds);
-				//System.out.println(ds);
+				// System.out.println(ds);
 			}
 			Controller.dataSources.set(dsList);
 		}
