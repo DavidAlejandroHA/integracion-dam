@@ -304,6 +304,7 @@ public class DrawerController implements Initializable {
 					// "La fuente de datos contiene un formato incorrecto respecto a la \n" +
 					// "gestión de la aplicación."
 					null, false);
+			e.printStackTrace();
 		}
 	}
 

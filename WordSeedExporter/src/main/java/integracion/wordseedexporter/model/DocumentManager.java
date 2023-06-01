@@ -1268,7 +1268,7 @@ public class DocumentManager {
 					boolean contains = false;
 
 					celdas = FXCollections.observableArrayList(); // reset de filas
-					for (int j = 0; j < searchWidth; j++) {
+					for (int j = 0; j < searchWidth-1; j++) {
 						OdfTableCell cell = t.getCellByPosition(j, i);
 //						if (emptyCellsCount > 100) {
 //							throw new Exception("La tabla contiene demasiados registros vacíos. Es posible que\n"
@@ -1297,7 +1297,7 @@ public class DocumentManager {
 				}
 
 				String texto = null;
-				for (int i = rowIndexStart; i < rowIndexStart + height; i++) {
+				for (int i = rowIndexStart; i < rowIndexStart + 1 + height; i++) {
 					celdas = FXCollections.observableArrayList(); // reset de celdas
 					for (int j = columnIndexStart; j < columnIndexStart + width; j++) {
 						OdfTableCell cell = t.getCellByPosition(j, i);
@@ -1331,6 +1331,7 @@ public class DocumentManager {
 				ds.setKeyNames(nombresReemplazo);
 				ds.setRows(filas);
 				dsList.add(ds);
+				//System.out.println(ds);
 			}
 			Controller.dataSources.set(dsList);
 		}
