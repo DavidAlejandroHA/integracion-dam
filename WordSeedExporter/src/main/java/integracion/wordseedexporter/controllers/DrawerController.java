@@ -129,6 +129,8 @@ public class DrawerController implements Initializable {
 				new FileChooser.ExtensionFilter("Office Graphics Document", "*.odg"));
 		File f = fileChooser.showOpenDialog(WordSeedExporterApp.primaryStage);
 		if (f != null) {
+			Controller.ficheroImportado.set(null); // Es necesario para forzar a que se actualize el fichero importado
+													// en caso de haber hecho cambios al reimportarlo y previsualizarlo
 			Controller.ficheroImportado.set(f);
 		}
 
